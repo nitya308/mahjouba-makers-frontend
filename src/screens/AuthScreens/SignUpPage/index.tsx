@@ -35,7 +35,7 @@ const SignUpPage = () => {
   };
 
   return (
-    <BaseView logoText={'Vibe'}>
+    <BaseView logoText={'App Title'}>
       <View style={{ width: '90%' }}>
         <AppTextInput
           onChangeText={(text) => setName(text)}

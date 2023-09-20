@@ -11,7 +11,7 @@ const BasePage = () => {
   const navigation = useNavigation<NavType>();
 
   return (
-    <BaseView logoText={'Vibe'}>
+    <BaseView logoText={'App Title'}>
       <View style={{ width: '90%' }}>
         <AppButton
           onPress={() => navigation.navigate(AuthStackRoutes.SIGNIN)}

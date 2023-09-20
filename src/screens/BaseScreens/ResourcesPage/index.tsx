@@ -55,7 +55,7 @@ const ResourcesPage = () => {
   };
 
   return (
-    <BaseView logoText={'Vibe'}>
+    <BaseView logoText={'App Title'}>
       <View
         style={{
           height: '70%',

@@ -5,7 +5,7 @@ import { fonts } from 'utils/constants';
 
 const ForbiddenPage = () => {
   return (
-    <BaseView logoText={'Vibe'}>
+    <BaseView logoText={'App Title'}>
       <Text color="white" fontSize={24} fontFamily={fonts.medium}>
         403 - Forbidden
       </Text>

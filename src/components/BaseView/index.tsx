@@ -9,7 +9,6 @@ import backgroundImage from '../../assets/background-stars-2x.png';
 import LogoSmallNoText from '../../assets/logo-small-no-text.svg';
 import LogoElongatedNoText from '../../assets/logo-elongated-no-text.svg';
 
-import Rings from '../../assets/rings.svg';
 import { fonts } from 'utils/constants';
 import Colors from 'utils/Colors';
 import TextStyles from 'utils/TextStyles';
@@ -19,14 +18,21 @@ import { logout } from 'redux/slices/authSlice';
 
 const BaseView = ({ 
   children, 
-  showRings, 
   smallLogo, 
   noLogo,
   logoText,
   elongatedLogo,
   style,
   showTopRightIcon,
-}: { children: React.ReactNode, showRings?: boolean, smallLogo?: boolean, noLogo?: boolean, elongatedLogo?: boolean, logoText?: string, style?: StyleProp<ViewStyle>, showTopRightIcon?: boolean }) => {
+}: { 
+  children: React.ReactNode, 
+  smallLogo?: boolean, 
+  noLogo?: boolean, 
+  elongatedLogo?: boolean, 
+  logoText?: string, 
+  style?: StyleProp<ViewStyle>, 
+  showTopRightIcon?: boolean 
+}) => {
   const isLoading = useIsLoading();
 
   const dispatch = useAppDispatch();
@@ -68,16 +74,10 @@ const BaseView = ({
             )
             }
           </View>
-
-          {showRings && 
-          (<View style={styles.rings}>
-            <Rings style={{ width: 681, height: 474 }} />
-          </View>)}
-
           {children}
         </ImageBackground>
       </LinearGradient>
-      <Overlay
+      {/* <Overlay
         isVisible={isLoading}
         overlayStyle={{
           backgroundColor: Colors.primary,
@@ -91,8 +91,7 @@ const BaseView = ({
         >
           Loading...
         </Text>
-      </Overlay>
-
+      </Overlay> */}
       <Actionsheet isOpen={isOpen} onClose={onClose}>
         <Actionsheet.Content>
           <Actionsheet.Item onPress={() => dispatch(logout({}))}>
