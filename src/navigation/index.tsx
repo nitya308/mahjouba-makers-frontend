@@ -8,6 +8,7 @@ import { initCredentials, jwtSignIn } from 'redux/slices/authSlice';
 import { VerifyPage } from 'screens/AuthScreens';
 import AuthNavigation from './AuthNavigation';
 import BaseNavigation from './BaseNavigation';
+import AuthController from 'components/Auth/AuthController';
 
 const RootNavigation = () => {
   const { isConnected } = useAppSelector((state) => state.connection);
@@ -29,7 +30,7 @@ const RootNavigation = () => {
   
   if (!authenticated) {
     return (
-      <AuthNavigation />
+      <AuthController />
     );
   } else if (authenticated && role === UserScopes.Unverified) {
     return (

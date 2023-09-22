@@ -1,5 +1,4 @@
 import React from 'react';
-import { View, StatusBar } from 'react-native';
 import { Provider } from 'react-redux';
 import { store } from './src/redux/store';
 import RootNavigation from './src/navigation';
@@ -40,13 +39,12 @@ export default function App() {
   });
 
   if (!fontsLoaded) {
-    return <View />;
+    return <></>;
   }
   
   return (
     <NativeBaseProvider theme={theme}>
       <Provider store={store}>
-        <StatusBar barStyle = 'light-content' />
         <RootNavigation />
       </Provider>
     </NativeBaseProvider>
