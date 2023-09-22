@@ -98,7 +98,7 @@ const BaseNavigation = () => {
         <BaseTab.Screen
           name={BaseTabRoutes.FRONT}
           component={FrontNavigator}
-          options={{ tabBarIcon: () => <RingsIcon /> }}
+          options={{ tabBarIcon: () => <></> }}
         />
         {/* <BaseTab.Screen
           name={BaseTabRoutes.RESOURCES}
