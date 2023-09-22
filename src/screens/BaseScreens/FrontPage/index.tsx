@@ -14,7 +14,7 @@ const FrontPage = () => {
   return (
     <BaseView smallLogo showTopRightIcon logoText={'App Title'}>
       <VStack height="100%" pt={150}>
-        <Text color="white" fontSize={24} fontFamily={fonts.medium}>{`Welcome back, ${name}`}</Text>
+        {/* <Text color="white" fontSize={24} fontFamily={fonts.medium}>{`Welcome back, ${name}`}</Text> */}
       </VStack>
     </BaseView>
   );

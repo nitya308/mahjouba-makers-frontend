@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Provider } from 'react-redux';
 import { store } from './src/redux/store';
 import RootNavigation from './src/navigation';
@@ -6,6 +6,8 @@ import { useFonts, Raleway_400Regular, Raleway_600SemiBold, Raleway_800ExtraBold
 import { Montserrat_600SemiBold, Montserrat_400Regular, Montserrat_500Medium } from '@expo-google-fonts/montserrat';
 import { NativeBaseProvider, extendTheme } from 'native-base';
 import { fonts } from 'utils/constants';
+import firebase, { initializeApp } from 'firebase/app';
+import { firebaseConfig } from './firebaseConfig';
 
 const theme = extendTheme({
   fontConfig: {
@@ -37,6 +39,12 @@ export default function App() {
     Montserrat_400Regular,
     Montserrat_500Medium,
   });
+
+  // useEffect(() => {
+  //   if (!(firebase as any).apps.length) {
+  //     initializeApp(firebaseConfig);
+  //   }
+  // }, []);
 
   if (!fontsLoaded) {
     return <></>;

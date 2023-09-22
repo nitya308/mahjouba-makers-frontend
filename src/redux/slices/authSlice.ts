@@ -1,9 +1,11 @@
 /* eslint-disable @typescript-eslint/indent */
-import { createAsyncThunk, createSlice, isRejectedWithValue } from '@reduxjs/toolkit';
+import { PayloadAction, createAsyncThunk, createSlice, isRejectedWithValue } from '@reduxjs/toolkit';
 import { SERVER_URL } from 'utils/constants.js';
 import axios from 'axios';
 import { getBearerToken, setBearerToken } from 'utils/asyncStorage';
 import { UserScopes } from 'types/users';
+import { auth } from '../../../firebaseConfig';
+import { User, signOut } from 'firebase/auth';
 
 export interface AuthState {
   authenticated: boolean
@@ -53,100 +55,129 @@ export const initCredentials = createAsyncThunk(
   },
 );
 
-export const signUp = createAsyncThunk(
-  'auth/signup',
-  async (credentials: { email: string, password: string, name: string }, { dispatch }) => {
-    dispatch(startAuthLoading());
-    return axios
-      .post(`${SERVER_URL}auth/signup`, credentials)
-      .finally(() => dispatch(stopAuthLoading()))
-      .then((response) => {
-        alert('Sign up successful!');
-        return response.data;
-      })
-      .catch((error) => {
-        console.error('Error when signing up', error);
-        return false;
-      });
-  },
-);
-
-export const signIn = createAsyncThunk(
-  'auth/signin',
-  async (credentials: { email: string, password: string }, { dispatch }) => {
-    dispatch(startAuthLoading());
-    return axios
-      .post<LoginResponse>(`${SERVER_URL}auth/signin`, credentials)
-      .finally(() => dispatch(stopAuthLoading()))
-      .then((response) => {
-        if (response.status == 403) {
-          // forbidden - not verified
-          return {
-            user: { email: credentials.email },
-            verified: false,
-          };
-        }
-        dispatch(setCredentials(response.data.token));
-        alert('Signed In!');
-        return { ...response.data };
-      })
-      .catch((error) => {
-        alert(
-          'Unable to log in, please ensure your email and password are correct.',
-        );
-        console.error('Error when logging in', error);
-        throw error;
-      });
-  },
-);
-
-export const jwtSignIn = createAsyncThunk(
-  'auth/jwt-signin',
-  async (req: unknown, { dispatch }) => {
-    const token = await getBearerToken();
-    if (!token) {
-      throw Error('null token');
-    }
-    
-    dispatch(startAuthLoading());
-    return axios
-      .get<LoginResponse>(`${SERVER_URL}auth/jwt-signin/`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .finally(() => dispatch(stopAuthLoading()))
-      .then((response) => {
-        if (token) {
-          dispatch(setCredentials(token));
-        }
-        return response.data;
-      })
-      .catch((err) => {
-        console.error(err);
-        alert('Your login session has expired.');
-        throw err;
-      });
-  },
-);
-
 export const logout = createAsyncThunk(
-  'auth/logout',
+  'auth/logOut',
   async (req: unknown, { dispatch }) => {
-    dispatch(startAuthLoading());
-    return axios
-      .post(`${SERVER_URL}auth/logout`)
-      .finally(() => dispatch(stopAuthLoading()))
-      .then((response) => {
-        dispatch(setCredentials(''));
-        return response.data;
-      })
-      .catch((err) => {
-        console.error('Logout attempt failed', err);
-        throw err;
-      });
+    try {
+      dispatch(startAuthLoading());
+      await signOut(auth);
+      dispatch(setCredentials(''));
+      dispatch(stopAuthLoading());
+      return true;
+    } catch (err) {
+      dispatch(stopAuthLoading());
+      throw err;
+    }
   },
 );
+
+export const storeFirebaseUser = createAsyncThunk('auth/signin',
+  async (newUser: User, { dispatch }) => {
+    try {
+      const token = await newUser.getIdToken();
+      dispatch(setCredentials(token));
+      dispatch(handleFirebaseUser(newUser));
+      return true;
+    } catch (err) {
+      throw err;
+    }
+  },
+);
+
+// export const signUp = createAsyncThunk(
+//   'auth/signup',
+//   async (credentials: { email: string, password: string, name: string }, { dispatch }) => {
+//     dispatch(startAuthLoading());
+//     return axios
+//       .post(`${SERVER_URL}auth/signup`, credentials)
+//       .finally(() => dispatch(stopAuthLoading()))
+//       .then((response) => {
+//         alert('Sign up successful!');
+//         return response.data;
+//       })
+//       .catch((error) => {
+//         console.error('Error when signing up', error);
+//         return false;
+//       });
+//   },
+// );
+
+// export const signIn = createAsyncThunk(
+//   'auth/signin',
+//   async (credentials: { email: string, password: string }, { dispatch }) => {
+//     dispatch(startAuthLoading());
+//     return axios
+//       .post<LoginResponse>(`${SERVER_URL}auth/signin`, credentials)
+//       .finally(() => dispatch(stopAuthLoading()))
+//       .then((response) => {
+//         if (response.status == 403) {
+//           // forbidden - not verified
+//           return {
+//             user: { email: credentials.email },
+//             verified: false,
+//           };
+//         }
+//         dispatch(setCredentials(response.data.token));
+//         alert('Signed In!');
+//         return { ...response.data };
+//       })
+//       .catch((error) => {
+//         alert(
+//           'Unable to log in, please ensure your email and password are correct.',
+//         );
+//         console.error('Error when logging in', error);
+//         throw error;
+//       });
+//   },
+// );
+
+// export const jwtSignIn = createAsyncThunk(
+//   'auth/jwt-signin',
+//   async (req: unknown, { dispatch }) => {
+//     const token = await getBearerToken();
+//     if (!token) {
+//       throw Error('null token');
+//     }
+    
+//     dispatch(startAuthLoading());
+//     return axios
+//       .get<LoginResponse>(`${SERVER_URL}auth/jwt-signin/`, {
+//         headers: {
+//           Authorization: `Bearer ${token}`,
+//         },
+//       })
+//       .finally(() => dispatch(stopAuthLoading()))
+//       .then((response) => {
+//         if (token) {
+//           dispatch(setCredentials(token));
+//         }
+//         return response.data;
+//       })
+//       .catch((err) => {
+//         console.error(err);
+//         alert('Your login session has expired.');
+//         throw err;
+//       });
+//   },
+// );
+
+// export const logout = createAsyncThunk(
+//   'auth/logout',
+//   async (req: unknown, { dispatch }) => {
+//     dispatch(startAuthLoading());
+//     return axios
+//       .post(`${SERVER_URL}auth/logout`)
+//       .finally(() => dispatch(stopAuthLoading()))
+//       .then((response) => {
+//         dispatch(setCredentials(''));
+//         return response.data;
+//       })
+//       .catch((err) => {
+//         console.error('Logout attempt failed', err);
+//         throw err;
+//       });
+//   },
+// );
 
 export const resendCode = createAsyncThunk(
   'auth/resend-code',
@@ -185,21 +216,29 @@ export const authSlice = createSlice({
   reducers: {
     startAuthLoading: (state) => ({ ...state, loading: true }),
     stopAuthLoading: (state) => ({ ...state, loading: false }),
+    handleFirebaseUser: (state, action: PayloadAction<User>) => {
+      return {
+        ...state,
+        id: action.payload.uid || '',
+        email: action.payload.email || '',
+        authenticated: true,
+      };
+    },
   },
   extraReducers: (builder) => {
-    builder.addCase(signIn.fulfilled, (state, action) => {
-      if ('token' in action.payload) {
-        state = ({ ...state, ...action.payload.user });
-        state.authenticated = true;
-        return state;
-      }
-    });
-    builder.addCase(jwtSignIn.fulfilled, (state, action) => {
-      state = ({ ...state, ...action.payload.user });
-      state.authenticated = true;
-      return state;
-    });
-    builder.addCase(jwtSignIn.rejected, () => initialState);
+    // builder.addCase(signIn.fulfilled, (state, action) => {
+    //   if ('token' in action.payload) {
+    //     state = ({ ...state, ...action.payload.user });
+    //     state.authenticated = true;
+    //     return state;
+    //   }
+    // });
+    // builder.addCase(jwtSignIn.fulfilled, (state, action) => {
+    //   state = ({ ...state, ...action.payload.user });
+    //   state.authenticated = true;
+    //   return state;
+    // });
+    // builder.addCase(jwtSignIn.rejected, () => initialState);
     builder.addCase(logout.fulfilled, () => {
       alert('Logged out of account');
       return initialState;
@@ -220,7 +259,7 @@ export const authSlice = createSlice({
   },
 });
 
-export const { startAuthLoading, stopAuthLoading } =
+export const { startAuthLoading, stopAuthLoading, handleFirebaseUser } =
   authSlice.actions;
 
 export default authSlice.reducer;

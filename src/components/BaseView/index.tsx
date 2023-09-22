@@ -57,9 +57,9 @@ const BaseView = ({
                 <Text 
                   color="white" 
                   fontFamily={fonts.medium}
-                  fontSize={18}
+                  fontSize='18px'
                   textAlign="center"
-                  mb={-6}
+                  mb='-6px'
                   zIndex={100}
                 >
                   {logoText}
