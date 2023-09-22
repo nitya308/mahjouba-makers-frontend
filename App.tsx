@@ -7,6 +7,7 @@ import { useFonts, Raleway_400Regular, Raleway_600SemiBold, Raleway_800ExtraBold
 import { Montserrat_600SemiBold, Montserrat_400Regular, Montserrat_500Medium } from '@expo-google-fonts/montserrat';
 import { NativeBaseProvider, extendTheme } from 'native-base';
 import { fonts } from 'utils/constants';
+import './src/utils/i18n';
 
 const theme = extendTheme({
   fontConfig: {
