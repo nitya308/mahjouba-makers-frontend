@@ -10,7 +10,7 @@ import AuthNavigation from './AuthNavigation';
 import BaseNavigation from './BaseNavigation';
 import AuthController from 'components/Auth/AuthController';
 import { User, onAuthStateChanged } from 'firebase/auth';
-import { auth } from '../../firebaseConfig';
+import { auth } from '../../firebase';
 
 const RootNavigation = () => {
   const { isConnected } = useAppSelector((state) => state.connection);

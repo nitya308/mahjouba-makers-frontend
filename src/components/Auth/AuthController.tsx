@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { View, Box, Heading, Center, Text } from 'native-base';
+import { View, Box, Heading, Center, Text, Button } from 'native-base';
 import Signup from './Signup';
 import Login from './Login';
+import { googleSignIn } from 'utils/auth';
 
 export default function AuthController() {
   const [newUser, setNewUser] = useState(false);
@@ -24,6 +25,18 @@ export default function AuthController() {
             <Signup /> :
             <Login />
         }
+        <Button 
+          w='100%' 
+          borderRadius='40px' 
+          backgroundColor='#222' 
+          marginY='8px' 
+          paddingY='4px' 
+          paddingX='16px' 
+          color='#444' 
+          size='sm' 
+          onPress={() => googleSignIn()}>
+          <Text color='white' fontWeight='medium'>Sign in with google</Text>
+        </Button>
         {
           newUser ?
             <Text color='gray.500' fontSize='xs' mt='10px'>

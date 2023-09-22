@@ -4,7 +4,7 @@ import { SERVER_URL } from 'utils/constants.js';
 import axios from 'axios';
 import { getBearerToken, setBearerToken } from 'utils/asyncStorage';
 import { UserScopes } from 'types/users';
-import { auth } from '../../../firebaseConfig';
+import { auth } from '../../../firebase';
 import { User, signOut } from 'firebase/auth';
 
 export interface AuthState {
