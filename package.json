@@ -9,7 +9,8 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "eject": "expo eject",
-    "lint": "eslint ./src"
+    "lint": "eslint ./src",
+    "translation:parse": "npx i18next-parser 'src/**/*.{js,jsx,ts,tsx}' --config i18next-parser.config.mjs"
   },
   "dependencies": {
     "@expo-google-fonts/montserrat": "^0.2.3",
@@ -32,6 +33,7 @@
     "expo-linear-gradient": "~12.1.2",
     "expo-status-bar": "~1.4.4",
     "i18next": "^23.5.1",
+    "i18next-parser": "^8.7.0",
     "native-base": "^3.4.28",
     "react": "18.2.0",
     "react-dom": "18.2.0",
