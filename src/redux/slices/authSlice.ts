@@ -5,7 +5,7 @@ import axios from 'axios';
 import { getBearerToken, setBearerToken } from 'utils/asyncStorage';
 import { UserScopes } from 'types/users';
 import { auth } from '../../../firebase';
-import { User, signOut } from 'firebase/auth';
+import { User as FBUser, signOut } from 'firebase/auth';
 
 export interface AuthState {
   authenticated: boolean
@@ -14,6 +14,7 @@ export interface AuthState {
   email: string
   name: string
   role: UserScopes
+  fbUserRef: FBUser | null
 }
 
 const initialState: AuthState = {
@@ -22,7 +23,8 @@ const initialState: AuthState = {
   id: '',
   email: '',
   name: '',
-  role: UserScopes.Unverified,
+  role: UserScopes.Uninitialized,
+  fbUserRef: null,
 };
 
 interface LoginResponse {
@@ -71,12 +73,16 @@ export const logout = createAsyncThunk(
   },
 );
 
-export const storeFirebaseUser = createAsyncThunk('auth/signin',
-  async (newUser: User, { dispatch }) => {
+export const handleAuthStateChanged = createAsyncThunk('auth/signin',
+  async (user: FBUser | null, { dispatch }) => {
     try {
-      const token = await newUser.getIdToken();
+      if (!user) {
+        dispatch(handleFirebaseNoAuth());
+        return true;
+      }
+      const token = await user.getIdToken();
       dispatch(setCredentials(token));
-      dispatch(handleFirebaseUser(newUser));
+      dispatch(handleFirebaseUser(user));
       return true;
     } catch (err) {
       throw err;
@@ -216,29 +222,27 @@ export const authSlice = createSlice({
   reducers: {
     startAuthLoading: (state) => ({ ...state, loading: true }),
     stopAuthLoading: (state) => ({ ...state, loading: false }),
-    handleFirebaseUser: (state, action: PayloadAction<User>) => {
+    handleFirebaseNoAuth: (state) => {
+      return {
+        ...state,
+        id: '',
+        email: '',
+        authenticated: false,
+        role: UserScopes.Uninitialized,
+      };
+    },
+    handleFirebaseUser: (state, action: PayloadAction<FBUser>) => {
       return {
         ...state,
         id: action.payload.uid || '',
         email: action.payload.email || '',
         authenticated: true,
+        role: UserScopes.Uninitialized,
+        fbUserRef: action.payload,
       };
     },
   },
   extraReducers: (builder) => {
-    // builder.addCase(signIn.fulfilled, (state, action) => {
-    //   if ('token' in action.payload) {
-    //     state = ({ ...state, ...action.payload.user });
-    //     state.authenticated = true;
-    //     return state;
-    //   }
-    // });
-    // builder.addCase(jwtSignIn.fulfilled, (state, action) => {
-    //   state = ({ ...state, ...action.payload.user });
-    //   state.authenticated = true;
-    //   return state;
-    // });
-    // builder.addCase(jwtSignIn.rejected, () => initialState);
     builder.addCase(logout.fulfilled, () => {
       alert('Logged out of account');
       return initialState;
@@ -259,7 +263,12 @@ export const authSlice = createSlice({
   },
 });
 
-export const { startAuthLoading, stopAuthLoading, handleFirebaseUser } =
+export const {
+  startAuthLoading,
+  stopAuthLoading,
+  handleFirebaseUser,
+  handleFirebaseNoAuth,
+} =
   authSlice.actions;
 
 export default authSlice.reducer;

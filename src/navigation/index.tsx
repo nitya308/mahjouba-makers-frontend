@@ -4,7 +4,7 @@ import useAppSelector from 'hooks/useAppSelector';
 import useAppDispatch from 'hooks/useAppDispatch';
 import { UserScopes } from 'types/users';
 import { checkConnection } from 'redux/slices/connectionSlice';
-import { initCredentials, logout, storeFirebaseUser } from 'redux/slices/authSlice';
+import { initCredentials, logout, handleAuthStateChanged } from 'redux/slices/authSlice';
 import { VerifyPage } from 'screens/AuthScreens';
 import AuthNavigation from './AuthNavigation';
 import BaseNavigation from './BaseNavigation';
@@ -32,11 +32,7 @@ const RootNavigation = () => {
 
   useEffect(() => {
     const authListener = onAuthStateChanged(auth, async (user: User | null) => {
-      if (user) {
-        dispatch(storeFirebaseUser(user));
-      } else {
-        // dispatch(logout({}));
-      }
+      dispatch(handleAuthStateChanged(user));
     });
 
     return () => {
