@@ -6,6 +6,7 @@ import { getBearerToken, setBearerToken } from 'utils/asyncStorage';
 import { UserScopes } from 'types/users';
 import { auth } from '../../../firebase';
 import { User as FBUser, signOut } from 'firebase/auth';
+import { RootState } from 'redux/store';
 
 export interface AuthState {
   authenticated: boolean
@@ -241,6 +242,12 @@ export const authSlice = createSlice({
         fbUserRef: action.payload,
       };
     },
+    setUserInitialized: (state) => {
+      return {
+        ...state,
+        role: UserScopes.User,
+      };
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(logout.fulfilled, () => {
@@ -268,7 +275,9 @@ export const {
   stopAuthLoading,
   handleFirebaseUser,
   handleFirebaseNoAuth,
+  setUserInitialized,
 } =
   authSlice.actions;
+export const authSelector = (state: RootState) => state.auth;
 
 export default authSlice.reducer;

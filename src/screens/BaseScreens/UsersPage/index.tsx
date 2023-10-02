@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Dimensions, Text, View, ScrollView } from 'react-native';
 import useAppSelector from 'hooks/useAppSelector';
 import useAppDispatch from 'hooks/useAppDispatch';
-import { createUser, getUser, updateUser, deleteUser } from 'redux/slices/usersSlice';
+import { createUser, getUser, updateUser, deleteUser } from 'redux/slices/userDataSlice';
 import { UserScopes } from 'types/users';
 import Accordion from 'components/Accordion';
 import AppTextInput from 'components/AppTextInput';

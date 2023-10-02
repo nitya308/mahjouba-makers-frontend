@@ -2,7 +2,7 @@ import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
 import connectionReducer from './slices/connectionSlice';
 import authReducer from './slices/authSlice';
 import resourcesReducer from './slices/resourcesSlice';
-import usersReducer from './slices/usersSlice';
+import usersReducer from './slices/userDataSlice';
 
 export const store = configureStore({
   reducer: {
@@ -11,6 +11,9 @@ export const store = configureStore({
     resources: resourcesReducer,
     users: usersReducer,
   },
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware({
+    serializableCheck: false,
+  }),
 });
 
 export type AppDispatch = typeof store.dispatch;

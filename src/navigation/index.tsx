@@ -11,6 +11,7 @@ import BaseNavigation from './BaseNavigation';
 import AuthController from 'components/Auth/AuthController';
 import { User, onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../../firebase';
+import { UserSetup } from 'components/Setup';
 
 const RootNavigation = () => {
   const { isConnected } = useAppSelector((state) => state.connection);
@@ -46,13 +47,11 @@ const RootNavigation = () => {
     return (
       <AuthController />
     );
-  } else if (authenticated /*&& role === UserScopes.Unverified*/) {
-  //   return (
-  //     <NavigationContainer>
-  //       <VerifyPage />
-  //     </NavigationContainer>
-  //   );
-  // } else {
+  } else if (authenticated && role === UserScopes.Uninitialized) {
+    return (
+      <UserSetup />
+    );
+  } else {
     return (
       <BaseNavigation />
     );
