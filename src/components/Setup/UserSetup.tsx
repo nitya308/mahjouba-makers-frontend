@@ -28,12 +28,6 @@ export default function UserSetup() {
     }
   }, [userData]);
 
-  useEffect(() => {
-    if (authenticated && fbUserRef && !userData) {
-      dispatch(getUser({ fbUserRef }));
-    }
-  }, [fbUserRef, authenticated]);
-
   return (
     <View flex='1'>
       <Center h='100%' p='10px'>

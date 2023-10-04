@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import useAppSelector from 'hooks/useAppSelector';
 import useAppDispatch from 'hooks/useAppDispatch';
@@ -12,10 +12,13 @@ import AuthController from 'components/Auth/AuthController';
 import { User, onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../../firebase';
 import { UserSetup } from 'components/Setup';
+import { getUser, userDataSelector } from 'redux/slices/userDataSlice';
+import { Center, Spinner, View } from 'native-base';
 
 const RootNavigation = () => {
   const { isConnected } = useAppSelector((state) => state.connection);
   const { authenticated, role } = useAppSelector((state) => state.auth);
+  const { userData, loading } = useAppSelector(userDataSelector);
   
   const dispatch = useAppDispatch();
   useEffect(() => {
@@ -24,6 +27,10 @@ const RootNavigation = () => {
   useEffect(() => {
     dispatch(initCredentials({})).finally(() => { });
   }, []);
+
+  const initialized = useMemo(() => {
+    return userData !== undefined;
+  }, [userData, loading]);
   // When the app loads, try to log in with token stored in async storage
   // useEffect(() => {
   //   if (isConnected) {
@@ -34,6 +41,9 @@ const RootNavigation = () => {
   useEffect(() => {
     const authListener = onAuthStateChanged(auth, async (user: User | null) => {
       dispatch(handleAuthStateChanged(user));
+      if (user) {
+        dispatch(getUser({ fbUserRef: user }));
+      }
     });
 
     return () => {
@@ -47,7 +57,13 @@ const RootNavigation = () => {
     return (
       <AuthController />
     );
-  } else if (authenticated && role === UserScopes.Uninitialized) {
+  } else if (loading) {
+    return <View flex='1'>
+      <Center h='100%'>
+        <Spinner />
+      </Center>
+    </View>;
+  } else if (authenticated && !initialized) {
     return (
       <UserSetup />
     );

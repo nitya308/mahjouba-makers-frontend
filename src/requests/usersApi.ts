@@ -25,7 +25,7 @@ const getCurrUser = async (fbUserRef: User) => {
     return await axios.get<IUser>(`${SERVER_URL}users/${fbUserRef.uid}`, config)
       .then((res) => ({ ...res.data }))
       .catch((err) => {
-        alert('Unable to initialize user');
+        // alert('Unable to fetch user');
         throw err;
       });
   } catch (err) {
