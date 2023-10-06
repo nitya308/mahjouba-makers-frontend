@@ -1,10 +1,10 @@
 import axios from 'axios';
 import { SERVER_URL } from 'utils/constants';
 import { User } from 'firebase/auth';
-import { IUser } from 'types/users';
+import { CreateUserModel, IUser } from 'types/users';
 import { getAxiosConfigForFBUser } from 'utils/requestUtils';
 
-const initUser = async (userData: Omit<IUser, 'id' | 'email' | 'role'>, fbUserRef: User) => {
+const initUser = async (userData: CreateUserModel, fbUserRef: User) => {
   try {
     const config = await getAxiosConfigForFBUser(fbUserRef);
     console.log(userData);
@@ -12,6 +12,7 @@ const initUser = async (userData: Omit<IUser, 'id' | 'email' | 'role'>, fbUserRe
       .then((res) => ({ ...res.data }))
       .catch((err) => {
         alert('Unable to initialize user');
+        console.log(err);
         throw err;
       });
   } catch (err) {
@@ -25,6 +26,7 @@ const getCurrUser = async (fbUserRef: User) => {
     return await axios.get<IUser>(`${SERVER_URL}users/${fbUserRef.uid}`, config)
       .then((res) => ({ ...res.data }))
       .catch((err) => {
+        console.log(err);
         // alert('Unable to fetch user');
         throw err;
       });

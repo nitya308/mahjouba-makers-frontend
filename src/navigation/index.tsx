@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import useAppSelector from 'hooks/useAppSelector';
 import useAppDispatch from 'hooks/useAppDispatch';
@@ -11,15 +11,16 @@ import BaseNavigation from './BaseNavigation';
 import AuthController from 'components/Auth/AuthController';
 import { User, onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../../firebase';
-import { UserSetup } from 'components/Setup';
+import UserSetup from 'components/Setup';
 import { getUser, userDataSelector } from 'redux/slices/userDataSlice';
 import { Center, Spinner, View } from 'native-base';
+import ProfileImageSelector from 'components/ProfileImageSelector';
 
 const RootNavigation = () => {
   const { isConnected } = useAppSelector((state) => state.connection);
   const { authenticated, role } = useAppSelector((state) => state.auth);
   const { userData, loading } = useAppSelector(userDataSelector);
-  
+    
   const dispatch = useAppDispatch();
   useEffect(() => {
     dispatch(checkConnection()).finally(() => { });

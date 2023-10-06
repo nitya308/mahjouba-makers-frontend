@@ -1,7 +1,7 @@
 import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { SERVER_URL } from 'utils/constants.js';
 import axios from 'axios';
-import { UserScopes, IUser } from 'types/users.jsx';
+import { UserScopes, IUser, CreateUserModel } from 'types/users.jsx';
 import { User } from 'firebase/auth';
 import { usersApi } from 'requests';
 import { RootState } from 'redux/store';
@@ -19,7 +19,7 @@ const initialState: UserState = {
 export const initUser = createAsyncThunk(
   'userData/initUser',
   async (req: {
-    userData: Omit<IUser, 'id' | 'email' | 'role'>,
+    userData: CreateUserModel,
     fbUserRef: User
   }, { dispatch }) => {
     dispatch(startUsersLoading());

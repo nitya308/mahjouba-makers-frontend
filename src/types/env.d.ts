@@ -8,4 +8,5 @@ declare module '@env' {
   export const FB_APP_ID: string;
   export const FB_MEASURE_ID: string;
   export const GOOGLE_WCID: string;
+  export const MAPS_API_KEY: string;
 }
