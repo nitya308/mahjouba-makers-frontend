@@ -82,7 +82,7 @@ const BaseNavigation = () => {
         }}
         initialRouteName={BaseTabRoutes.FRONT}
       >
-        <BaseTab.Screen
+        {/* <BaseTab.Screen
           name={BaseTabRoutes.USERS}
           component={
             ProtectedRoute([UserScopes.Admin])
@@ -90,17 +90,17 @@ const BaseNavigation = () => {
               : ForbiddenPage
           }
           options={{ tabBarIcon: () => (
-            <HStack width={35} height={35} alignItems="center" justifyContent="center">
+            <HStack width='35px' height='35px' alignItems="center" justifyContent="center">
               <ProfileNavBaseIcon style={{ position: 'absolute' }} />
             </HStack>
           ) }}
-        />
+        /> */}
         <BaseTab.Screen
           name={BaseTabRoutes.FRONT}
           component={FrontNavigator}
-          options={{ tabBarIcon: () => <RingsIcon /> }}
+          options={{ tabBarIcon: () => <></> }}
         />
-        <BaseTab.Screen
+        {/* <BaseTab.Screen
           name={BaseTabRoutes.RESOURCES}
           component={
             ProtectedRoute([UserScopes.User, UserScopes.Admin])
@@ -108,11 +108,11 @@ const BaseNavigation = () => {
               : ForbiddenPage
           }
           options={{ tabBarIcon: () => (
-            <HStack width={35} height={35} alignItems="center" justifyContent="center">
+            <HStack width='35px' height='35px' alignItems="center" justifyContent="center">
               <ProfileNavBaseIcon style={{ position: 'absolute' }} />
             </HStack>
           ) }}
-        />
+        /> */}
       </BaseTab.Navigator>
     </NavigationContainer>
   );

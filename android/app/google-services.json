@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "880532850393",
+    "project_id": "mahjouba-initiative",
+    "storage_bucket": "mahjouba-initiative.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:880532850393:android:3d9eec473e41a3a87aa0c8",
+        "android_client_info": {
+          "package_name": "com.dali.mahjouba"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "880532850393-r8vbidhde2nejbmd7e3ff2usleake54s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCfnd-_aikMZykZVWL_o7iPs0LymMZDbWI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "880532850393-r8vbidhde2nejbmd7e3ff2usleake54s.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "880532850393-62g36tcao3slo87re4db4g71j1hu4ojg.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.dali.mahjouba"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

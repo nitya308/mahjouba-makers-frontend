@@ -1,9 +1,12 @@
 /* eslint-disable @typescript-eslint/indent */
-import { createAsyncThunk, createSlice, isRejectedWithValue } from '@reduxjs/toolkit';
+import { PayloadAction, createAsyncThunk, createSlice, isRejectedWithValue } from '@reduxjs/toolkit';
 import { SERVER_URL } from 'utils/constants.js';
 import axios from 'axios';
 import { getBearerToken, setBearerToken } from 'utils/asyncStorage';
 import { UserScopes } from 'types/users';
+import { auth } from '../../../firebase';
+import { User as FBUser, signOut } from 'firebase/auth';
+import { RootState } from 'redux/store';
 
 export interface AuthState {
   authenticated: boolean
@@ -12,6 +15,7 @@ export interface AuthState {
   email: string
   name: string
   role: UserScopes
+  fbUserRef: FBUser | null
 }
 
 const initialState: AuthState = {
@@ -20,7 +24,8 @@ const initialState: AuthState = {
   id: '',
   email: '',
   name: '',
-  role: UserScopes.Unverified,
+  role: UserScopes.Uninitialized,
+  fbUserRef: null,
 };
 
 interface LoginResponse {
@@ -53,100 +58,133 @@ export const initCredentials = createAsyncThunk(
   },
 );
 
-export const signUp = createAsyncThunk(
-  'auth/signup',
-  async (credentials: { email: string, password: string, name: string }, { dispatch }) => {
-    dispatch(startAuthLoading());
-    return axios
-      .post(`${SERVER_URL}auth/signup`, credentials)
-      .finally(() => dispatch(stopAuthLoading()))
-      .then((response) => {
-        alert('Sign up successful!');
-        return response.data;
-      })
-      .catch((error) => {
-        console.error('Error when signing up', error);
-        return false;
-      });
-  },
-);
-
-export const signIn = createAsyncThunk(
-  'auth/signin',
-  async (credentials: { email: string, password: string }, { dispatch }) => {
-    dispatch(startAuthLoading());
-    return axios
-      .post<LoginResponse>(`${SERVER_URL}auth/signin`, credentials)
-      .finally(() => dispatch(stopAuthLoading()))
-      .then((response) => {
-        if (response.status == 403) {
-          // forbidden - not verified
-          return {
-            user: { email: credentials.email },
-            verified: false,
-          };
-        }
-        dispatch(setCredentials(response.data.token));
-        alert('Signed In!');
-        return { ...response.data };
-      })
-      .catch((error) => {
-        alert(
-          'Unable to log in, please ensure your email and password are correct.',
-        );
-        console.error('Error when logging in', error);
-        throw error;
-      });
-  },
-);
-
-export const jwtSignIn = createAsyncThunk(
-  'auth/jwt-signin',
-  async (req: unknown, { dispatch }) => {
-    const token = await getBearerToken();
-    if (!token) {
-      throw Error('null token');
-    }
-    
-    dispatch(startAuthLoading());
-    return axios
-      .get<LoginResponse>(`${SERVER_URL}auth/jwt-signin/`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .finally(() => dispatch(stopAuthLoading()))
-      .then((response) => {
-        if (token) {
-          dispatch(setCredentials(token));
-        }
-        return response.data;
-      })
-      .catch((err) => {
-        console.error(err);
-        alert('Your login session has expired.');
-        throw err;
-      });
-  },
-);
-
 export const logout = createAsyncThunk(
-  'auth/logout',
+  'auth/logOut',
   async (req: unknown, { dispatch }) => {
-    dispatch(startAuthLoading());
-    return axios
-      .post(`${SERVER_URL}auth/logout`)
-      .finally(() => dispatch(stopAuthLoading()))
-      .then((response) => {
-        dispatch(setCredentials(''));
-        return response.data;
-      })
-      .catch((err) => {
-        console.error('Logout attempt failed', err);
-        throw err;
-      });
+    try {
+      dispatch(startAuthLoading());
+      await signOut(auth);
+      dispatch(setCredentials(''));
+      dispatch(stopAuthLoading());
+      return true;
+    } catch (err) {
+      dispatch(stopAuthLoading());
+      throw err;
+    }
   },
 );
+
+export const handleAuthStateChanged = createAsyncThunk('auth/signin',
+  async (user: FBUser | null, { dispatch }) => {
+    try {
+      if (!user) {
+        dispatch(handleFirebaseNoAuth());
+        return true;
+      }
+      const token = await user.getIdToken();
+      dispatch(setCredentials(token));
+      dispatch(handleFirebaseUser(user));
+      return true;
+    } catch (err) {
+      throw err;
+    }
+  },
+);
+
+// export const signUp = createAsyncThunk(
+//   'auth/signup',
+//   async (credentials: { email: string, password: string, name: string }, { dispatch }) => {
+//     dispatch(startAuthLoading());
+//     return axios
+//       .post(`${SERVER_URL}auth/signup`, credentials)
+//       .finally(() => dispatch(stopAuthLoading()))
+//       .then((response) => {
+//         alert('Sign up successful!');
+//         return response.data;
+//       })
+//       .catch((error) => {
+//         console.error('Error when signing up', error);
+//         return false;
+//       });
+//   },
+// );
+
+// export const signIn = createAsyncThunk(
+//   'auth/signin',
+//   async (credentials: { email: string, password: string }, { dispatch }) => {
+//     dispatch(startAuthLoading());
+//     return axios
+//       .post<LoginResponse>(`${SERVER_URL}auth/signin`, credentials)
+//       .finally(() => dispatch(stopAuthLoading()))
+//       .then((response) => {
+//         if (response.status == 403) {
+//           // forbidden - not verified
+//           return {
+//             user: { email: credentials.email },
+//             verified: false,
+//           };
+//         }
+//         dispatch(setCredentials(response.data.token));
+//         alert('Signed In!');
+//         return { ...response.data };
+//       })
+//       .catch((error) => {
+//         alert(
+//           'Unable to log in, please ensure your email and password are correct.',
+//         );
+//         console.error('Error when logging in', error);
+//         throw error;
+//       });
+//   },
+// );
+
+// export const jwtSignIn = createAsyncThunk(
+//   'auth/jwt-signin',
+//   async (req: unknown, { dispatch }) => {
+//     const token = await getBearerToken();
+//     if (!token) {
+//       throw Error('null token');
+//     }
+    
+//     dispatch(startAuthLoading());
+//     return axios
+//       .get<LoginResponse>(`${SERVER_URL}auth/jwt-signin/`, {
+//         headers: {
+//           Authorization: `Bearer ${token}`,
+//         },
+//       })
+//       .finally(() => dispatch(stopAuthLoading()))
+//       .then((response) => {
+//         if (token) {
+//           dispatch(setCredentials(token));
+//         }
+//         return response.data;
+//       })
+//       .catch((err) => {
+//         console.error(err);
+//         alert('Your login session has expired.');
+//         throw err;
+//       });
+//   },
+// );
+
+// export const logout = createAsyncThunk(
+//   'auth/logout',
+//   async (req: unknown, { dispatch }) => {
+//     dispatch(startAuthLoading());
+//     return axios
+//       .post(`${SERVER_URL}auth/logout`)
+//       .finally(() => dispatch(stopAuthLoading()))
+//       .then((response) => {
+//         dispatch(setCredentials(''));
+//         return response.data;
+//       })
+//       .catch((err) => {
+//         console.error('Logout attempt failed', err);
+//         throw err;
+//       });
+//   },
+// );
 
 export const resendCode = createAsyncThunk(
   'auth/resend-code',
@@ -185,21 +223,33 @@ export const authSlice = createSlice({
   reducers: {
     startAuthLoading: (state) => ({ ...state, loading: true }),
     stopAuthLoading: (state) => ({ ...state, loading: false }),
+    handleFirebaseNoAuth: (state) => {
+      return {
+        ...state,
+        id: '',
+        email: '',
+        authenticated: false,
+        role: UserScopes.Uninitialized,
+      };
+    },
+    handleFirebaseUser: (state, action: PayloadAction<FBUser>) => {
+      return {
+        ...state,
+        id: action.payload.uid || '',
+        email: action.payload.email || '',
+        authenticated: true,
+        role: UserScopes.Uninitialized,
+        fbUserRef: action.payload,
+      };
+    },
+    setUserInitialized: (state) => {
+      return {
+        ...state,
+        role: UserScopes.User,
+      };
+    },
   },
   extraReducers: (builder) => {
-    builder.addCase(signIn.fulfilled, (state, action) => {
-      if ('token' in action.payload) {
-        state = ({ ...state, ...action.payload.user });
-        state.authenticated = true;
-        return state;
-      }
-    });
-    builder.addCase(jwtSignIn.fulfilled, (state, action) => {
-      state = ({ ...state, ...action.payload.user });
-      state.authenticated = true;
-      return state;
-    });
-    builder.addCase(jwtSignIn.rejected, () => initialState);
     builder.addCase(logout.fulfilled, () => {
       alert('Logged out of account');
       return initialState;
@@ -220,7 +270,14 @@ export const authSlice = createSlice({
   },
 });
 
-export const { startAuthLoading, stopAuthLoading } =
+export const {
+  startAuthLoading,
+  stopAuthLoading,
+  handleFirebaseUser,
+  handleFirebaseNoAuth,
+  setUserInitialized,
+} =
   authSlice.actions;
+export const authSelector = (state: RootState) => state.auth;
 
 export default authSlice.reducer;

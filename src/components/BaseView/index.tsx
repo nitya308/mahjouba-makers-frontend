@@ -57,22 +57,22 @@ const BaseView = ({
                 <Text 
                   color="white" 
                   fontFamily={fonts.medium}
-                  fontSize={18}
+                  fontSize='18px'
                   textAlign="center"
-                  mb={-6}
-                  zIndex={100}
+                  mb='-6px'
+                  zIndex='100'
                 >
-                  {logoText}
+                  {logoText as string}
                 </Text>
-                {elongatedLogo ? <LogoElongatedNoText /> : <LogoSmallNoText />}
+                {/* {elongatedLogo ? <LogoElongatedNoText /> : <LogoSmallNoText />} */}
               </VStack>
             )}
-            {!logoText && (
+            {/* {!logoText && (
               noLogo 
                 ? null 
                 : (smallLogo ? <LogoSmallNoText style={{ width: 99, height: 46 }} /> : <LogoElongatedNoText style={{ width: 165, height: 89 }} />)
             )
-            }
+            } */}
           </View>
           {children}
         </ImageBackground>
