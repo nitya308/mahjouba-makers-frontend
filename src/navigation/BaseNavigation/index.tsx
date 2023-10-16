@@ -1,62 +1,56 @@
 import React from 'react';
-import { Text } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
-import { AntDesign, Octicons, Ionicons } from '@expo/vector-icons';
-import useAppSelector from 'hooks/useAppSelector';
-import { UserScopes } from 'types/users';
-import { FrontPage, ResourcesPage, UsersPage, ForbiddenPage } from 'screens/BaseScreens';
+import { AntDesign, Entypo } from '@expo/vector-icons';
 import { BaseTabRoutes, BaseNavigationList } from '../routeTypes';
-import { HStack } from 'native-base';
-import RingsIcon from 'assets/ringicon.svg';
-import ProfileNavBaseIcon from 'assets/profile-nav-base.svg';
-import Colors from 'utils/Colors';
+import { Icon } from 'native-base';
+import { JobsController, ProfileController, CurrentJobController } from 'controllers';
 
 const BaseTab = createBottomTabNavigator<BaseNavigationList>();
 const BaseStack = createStackNavigator<BaseNavigationList>();
 
-const ProtectedRoute = (allowableScopes: UserScopes[]) => {
-  const { authenticated, role } = useAppSelector((state) => state.auth);
+// const ProtectedRoute = (allowableScopes: UserScopes[]) => {
+//   const { authenticated, role } = useAppSelector((state) => state.auth);
 
-  return (allowableScopes.includes(role) && authenticated);
-};
+//   return (allowableScopes.includes(role) && authenticated);
+// };
 
-const FrontNavigator = () => {
-  return (
-    <BaseStack.Navigator initialRouteName={BaseTabRoutes.FRONT}>
-      <BaseStack.Screen
-        name={BaseTabRoutes.FRONT}
-        component={FrontPage}
-        options={{ header: () => null }}
-      />
-    </BaseStack.Navigator>
-  );
-};
+// const JobsNavigator = () => {
+//   return (
+//     <BaseStack.Navigator initialRouteName={BaseTabRoutes.JOBS}>
+//       <BaseStack.Screen
+//         name={BaseTabRoutes.JOBS}
+//         component={JobsController}
+//         options={{ header: () => null }}
+//       />
+//     </BaseStack.Navigator>
+//   );
+// };
 
-const UsersNavigator = () => {
-  return (
-    <BaseStack.Navigator initialRouteName={BaseTabRoutes.USERS}>
-      <BaseStack.Screen
-        name={BaseTabRoutes.USERS}
-        component={UsersPage}
-        options={{ header: () => null }}
-      />
-    </BaseStack.Navigator>
-  );
-};
+// const CurrentJobNavigator = () => {
+//   return (
+//     <BaseStack.Navigator initialRouteName={BaseTabRoutes.JOBS}>
+//       <BaseStack.Screen
+//         name={BaseTabRoutes.CURRJOB}
+//         component={CurrentJobController}
+//         options={{ header: () => null }}
+//       />
+//     </BaseStack.Navigator>
+//   );
+// };
 
-const ResourcesNavigator = () => {
-  return (
-    <BaseStack.Navigator initialRouteName={BaseTabRoutes.RESOURCES}>
-      <BaseStack.Screen
-        name={BaseTabRoutes.RESOURCES}
-        component={ResourcesPage}
-        options={{ header: () => null }}
-      />
-    </BaseStack.Navigator>
-  );
-};
+// const ProfileNavigator = () => {
+//   return (
+//     <BaseStack.Navigator initialRouteName={BaseTabRoutes.JOBS}>
+//       <BaseStack.Screen
+//         name={BaseTabRoutes.PROFILE}
+//         component={ProfileController}
+//         options={{ header: () => null }}
+//       />
+//     </BaseStack.Navigator>
+//   );
+// };
 
 const BaseNavigation = () => {
   return (
@@ -65,11 +59,11 @@ const BaseNavigation = () => {
         screenOptions={{
           header: () => null,
           tabBarStyle: {
-            backgroundColor: 'rgba(147,111,209,0.25)',
+            backgroundColor: 'rgba(0,0,0,0.05)',
             bottom: 15,
             width: '90%',
             alignSelf: 'center',
-            borderRadius: 15,
+            borderRadius: 30,
             borderTopWidth: 0,
             position: 'absolute',
             left: '5%',
@@ -80,39 +74,23 @@ const BaseNavigation = () => {
             marginTop: 50,
           },
         }}
-        initialRouteName={BaseTabRoutes.FRONT}
+        initialRouteName={BaseTabRoutes.JOBS}
       >
-        {/* <BaseTab.Screen
-          name={BaseTabRoutes.USERS}
-          component={
-            ProtectedRoute([UserScopes.Admin])
-              ? UsersNavigator
-              : ForbiddenPage
-          }
-          options={{ tabBarIcon: () => (
-            <HStack width='35px' height='35px' alignItems="center" justifyContent="center">
-              <ProfileNavBaseIcon style={{ position: 'absolute' }} />
-            </HStack>
-          ) }}
-        /> */}
         <BaseTab.Screen
-          name={BaseTabRoutes.FRONT}
-          component={FrontNavigator}
-          options={{ tabBarIcon: () => <></> }}
+          name={BaseTabRoutes.JOBS}
+          component={JobsController}
+          options={{ tabBarIcon: (props) => <Icon as={Entypo} name='tools' color={props.color} /> }}
         />
-        {/* <BaseTab.Screen
-          name={BaseTabRoutes.RESOURCES}
-          component={
-            ProtectedRoute([UserScopes.User, UserScopes.Admin])
-              ? ResourcesNavigator
-              : ForbiddenPage
-          }
-          options={{ tabBarIcon: () => (
-            <HStack width='35px' height='35px' alignItems="center" justifyContent="center">
-              <ProfileNavBaseIcon style={{ position: 'absolute' }} />
-            </HStack>
-          ) }}
-        /> */}
+        <BaseTab.Screen
+          name={BaseTabRoutes.CURRJOB}
+          component={CurrentJobController}
+          options={{ tabBarIcon: (props) => <Icon as={Entypo} name='suitcase' color={props.color} /> }}
+        />
+        <BaseTab.Screen
+          name={BaseTabRoutes.PROFILE}
+          component={ProfileController}
+          options={{ tabBarIcon: (props) => <Icon as={AntDesign} name='user' color={props.color} /> }}
+        />
       </BaseTab.Navigator>
     </NavigationContainer>
   );

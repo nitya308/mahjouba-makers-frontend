@@ -44,39 +44,34 @@ const BaseView = ({
 
   return (
     <View style={[FormatStyle.container, style]}>
-      <LinearGradient colors={['#3D037A', '#1A2655', '#4D1F63', '#380B52']} style={styles.imageBackground}>
-        {showTopRightIcon && (
-          <Pressable style={{ position: 'absolute', top: 60, right: 20, zIndex: 200 }} onPress={onOpen}>
-            <Ionicons name="ellipsis-vertical-outline" size={20} color="white" />
-          </Pressable>
+      {showTopRightIcon && (
+        <Pressable style={{ position: 'absolute', top: 60, right: 20, zIndex: 200 }} onPress={onOpen}>
+          <Ionicons name="ellipsis-vertical-outline" size={20} />
+        </Pressable>
+      )}
+      <View style={styles.logo}>
+        {!!logoText && (
+          <VStack>
+            <Text 
+              fontFamily={fonts.medium}
+              fontSize='18px'
+              textAlign="center"
+              mb='-6px'
+              zIndex='100'
+            >
+              {logoText as string}
+            </Text>
+            {/* {elongatedLogo ? <LogoElongatedNoText /> : <LogoSmallNoText />} */}
+          </VStack>
         )}
-        <ImageBackground source={backgroundImage} resizeMode="cover" style={styles.imageBackground}>
-          <View style={styles.logo}>
-            {!!logoText && (
-              <VStack>
-                <Text 
-                  color="white" 
-                  fontFamily={fonts.medium}
-                  fontSize='18px'
-                  textAlign="center"
-                  mb='-6px'
-                  zIndex='100'
-                >
-                  {logoText as string}
-                </Text>
-                {/* {elongatedLogo ? <LogoElongatedNoText /> : <LogoSmallNoText />} */}
-              </VStack>
-            )}
-            {/* {!logoText && (
+        {/* {!logoText && (
               noLogo 
                 ? null 
                 : (smallLogo ? <LogoSmallNoText style={{ width: 99, height: 46 }} /> : <LogoElongatedNoText style={{ width: 165, height: 89 }} />)
             )
             } */}
-          </View>
-          {children}
-        </ImageBackground>
-      </LinearGradient>
+      </View>
+      {children}
       {/* <Overlay
         isVisible={isLoading}
         overlayStyle={{

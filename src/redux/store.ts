@@ -3,6 +3,7 @@ import connectionReducer from './slices/connectionSlice';
 import authReducer from './slices/authSlice';
 import resourcesReducer from './slices/resourcesSlice';
 import usersReducer from './slices/userDataSlice';
+import jobsReducer from './slices/jobsSlice';
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
     auth: authReducer,
     resources: resourcesReducer,
     users: usersReducer,
+    jobs: jobsReducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware({
     serializableCheck: false,
