@@ -3,11 +3,13 @@ import { jobsApi } from 'requests';
 import { Job, JobParams, JobUpdateFields } from 'types/job';
 import { User } from 'firebase/auth';
 import { RootState } from 'redux/store';
+import CursorContainer from 'types/cursorContainer';
+import SortOptions from 'types/sortOptions';
 
 export interface JobState {
   loading: boolean;
   jobs: Job[];
-  cursor?: any; // change type after pagination code written
+  cursor?: string;
   sortParams?: any;
 }
 
@@ -20,15 +22,37 @@ const initialState: JobState = {
 
 export const pullJobs = createAsyncThunk(
   'jobs/pullJobs',
-  async (req: { fbUserRef: User }, { dispatch }) => {
+  async (req: { fbUserRef: User, sortOptions?: SortOptions }, { dispatch }) => {
     dispatch(startJobsLoading());
     try {
-      const jobs = await jobsApi.getJobs({}, req.fbUserRef);
+      const cursorContainer: CursorContainer = {};
+      const jobs = await jobsApi.getJobs({}, req.fbUserRef, req.sortOptions, cursorContainer);
       if (jobs) {
         dispatch(setJobs(jobs));
+        dispatch(setCursor(cursorContainer.cursor));
       }
       dispatch(stopJobsLoading());
     } catch (err) {
+      dispatch(stopJobsLoading());
+    }
+  },
+);
+
+export const pullNextJobsPage = createAsyncThunk(
+  'jobs/pullNextPage',
+  async (req: { fbUserRef: User }, { dispatch, getState }) => {
+    dispatch(startJobsLoading());
+    try {
+      const { cursor } = (getState() as RootState).jobs;
+      const cursorContainer = { cursor };
+      const nextPage = await jobsApi.getJobs({}, req.fbUserRef, undefined, cursorContainer);
+      if (nextPage) {
+        dispatch(addPage(nextPage));
+        dispatch(setCursor(cursorContainer.cursor));
+      }
+      dispatch(stopJobsLoading());
+    } catch (err) {
+      console.log(err);
       dispatch(stopJobsLoading());
     }
   },
@@ -42,7 +66,7 @@ export const jobsSlice = createSlice({
       ...state,
       jobs: action.payload,
     }),
-    setCursor: (state, action: PayloadAction<any>) => ({
+    setCursor: (state, action: PayloadAction<string | undefined>) => ({
       ...state,
       cursor: action.payload,
     }),

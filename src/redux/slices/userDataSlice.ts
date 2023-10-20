@@ -117,10 +117,10 @@ export const userDataSlice = createSlice({
     builder.addCase(deleteUser.fulfilled, (state, action) => {
       const user: IUser = action.payload as IUser;
       const curSelectedUser = state.userData as IUser;
-      if (curSelectedUser.id === user.id) {
+      if (curSelectedUser._id === user._id) {
         state.userData = undefined;
       }
-      alert('Deleted user with id ' + user.id);
+      alert('Deleted user with id ' + user._id);
     });
   },
 });

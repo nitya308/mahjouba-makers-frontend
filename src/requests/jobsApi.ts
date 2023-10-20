@@ -3,13 +3,29 @@ import { SERVER_URL } from 'utils/constants';
 import { User } from 'firebase/auth';
 import { Job, JobParams, JobUpdateFields } from 'types/job';
 import { getAxiosConfigForFBUser } from 'utils/requestUtils';
+import CursorContainer from 'types/cursorContainer';
+import SortOptions from 'types/sortOptions';
 
-const getJobs = async (params: JobParams, fbUserRef: User) => {
+const getJobs = async (params: JobParams, fbUserRef: User, sortOptions?: SortOptions, cursorContainer?: CursorContainer) => {
   const config = await getAxiosConfigForFBUser(fbUserRef);
   if (!config) throw new Error('Unable to create auth config');
-  config.params = params;
+  config.params = {
+    ...params,
+    sortOptions,
+  };
+  if (cursorContainer?.cursor) {
+    config.params.cursor = cursorContainer.cursor;
+  }
   return axios.get<Job[]>(`${SERVER_URL}jobs`, config)
-    .then((res) => (res.data as Job[]))
+    .then((res) => {
+      if ('cursor' in res.headers && cursorContainer) {
+        cursorContainer.cursor = res.headers.cursor;
+        console.log(cursorContainer.cursor);
+      } else if (cursorContainer) {
+        cursorContainer.cursor = undefined;
+      }
+      return res.data as Job[];
+    })
     .catch((err) => {
       console.log(err);
       throw err;
