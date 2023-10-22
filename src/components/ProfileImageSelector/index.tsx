@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
-import ImagePicker, { Image } from 'react-native-image-crop-picker';
-import FastImage from 'react-native-fast-image';
+import { Image } from 'react-native-image-crop-picker';
+// import FastImage from 'react-native-fast-image';
+import { Image as ExpoImage } from 'expo-image';
 import { View, Button } from 'native-base';
 import ProfileImage from '../../assets/profileDefault.png';
 
@@ -19,6 +20,8 @@ export default function ProfileImageSelector({
 }): JSX.Element {
   const selectImage = async () => {
     try {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const ImagePicker = require('react-native-image-crop-picker');
       const selection = await ImagePicker.openPicker({
         width: 200,
         height: 200,
@@ -42,10 +45,10 @@ export default function ProfileImageSelector({
   }, [selectedProfile]);
 
   return <View>
-    <FastImage
+    <ExpoImage
       source={{
         uri: selectedUri,
-        priority: 'normal',
+        // priority: 'normal',
       }}
       style={{
         width,

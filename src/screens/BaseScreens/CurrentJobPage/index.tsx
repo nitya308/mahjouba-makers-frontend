@@ -32,7 +32,7 @@ export default function CurrentJobPage(): JSX.Element {
   return <Center flex='1'>
     <Heading mr='auto'>Current Job</Heading>
     {
-      jobLoading ? 
+      !jobLoading ? 
         <Text>
           { currentJob ? JSON.stringify(currentJob) : 'No current job selected' }
         </Text> :

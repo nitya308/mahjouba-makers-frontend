@@ -26,9 +26,20 @@ const getCurrUser = async (fbUserRef: User) => {
     });
 };
 
+const updateUserCurrJob = async (userId: string, jobId: string, fbUserRef: User) => {
+  const config = await getAxiosConfigForFBUser(fbUserRef);
+  return axios.post<IUser>(`${SERVER_URL}users/${userId}`, { currentJobId: jobId }, config)
+    .then((res) => ({ ...res.data }))
+    .catch((err) => {
+      console.log(err);
+      throw err;
+    });
+};
+
 const usersApi = {
   initUser,
   getCurrUser,
+  updateUserCurrJob,
 };
 
 export default usersApi;

@@ -58,6 +58,9 @@ export default function AddressInput({
             flexGrow: 1,
             minHeight: 100,
           },
+          textInput: {
+            color: 'black',
+          },
         }}
         textInputProps={{
           onChangeText: (newText?: string) => {
@@ -67,6 +70,7 @@ export default function AddressInput({
               setActive(false);
             }
           },
+          placeholderTextColor: 'gray',
         }}
       />
     </View>

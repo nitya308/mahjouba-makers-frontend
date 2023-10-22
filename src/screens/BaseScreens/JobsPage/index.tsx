@@ -10,15 +10,19 @@ import { userDataSelector } from 'redux/slices/userDataSlice';
 import { jobsSelector, pullNextJobsPage } from 'redux/slices/jobsSlice';
 import useAppDispatch from 'hooks/useAppDispatch';
 import { authSelector } from 'redux/slices/authSlice';
+import { Pressable } from 'react-native';
+import { Job } from 'types/job';
 
 const JobsPage = ({
   setSortField,
   setSortOrder,
   pullNextPage,
+  handleSelect,
 }: {
   setSortField: (newField?: string) => void;
   setSortOrder: (order: 1 | -1) => void;
   pullNextPage: () => void;
+  handleSelect: (job?: Job) => void;
 }) => {
   const { userData } = useAppSelector(userDataSelector);
   const { jobs, cursor } = useAppSelector(jobsSelector);
@@ -32,7 +36,11 @@ const JobsPage = ({
         }
         <Text>Jobs:</Text>
         {
-          jobs.map(j => <Text key={j._id} m='5px'>{JSON.stringify(j)}</Text>)
+          jobs.map((j) => (
+            <Pressable key={j._id} onPress={() => handleSelect(j)}>
+              <Text m='5px'>{JSON.stringify(j)}</Text>
+            </Pressable>
+          ))
         }
         {
           cursor &&
