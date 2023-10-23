@@ -2,12 +2,13 @@ import useAppSelector from 'hooks/useAppSelector';
 import React, { useCallback, useEffect, useState } from 'react';
 import { authSelector } from 'redux/slices/authSlice';
 import { jobsSelector } from 'redux/slices/jobsSlice';
-import { userDataSelector } from 'redux/slices/userDataSlice';
+import { getUser, userDataSelector } from 'redux/slices/userDataSlice';
 import { jobsApi, usersApi } from 'requests';
 import partsApi from 'requests/partsApi';
 import { Job } from 'types/job';
 import Part from 'types/part_type';
 import { Button, Center, Spinner, Text } from 'native-base';
+import useAppDispatch from 'hooks/useAppDispatch';
 
 export default function JobDetailsPage({
   jobId,
@@ -16,6 +17,8 @@ export default function JobDetailsPage({
   jobId: string,
   exit: () => void,
 }): JSX.Element {
+  const dispatch = useAppDispatch();
+
   const { fbUserRef } = useAppSelector(authSelector);
   const { userData } = useAppSelector(userDataSelector);
   const { partsMap } = useAppSelector(jobsSelector);
@@ -50,7 +53,8 @@ export default function JobDetailsPage({
   const acceptJob = useCallback(async () => {
     if (!fbUserRef || !userData?._id) return;
     try {
-      await usersApi.updateUserCurrJob(userData._id, jobId, fbUserRef);
+      await usersApi.updateUserCurrJob(jobId, fbUserRef);
+      dispatch(getUser({ fbUserRef }));
     } catch (err) {
       console.log(err);
     }
@@ -67,7 +71,7 @@ export default function JobDetailsPage({
           accept job
           </Button>
         </> :
-        <Text>No part found with id {jobId}</Text>
+        <Text>No part found with id {job?.partId}</Text>
     }
     <Button onPress={exit}>
       exit

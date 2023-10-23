@@ -23,19 +23,22 @@ export default function JobsController(): JSX.Element {
     if (!cursor || !fbUserRef) return;
     dispatch(pullNextJobsPage({ fbUserRef }));
   }, [fbUserRef, cursor]);
+
+  const reloadJobs = useCallback(async () => {
+    if (!fbUserRef) return;
+    let sortOptions: SortOptions | undefined = undefined;
+    if (sortOrder && sortField) {
+      sortOptions = {
+        fieldName: sortField,
+        order: sortOrder,
+      };
+    }
+    dispatch(pullJobs({ fbUserRef, sortOptions }));
+  }, [fbUserRef, sortField, sortOrder]);
   
   useEffect(() => {
-    if (fbUserRef) {
-      let sortOptions: SortOptions | undefined = undefined;
-      if (sortOrder && sortField) {
-        sortOptions = {
-          fieldName: sortField,
-          order: sortOrder,
-        };
-      }
-      dispatch(pullJobs({ fbUserRef, sortOptions }));
-    }
-  }, [fbUserRef, sortField, sortOrder]);
+    reloadJobs();
+  }, [fbUserRef, sortField, sortOrder, reloadJobs]);
 
   const handleJobSelect = useCallback((job?: Job) => {
     if (!detailsPageOpen) {
@@ -56,7 +59,8 @@ export default function JobsController(): JSX.Element {
         handleSelect={handleJobSelect}
         pullNextPage={pullNextPage}
         setSortField={setSortField} 
-        setSortOrder={setSortOrder} />
+        setSortOrder={setSortOrder}
+        reloadJobs={reloadJobs} />
     }
   </View>;
 }

@@ -74,6 +74,7 @@ export const pullNextJobsPage = createAsyncThunk(
       if (nextPage) {
         dispatch(addPage(nextPage));
         dispatch(setCursor(cursorContainer.cursor));
+        dispatch(getPartsForJobs({ fbUserRef: req.fbUserRef }));
       }
       dispatch(stopJobsLoading());
     } catch (err) {

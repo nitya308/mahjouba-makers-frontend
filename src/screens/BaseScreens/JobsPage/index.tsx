@@ -18,11 +18,13 @@ const JobsPage = ({
   setSortOrder,
   pullNextPage,
   handleSelect,
+  reloadJobs,
 }: {
   setSortField: (newField?: string) => void;
   setSortOrder: (order: 1 | -1) => void;
   pullNextPage: () => void;
   handleSelect: (job?: Job) => void;
+  reloadJobs: () => void;
 }) => {
   const { userData } = useAppSelector(userDataSelector);
   const { jobs, cursor } = useAppSelector(jobsSelector);
@@ -48,6 +50,9 @@ const JobsPage = ({
             pull next page
           </Button>
         }
+        <Button onPress={reloadJobs} m='5px'>
+          reload
+        </Button>
         <Button onPress={() => setSortField('price')} m='5px'>
           sort by price
         </Button>
