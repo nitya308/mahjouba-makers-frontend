@@ -23,6 +23,7 @@
     "@react-navigation/stack": "^6.2.3",
     "@reduxjs/toolkit": "^1.6.1",
     "@types/axios": "^0.14.0",
+    "aws-sdk": "^2.1478.0",
     "axios": "^0.27.2",
     "babel-plugin-module-resolver": "^5.0.0",
     "eslint-config-airbnb-base": "^15.0.0",
