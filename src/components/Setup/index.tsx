@@ -9,6 +9,7 @@ import AddressInput from 'components/AddressInput';
 import { Image } from 'react-native-image-crop-picker';
 import ProfileImageSelector from 'components/ProfileImageSelector';
 import Address from 'types/address';
+import { uploadMedia } from 'utils/mediaUtils';
 
 export default function UserSetup() {
   const [name, setName] = useState<string | undefined>();
@@ -24,6 +25,8 @@ export default function UserSetup() {
     console.log(selectedHomeAddr);
     console.log(selectedShippingAddr);
     if (!fbUserRef || !name || !selectedHomeAddr || !selectedShippingAddr) return;
+    const uploadRes = await uploadMedia(`${userData?._id}-profile`, `file://${selectedProfile.path}`);
+    console.log(uploadRes);
     dispatch(initUser({
       userData: {
         name,
@@ -32,7 +35,7 @@ export default function UserSetup() {
       },
       fbUserRef,
     }));
-  }, [name, selectedHomeAddr, selectedShippingAddr]);
+  }, [name, selectedHomeAddr, selectedShippingAddr, selectedProfile, userData]);
 
   useEffect(() => {
     if (userData?.role === UserScopes.User) {

@@ -58,7 +58,7 @@ export default function JobDetailsPage({
     } catch (err) {
       console.log(err);
     }
-  }, [jobId, fbUserRef]);
+  }, [jobId, fbUserRef, userData]);
 
   return <Center h='100%'>
     {loading && <Spinner />}
