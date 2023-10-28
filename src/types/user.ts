@@ -1,4 +1,5 @@
 import Address from './address';
+import Photo from './photo';
 
 export enum UserScopes {
   Unverified = 'UNVERIFIED',
@@ -22,6 +23,8 @@ export interface IUser {
 
 export interface CreateUserModel {
   name: string;
+  email: string | null;
   homeAddress?: Address;
   shippingAddress?: Address;
+  profilePic?: Photo;
 }

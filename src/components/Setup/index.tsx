@@ -25,17 +25,21 @@ export default function UserSetup() {
     console.log(selectedHomeAddr);
     console.log(selectedShippingAddr);
     if (!fbUserRef || !name || !selectedHomeAddr || !selectedShippingAddr) return;
-    const uploadRes = await uploadMedia(`${userData?._id}-profile`, `file://${selectedProfile.path}`);
-    console.log(uploadRes);
+    const uploadRes = await uploadMedia(`${fbUserRef?.uid}-profile`, `file://${selectedProfile.path}`);
     dispatch(initUser({
       userData: {
         name,
+        email: fbUserRef.email,
         homeAddress: selectedHomeAddr,
         shippingAddress: selectedShippingAddr,
+        profilePic: uploadRes ? {
+          fullUrl: uploadRes,
+          fileType: 'image/jpeg',
+        } : undefined,
       },
       fbUserRef,
     }));
-  }, [name, selectedHomeAddr, selectedShippingAddr, selectedProfile, userData]);
+  }, [name, selectedHomeAddr, selectedShippingAddr, selectedProfile]);
 
   useEffect(() => {
     if (userData?.role === UserScopes.User) {
