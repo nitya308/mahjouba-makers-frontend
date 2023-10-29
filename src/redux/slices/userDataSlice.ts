@@ -5,15 +5,18 @@ import { UserScopes, IUser, CreateUserModel } from 'types/user.js';
 import { User } from 'firebase/auth';
 import { usersApi } from 'requests';
 import { RootState } from 'redux/store';
+import photosApi from 'requests/photosApi';
 
 export interface UserState {
   loading: boolean;
   userData?: IUser;
+  profileImageUri?: string;
 }
 
 const initialState: UserState = {
   loading: false,
   userData: undefined,
+  profileImageUri: undefined,
 };
 
 export const initUser = createAsyncThunk(
@@ -57,18 +60,18 @@ export const getUser = createAsyncThunk(
 
 export const updateUser = createAsyncThunk(
   'userData/updateUser',
-  async (req: { id: string, email: string, password: string, role: UserScopes }, { dispatch }) => {
+  async (req: { updates: Partial<IUser>, fbUserRef: User }, { dispatch }) => {
     dispatch(startUsersLoading());
-    return axios
-      .patch(`${SERVER_URL}users/${req.id}`, req)
-      .finally(() => dispatch(stopUsersLoading()))
-      .then((response) => {
-        return response.data;
-      })
-      .catch((error) => {
-        console.error('Error when updating user', error);
-        return false;
-      });
+    try {
+      const updateRes: IUser = await usersApi.updateUser(req.updates, req.fbUserRef);
+      if (updateRes && updateRes._id) {
+        dispatch(setUser(updateRes));
+      }
+      dispatch(stopUsersLoading());
+    } catch (err) {
+      dispatch(stopUsersLoading());
+      console.log(err);
+    }
   },
 );
 
@@ -89,6 +92,24 @@ export const deleteUser = createAsyncThunk(
   },
 );
 
+export const pullUserProfileImg = createAsyncThunk(
+  'userData/pullUserProfileImg',
+  async (req: { fbUserRef: User }, { dispatch, getState }) => {
+    try {
+      const currUserData = (getState() as RootState).userData;
+      if (!currUserData.userData?.profilePicId) {
+        return;
+      }
+      const profilePhoto = await photosApi.getPhoto(currUserData.userData.profilePicId, req.fbUserRef);
+      if (profilePhoto) {
+        dispatch(setProfileUri(profilePhoto.fullUrl));
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  },
+);
+
 export const userDataSlice = createSlice({
   name: 'users',
   initialState,
@@ -97,6 +118,12 @@ export const userDataSlice = createSlice({
       return {
         ...state,
         userData: action.payload,
+      };
+    },
+    setProfileUri: (state, action: PayloadAction<string>) => {
+      return {
+        ...state,
+        profileImageUri: action.payload,
       };
     },
     startUsersLoading: (state) => ({ ...state, loading: true }),
@@ -111,7 +138,6 @@ export const userDataSlice = createSlice({
       // alert('Retrieved user as: ' + JSON.stringify(action.payload));
     });
     builder.addCase(updateUser.fulfilled, (state, action) => {
-      state.userData = action.payload as IUser;
       alert('Updated user to: ' + JSON.stringify(action.payload));
     });
     builder.addCase(deleteUser.fulfilled, (state, action) => {
@@ -125,8 +151,8 @@ export const userDataSlice = createSlice({
   },
 });
 
-export const { startUsersLoading, stopUsersLoading, setUser } =
+export const { startUsersLoading, stopUsersLoading, setUser, setProfileUri } =
 userDataSlice.actions;
-export const userDataSelector = (state: RootState) => state.users;
+export const userDataSelector = (state: RootState) => state.userData;
 
 export default userDataSlice.reducer;

@@ -6,3 +6,5 @@ export const fonts = {
   medium: 'Montserrat_500Medium',
   semiBold: 'Montserrat_600SemiBold',
 };
+
+export const DEFAULT_PROFILE_URI = 'https://mahjouba-media.s3.eu-west-3.amazonaws.com/defaultProfile.jpeg';

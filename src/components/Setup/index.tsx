@@ -25,7 +25,7 @@ export default function UserSetup() {
     console.log(selectedHomeAddr);
     console.log(selectedShippingAddr);
     if (!fbUserRef || !name || !selectedHomeAddr || !selectedShippingAddr) return;
-    const uploadRes = await uploadMedia(`${fbUserRef?.uid}-profile`, `file://${selectedProfile.path}`);
+    const uploadRes = await uploadMedia(`${fbUserRef?.uid}-profile`, `file://${selectedProfile?.path}`);
     dispatch(initUser({
       userData: {
         name,

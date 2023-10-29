@@ -2,7 +2,7 @@ import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
 import connectionReducer from './slices/connectionSlice';
 import authReducer from './slices/authSlice';
 import resourcesReducer from './slices/resourcesSlice';
-import usersReducer from './slices/userDataSlice';
+import userDataReducer from './slices/userDataSlice';
 import jobsReducer from './slices/jobsSlice';
 
 export const store = configureStore({
@@ -10,7 +10,7 @@ export const store = configureStore({
     connection: connectionReducer,
     auth: authReducer,
     resources: resourcesReducer,
-    users: usersReducer,
+    userData: userDataReducer,
     jobs: jobsReducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware({

@@ -2,7 +2,7 @@ import useAppSelector from 'hooks/useAppSelector';
 import React, { useCallback, useEffect, useState } from 'react';
 import { authSelector } from 'redux/slices/authSlice';
 import { jobsSelector } from 'redux/slices/jobsSlice';
-import { getUser, userDataSelector } from 'redux/slices/userDataSlice';
+import { getUser, updateUser, userDataSelector } from 'redux/slices/userDataSlice';
 import { jobsApi, usersApi } from 'requests';
 import partsApi from 'requests/partsApi';
 import { Job } from 'types/job';
@@ -53,8 +53,12 @@ export default function JobDetailsPage({
   const acceptJob = useCallback(async () => {
     if (!fbUserRef || !userData?._id) return;
     try {
-      await usersApi.updateUserCurrJob(jobId, fbUserRef);
-      dispatch(getUser({ fbUserRef }));
+      dispatch(updateUser({
+        updates: {
+          currentJobId: jobId,
+        },
+        fbUserRef,
+      }));
     } catch (err) {
       console.log(err);
     }
