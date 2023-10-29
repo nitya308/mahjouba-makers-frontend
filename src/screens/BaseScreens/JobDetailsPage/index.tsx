@@ -51,7 +51,7 @@ export default function JobDetailsPage({
   }, [job, partsMap]);
 
   const acceptJob = useCallback(async () => {
-    if (!fbUserRef || !userData?._id) return;
+    if (!fbUserRef) return;
     try {
       dispatch(updateUser({
         updates: {
@@ -62,7 +62,7 @@ export default function JobDetailsPage({
     } catch (err) {
       console.log(err);
     }
-  }, [jobId, fbUserRef, userData]);
+  }, [jobId, fbUserRef]);
 
   return <Center h='100%'>
     {loading && <Spinner />}

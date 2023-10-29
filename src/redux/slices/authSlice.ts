@@ -53,7 +53,9 @@ export const initCredentials = createAsyncThunk(
     await getBearerToken().then((token: string | null | undefined) => {
       if (token) {
         dispatch(setCredentials(token));
-      } else dispatch(logout({}));
+      } else {
+        dispatch(logout({}));
+      }
     });
   },
 );

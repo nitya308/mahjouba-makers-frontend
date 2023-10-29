@@ -128,6 +128,7 @@ export const userDataSlice = createSlice({
     },
     startUsersLoading: (state) => ({ ...state, loading: true }),
     stopUsersLoading: (state) => ({ ...state, loading: false }),
+    clearUserData: (state) => ({ ...state, userData: undefined, profileImageUri: undefined }),
   },
   extraReducers: (builder) => {
     builder.addCase(initUser.fulfilled, (state, action) => {
@@ -151,7 +152,13 @@ export const userDataSlice = createSlice({
   },
 });
 
-export const { startUsersLoading, stopUsersLoading, setUser, setProfileUri } =
+export const {
+  startUsersLoading, 
+  stopUsersLoading, 
+  setUser, 
+  setProfileUri,
+  clearUserData,
+} =
 userDataSlice.actions;
 export const userDataSelector = (state: RootState) => state.userData;
 
