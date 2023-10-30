@@ -32,7 +32,7 @@ const JobsPage = ({
 
   return (
     <BaseView smallLogo showTopRightIcon logoText={'App Title'}>
-      <VStack height="100%" pt={150}>
+      <VStack height="100%" width='90%' pt={150}>
         {
           userData?.name &&
           <Text fontSize={24} fontFamily={fonts.medium}>{`Welcome back, ${userData.name}`}</Text>
@@ -41,11 +41,10 @@ const JobsPage = ({
         {
           jobs.map((j) => (
             <Pressable key={j._id} onPress={() => handleSelect(j)}>
-              <Text m='5px'>{JSON.stringify(j)}</Text>
+              <JobCard job={j} />
             </Pressable>
           ))
         }
-        <JobCard />
         {
           cursor &&
           <Button onPress={pullNextPage} m='5px'>
