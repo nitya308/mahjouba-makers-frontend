@@ -1,5 +1,6 @@
 import React from 'react';
 import BaseView from 'components/BaseView';
+import JobCard from 'components/JobCard';
 import { Text, VStack, Button } from 'native-base';
 import useAppSelector from 'hooks/useAppSelector';
 import { fonts } from 'utils/constants';
@@ -44,6 +45,7 @@ const JobsPage = ({
             </Pressable>
           ))
         }
+        <JobCard />
         {
           cursor &&
           <Button onPress={pullNextPage} m='5px'>
