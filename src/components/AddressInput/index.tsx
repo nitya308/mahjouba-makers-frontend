@@ -22,7 +22,7 @@ export default function AddressInput({
   }, [selectedPlace]);
 
   return (
-    <View h={active ? '150px' : '50px'}>
+    <View w='100%' h={active ? '150px' : '50px'}>
       <GooglePlacesAutocomplete
         placeholder={placeholder || 'Search'}
         fetchDetails={true}
@@ -34,6 +34,7 @@ export default function AddressInput({
           console.log(details);
           if (details) {
             setSelectedPlace(details);
+            setActive(false);
           }
         }}
         query={{
@@ -64,10 +65,13 @@ export default function AddressInput({
         }}
         textInputProps={{
           onChangeText: (newText?: string) => {
-            if (newText && newText.length > 0) {
+            if (newText && newText.length > 0 && !selectedPlace) {
               setActive(true);
             } else {
               setActive(false);
+            }
+            if (!newText) {
+              setSelectedPlace(null);
             }
           },
           placeholderTextColor: 'gray',

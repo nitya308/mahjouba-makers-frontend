@@ -13,3 +13,9 @@ export const getAxiosConfigForFBUser = async (fbUser: User): Promise<AxiosReques
     return undefined;
   }
 };
+
+export const cleanUndefinedFields = (object: { [key: string]: any }) => (
+  Object.fromEntries(
+    Object.entries(object).filter(([key, val]) => val !== undefined),
+  )
+);
