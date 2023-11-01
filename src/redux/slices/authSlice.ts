@@ -3,7 +3,7 @@ import { PayloadAction, createAsyncThunk, createSlice, isRejectedWithValue } fro
 import { SERVER_URL } from 'utils/constants.js';
 import axios from 'axios';
 import { getBearerToken, setBearerToken } from 'utils/asyncStorage';
-import { UserScopes } from 'types/users';
+import { UserScopes } from 'types/user';
 import { auth } from '../../../firebase';
 import { User as FBUser, signOut } from 'firebase/auth';
 import { RootState } from 'redux/store';
@@ -53,7 +53,9 @@ export const initCredentials = createAsyncThunk(
     await getBearerToken().then((token: string | null | undefined) => {
       if (token) {
         dispatch(setCredentials(token));
-      } else dispatch(logout({}));
+      } else {
+        dispatch(logout({}));
+      }
     });
   },
 );

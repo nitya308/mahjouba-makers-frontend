@@ -4,11 +4,12 @@ import useAppDispatch from 'hooks/useAppDispatch';
 import useAppSelector from 'hooks/useAppSelector';
 import { authSelector, setUserInitialized } from 'redux/slices/authSlice';
 import { initUser, userDataSelector } from 'redux/slices/userDataSlice';
-import { UserScopes } from 'types/users';
+import { UserScopes } from 'types/user';
 import AddressInput from 'components/AddressInput';
 import { Image } from 'react-native-image-crop-picker';
 import ProfileImageSelector from 'components/ProfileImageSelector';
 import Address from 'types/address';
+import { uploadMedia } from 'utils/mediaUtils';
 
 export default function UserSetup() {
   const [name, setName] = useState<string | undefined>();
@@ -24,15 +25,21 @@ export default function UserSetup() {
     console.log(selectedHomeAddr);
     console.log(selectedShippingAddr);
     if (!fbUserRef || !name || !selectedHomeAddr || !selectedShippingAddr) return;
+    const uploadRes = await uploadMedia(`${fbUserRef?.uid}-profile`, `file://${selectedProfile?.path}`);
     dispatch(initUser({
       userData: {
         name,
+        email: fbUserRef.email,
         homeAddress: selectedHomeAddr,
         shippingAddress: selectedShippingAddr,
+        profilePic: uploadRes ? {
+          fullUrl: uploadRes,
+          fileType: 'image/jpeg',
+        } : undefined,
       },
       fbUserRef,
     }));
-  }, [name, selectedHomeAddr, selectedShippingAddr]);
+  }, [name, selectedHomeAddr, selectedShippingAddr, selectedProfile]);
 
   useEffect(() => {
     if (userData?.role === UserScopes.User) {

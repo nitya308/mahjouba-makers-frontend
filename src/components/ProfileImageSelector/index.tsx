@@ -1,10 +1,12 @@
 import React, { useMemo } from 'react';
-import ImagePicker, { Image } from 'react-native-image-crop-picker';
-import FastImage from 'react-native-fast-image';
-import { View, Button } from 'native-base';
+import { Image } from 'react-native-image-crop-picker';
+// import FastImage from 'react-native-fast-image';
+import { Image as ExpoImage } from 'expo-image';
+import { View, Button, Center } from 'native-base';
 import ProfileImage from '../../assets/profileDefault.png';
-
-const DEFAULT_PROFILE_URI = ProfileImage;
+import { DEFAULT_PROFILE_URI } from 'utils/constants';
+import useAppSelector from 'hooks/useAppSelector';
+import { userDataSelector } from 'redux/slices/userDataSlice';
 
 export default function ProfileImageSelector({
   selectedProfile,
@@ -17,8 +19,12 @@ export default function ProfileImageSelector({
   width: number;
   height: number;
 }): JSX.Element {
+  const { profileImageUri } = useAppSelector(userDataSelector);
+
   const selectImage = async () => {
     try {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const ImagePicker = require('react-native-image-crop-picker');
       const selection = await ImagePicker.openPicker({
         width: 200,
         height: 200,
@@ -37,33 +43,37 @@ export default function ProfileImageSelector({
   const selectedUri = useMemo(() => {
     if (selectedProfile) {
       return selectedProfile.sourceURL || `file://${selectedProfile.path}`;
+    } else if (profileImageUri) {
+      return profileImageUri;
     }
-    return DEFAULT_PROFILE_URI.uri;
+    return DEFAULT_PROFILE_URI;
   }, [selectedProfile]);
 
-  return <View>
-    <FastImage
+  return <Center>
+    <ExpoImage
       source={{
         uri: selectedUri,
-        priority: 'normal',
+        // priority: 'normal',
       }}
       style={{
         width,
         height,
         borderRadius: width,
+        marginHorizontal: 'auto',
       }}
     />
     <Button
       mt={`-${height / 2}px`}
       borderRadius='full'
-      size='sm'
+      size='xs'
       colorScheme='dark'
       variant='subtle'
       opacity={0.8}
       onPress={selectImage}
       mb={`${height / 2}px`}
+      mx='auto'
     >
       Select profile image
     </Button>
-  </View>;
+  </Center>;
 }
