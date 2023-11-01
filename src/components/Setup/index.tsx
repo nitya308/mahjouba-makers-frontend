@@ -21,8 +21,8 @@ export default function UserSetup() {
   const [selectedShippingAddr, setSelectedShippingAddr] = useState<Address | undefined>();
 
   const handleSubmit = useCallback(async () => {
-    console.log(selectedHomeAddr);
-    console.log(selectedShippingAddr);
+    // console.log(selectedHomeAddr);
+    // console.log(selectedShippingAddr);
     if (!fbUserRef || !name || !selectedHomeAddr || !selectedShippingAddr) return;
     dispatch(initUser({
       userData: {

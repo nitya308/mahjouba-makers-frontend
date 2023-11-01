@@ -1,52 +1,61 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Text, View, Image } from 'react-native';
 import { StyleSheet } from 'react-native';
 import { Job } from 'types/job';
+import { PartType } from 'types/part_type';
 
-const JobCard = ({ job }: { job: Job }) => {
-  console.log('JobCard', job);
-  const { _id, price, dropoffAddressId, instructions, imageIds, partId, dueDate } = job;
+const JobCard = ({ job, part }: { job: Job, part: PartType }) => {
+  const [loading, setLoading] = useState(true);
 
-  const name = 'Handle Bar';
+  useEffect(() => {
+    if (job && part) {
+      setLoading(false);
+    }
+  }, [job, part]);
+
+  if (loading) {
+    return <Text>Loading...</Text>;
+  }
+
+  const { price } = job;
+  const { name, imageIds: partImageIds } = part;
 
   return (
     <View style={styles.jobCardContainer}>
-      <View style={styles.leftContent}>
+      <Image source={{ uri: partImageIds[0] }} style={styles.image} />
+      <View style={styles.namePriceContainer}>
         <Text style={styles.name}>{name}</Text>
         <Text style={styles.price}>{price} MAD</Text>
       </View>
-      {imageIds && imageIds.length > 0 && (
-        <Image source={{ uri: imageIds[0] }} style={styles.image} />
-      )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   jobCardContainer: {
+    backgroundColor: '#929292',
+    borderWidth: 3,
+    borderColor: '#FFC01D',
+    borderRadius: 2,
+    marginBottom: 10,
+  },
+  image: {
+    width: '100%',
+    height: 225,
+  },
+  namePriceContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: 'gray',
-    borderRadius: 5,
     padding: 10,
-    marginBottom: 10,
-  },
-  leftContent: {
-    flex: 1,
   },
   name: {
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontSize: 24,
+    color: 'black',
   },
   price: {
-    fontSize: 14,
-  },
-  image: {
-    width: 100,
-    height: 100,
-    borderRadius: 5,
+    fontSize: 18,
+    color: '#FFC01D',
   },
 });
 

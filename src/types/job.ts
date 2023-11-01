@@ -5,7 +5,7 @@ export interface Job {
   instructions: string,
   imageIds: string[],
   userId: string,
-  partId: string,
+  customPartId: string,
   dueDate: Date,
 }
 
@@ -15,7 +15,7 @@ export interface JobUpdateFields {
   instructions?: string,
   imageIds?: string[],
   userId?: string,
-  partId?: string,
+  customPartId?: string,
   dueDate?: Date,
 }
 
@@ -26,6 +26,6 @@ export interface JobParams {
   instructions?: string;
   imageIds?: string[];
   userId?: string;
-  partId?: string;
+  customPartId?: string;
   dueDate?: Date;
 }

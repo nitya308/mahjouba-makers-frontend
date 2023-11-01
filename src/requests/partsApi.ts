@@ -10,6 +10,7 @@ const getPart = async (_id: string, fbUserRef: User) => {
   return axios.get<PartType>(`${SERVER_URL}partTypes/${_id}`, config)
     .then((res) => ({ ...res.data }))
     .catch((err) => {
+      console.log('error getting part');
       console.log(err);
       throw err;
     });
