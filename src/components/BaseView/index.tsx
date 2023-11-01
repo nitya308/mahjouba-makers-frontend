@@ -15,6 +15,7 @@ import TextStyles from 'utils/TextStyles';
 import { Ionicons } from '@expo/vector-icons';
 import useAppDispatch from 'hooks/useAppDispatch';
 import { logout } from 'redux/slices/authSlice';
+import { clearUserData } from 'redux/slices/userDataSlice';
 
 const BaseView = ({ 
   children, 
@@ -89,7 +90,10 @@ const BaseView = ({
       </Overlay> */}
       <Actionsheet isOpen={isOpen} onClose={onClose}>
         <Actionsheet.Content>
-          <Actionsheet.Item onPress={() => dispatch(logout({}))}>
+          <Actionsheet.Item onPress={() => {
+            dispatch(logout({}));
+            dispatch(clearUserData());
+          }}>
             <Text style={{ color: Colors.primary, fontFamily: fonts.semiBold, fontSize: 16 }}>Log out</Text>
           </Actionsheet.Item>
         </Actionsheet.Content>

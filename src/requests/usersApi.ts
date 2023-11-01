@@ -26,9 +26,9 @@ const getCurrUser = async (fbUserRef: User) => {
     });
 };
 
-const updateUserCurrJob = async (jobId: string, fbUserRef: User) => {
+const updateUser = async (updates: Partial<IUser>, fbUserRef: User) => {
   const config = await getAxiosConfigForFBUser(fbUserRef);
-  return axios.patch<IUser>(`${SERVER_URL}users/${fbUserRef.uid}`, { currentJobId: jobId }, config)
+  return axios.patch<IUser>(`${SERVER_URL}users/${fbUserRef.uid}`, updates, config)
     .then((res) => ({ ...res.data }))
     .catch((err) => {
       console.log(err);
@@ -39,7 +39,7 @@ const updateUserCurrJob = async (jobId: string, fbUserRef: User) => {
 const usersApi = {
   initUser,
   getCurrUser,
-  updateUserCurrJob,
+  updateUser,
 };
 
 export default usersApi;
