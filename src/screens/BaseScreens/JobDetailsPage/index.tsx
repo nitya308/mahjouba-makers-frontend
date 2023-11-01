@@ -6,11 +6,13 @@ import useAppDispatch from 'hooks/useAppDispatch';
 import { authSelector } from 'redux/slices/authSlice';
 import { jobsSelector } from 'redux/slices/jobsSlice';
 import { getUser, userDataSelector } from 'redux/slices/userDataSlice';
-import { jobsApi, usersApi } from 'requests';
-import partsApi from 'requests/partsApi';
+import { addressApi, jobsApi, usersApi } from 'requests';
 import { Job } from 'types/job';
 import { PartType } from 'types/part_type';
+import Address from 'types/address';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import XIcon from 'assets/x.svg';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 const JobDetailsPage = ({
   jobId,
@@ -24,6 +26,7 @@ const JobDetailsPage = ({
   const { userData } = useAppSelector(userDataSelector);
   const { partsMap } = useAppSelector(jobsSelector);
   const [job, setJob] = useState<Job | undefined>();
+  const [address, setAddress] = useState<Address | undefined>();
   const [part, setPart] = useState<PartType | undefined>();
   const [loading, setLoading] = useState(false);
 
@@ -34,8 +37,12 @@ const JobDetailsPage = ({
       try {
         setLoading(true);
         const dbJob = await jobsApi.getJob(jobId, fbUserRef);
+        const dbAddress = await addressApi.getAddress(dbJob.dropoffAddressId, fbUserRef);
         if (dbJob) {
           setJob(dbJob);
+        }
+        if (dbAddress) {
+          setAddress(dbAddress);
         }
         setLoading(false);
       } catch (err) {
@@ -61,17 +68,23 @@ const JobDetailsPage = ({
     }
   }, [jobId, fbUserRef]);
 
+  console.log(job, part, address);
+
   // need to get address from api using job.dropoffAddressId
   return (
     <SafeAreaView style={styles.container}>
       {loading && <Spinner />}
       {part && job ? (
         <>
+          <TouchableOpacity onPress={exit}>
+            <XIcon width={30} height={30} />
+          </TouchableOpacity>
           <Image source={{ uri: part.imageIds[0] }} alt="image of part" style={styles.image} />
           <View style={styles.infoContainer}>
             <Text style={styles.name}>{part.name}</Text>
             <Text style={styles.text}>{`${part.completionTime} hours`}</Text>
             <Text style={styles.text}>{`${job.price} MAD`}</Text>
+            <Text style={styles.text}>{address.city}</Text>
           </View>
           <Button onPress={acceptJob} style={styles.button}>
             Accept Job
@@ -80,9 +93,6 @@ const JobDetailsPage = ({
       ) : (
         <Text style={styles.text}>No part found with id{job?.customPartId}</Text>
       )}
-      <Button onPress={exit} style={styles.button}>
-        Exit
-      </Button>
     </SafeAreaView>
   );
 };

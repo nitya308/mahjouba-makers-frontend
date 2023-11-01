@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { SERVER_URL } from 'utils/constants';
 import { User } from 'firebase/auth';
-import PartType, { PartTypeParams } from 'types/part_type';
+import { PartType, PartTypeParams } from 'types/part_type';
 import { getAxiosConfigForFBUser } from 'utils/requestUtils';
 
 const getPart = async (_id: string, fbUserRef: User) => {
