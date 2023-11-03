@@ -1,5 +1,6 @@
 import React from 'react';
 import BaseView from 'components/BaseView';
+import JobCard from 'components/JobCard';
 import { Text, VStack, Button } from 'native-base';
 import useAppSelector from 'hooks/useAppSelector';
 import { fonts } from 'utils/constants';
@@ -12,6 +13,7 @@ import useAppDispatch from 'hooks/useAppDispatch';
 import { authSelector } from 'redux/slices/authSlice';
 import { Pressable } from 'react-native';
 import { Job } from 'types/job';
+import { ScrollView } from 'react-native-gesture-handler';
 
 const JobsPage = ({
   setSortField,
@@ -27,40 +29,44 @@ const JobsPage = ({
   reloadJobs: () => void;
 }) => {
   const { userData } = useAppSelector(userDataSelector);
-  const { jobs, cursor } = useAppSelector(jobsSelector);
+  const { jobs, cursor, partsMap } = useAppSelector(jobsSelector);
+  console.log(jobs, partsMap);
 
   return (
-    <BaseView smallLogo showTopRightIcon logoText={'App Title'}>
-      <VStack height="100%" pt={150}>
-        {
-          userData?.name &&
-          <Text fontSize={24} fontFamily={fonts.medium}>{`Welcome back, ${userData.name}`}</Text>
-        }
-        <Text>Jobs:</Text>
-        {
-          jobs.map((j) => (
-            <Pressable key={j._id} onPress={() => handleSelect(j)}>
-              <Text m='5px'>{JSON.stringify(j)}</Text>
-            </Pressable>
-          ))
-        }
-        {
-          cursor &&
-          <Button onPress={pullNextPage} m='5px'>
-            pull next page
+    <ScrollView>
+      <BaseView smallLogo showTopRightIcon logoText={'App Title'}>
+        <VStack height="100%" width='90%' pt={150} paddingBottom={100}>
+          {
+            userData?.name &&
+            <Text fontSize={24} fontFamily={fonts.medium}>{`Welcome back, ${userData.name}`}</Text>
+          }
+          <Text>Jobs:</Text>
+          {
+            partsMap && jobs && jobs.map((j) => (
+              <Pressable key={j._id} onPress={() => handleSelect(j)}>
+                <JobCard job={j} part={partsMap[j.customPartId]} />
+              </Pressable>
+            ))
+          }
+
+          {
+            cursor &&
+            <Button onPress={pullNextPage} m='5px'>
+              pull next page
+            </Button>
+          }
+          <Button onPress={reloadJobs} m='5px'>
+            reload
           </Button>
-        }
-        <Button onPress={reloadJobs} m='5px'>
-          reload
-        </Button>
-        <Button onPress={() => setSortField('price')} m='5px'>
-          sort by price
-        </Button>
-        <Button onPress={() => setSortField(undefined)} m='5px'>
-          unsort
-        </Button>
-      </VStack>
-    </BaseView>
+          <Button onPress={() => setSortField('price')} m='5px'>
+            sort by price
+          </Button>
+          <Button onPress={() => setSortField(undefined)} m='5px'>
+            unsort
+          </Button>
+        </VStack>
+      </BaseView>
+    </ScrollView>
   );
 };
 

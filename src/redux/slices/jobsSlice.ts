@@ -1,12 +1,14 @@
 import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { jobsApi } from 'requests';
 import { Job, JobParams, JobUpdateFields } from 'types/job';
-import PartType from 'types/part_type';
+import { PartType } from 'types/part_type';
+import { CustomPart } from 'types/customPart';
 import { User } from 'firebase/auth';
 import { RootState } from 'redux/store';
 import CursorContainer from 'types/cursorContainer';
 import SortOptions from 'types/sortOptions';
 import partsApi from 'requests/partsApi';
+import customPartsApi from 'requests/customPartsApi';
 
 export interface JobState {
   loading: boolean;
@@ -50,11 +52,12 @@ export const getPartsForJobs = createAsyncThunk(
     if (!jobs || jobs.length === 0) return;
     await Promise.all(
       jobs.map(async (j) => {
-        if (!j.partId || j.partId in partsMap) return j;
+        if (!j.customPartId || j.customPartId in partsMap) return j;
         else {
           try {
-            const dbPart = await partsApi.getPart(j.partId, req.fbUserRef);
-            dispatch(addPart({ part: dbPart, id: j.partId }));
+            const dbCustomPart = await customPartsApi.getCustomPart(j.customPartId, req.fbUserRef);
+            const dbPart = await partsApi.getPart(dbCustomPart.partTypeId, req.fbUserRef);
+            dispatch(addPart({ part: dbPart, id: j.customPartId }));
           } catch (e) {
             console.log(e);
           }

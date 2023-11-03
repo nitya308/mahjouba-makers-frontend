@@ -30,8 +30,8 @@ export default function AddressInput({
           // 'details' is provided when fetchDetails = true
           // console.log(data, details);
           // console.log(details?.geometry.location);
-          console.log('address selected');
-          console.log(details);
+          // console.log('address selected');
+          // console.log(details);
           if (details) {
             setSelectedPlace(details);
             setActive(false);
