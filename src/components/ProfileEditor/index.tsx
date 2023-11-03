@@ -14,6 +14,7 @@ import Address from '../../types/address';
 import AddressInput from 'components/AddressInput';
 import addressApi from 'requests/addressApi';
 import { cleanUndefinedFields } from 'utils/requestUtils';
+import MaterialSelector from 'components/MaterialSelector';
 
 export default function ProfileEditor({
   toggleEditing,
@@ -27,6 +28,7 @@ export default function ProfileEditor({
   const [currAddressString, setCurrAddressString] = useState<string | undefined>();
   const [newName, setNewName] = useState<string | undefined>();
   const [newAddress, setNewAddress] = useState<Address | undefined>();
+  const [selectedMaterialIds, setSelectedMaterialIds] = useState<string[]>([]);
 
   useEffect(() => {
     if (currAddressString) return;
@@ -127,6 +129,11 @@ export default function ProfileEditor({
         setAddress={setNewAddress}
         placeholder={currAddressString || 'Address'}
       />
+      <Box w='100%' h='100px'>
+        <MaterialSelector
+          selectedMaterialIds={selectedMaterialIds}
+          setSelectedMaterialIds={setSelectedMaterialIds} />
+      </Box>
     </Center>
     {
       hasChanges &&
