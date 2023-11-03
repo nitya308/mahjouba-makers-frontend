@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { SERVER_URL } from 'utils/constants';
 import { User } from 'firebase/auth';
-import PartType, { PartTypeParams } from 'types/part_type';
+import { PartType, PartTypeParams } from 'types/part_type';
 import { getAxiosConfigForFBUser } from 'utils/requestUtils';
 
 const getPart = async (_id: string, fbUserRef: User) => {
@@ -10,6 +10,7 @@ const getPart = async (_id: string, fbUserRef: User) => {
   return axios.get<PartType>(`${SERVER_URL}partTypes/${_id}`, config)
     .then((res) => ({ ...res.data }))
     .catch((err) => {
+      console.log('error getting part');
       console.log(err);
       throw err;
     });
