@@ -54,8 +54,8 @@ const JobDetailsPage = ({
   }, [jobId, fbUserRef]);
 
   useEffect(() => {
-    if (!job || !(job.customPartId in partsMap)) return;
-    setPart(partsMap[job.customPartId]);
+    if (!job || !(job.partTypeId in partsMap)) return;
+    setPart(partsMap[job.partTypeId]);
   }, [job, partsMap]);
 
   const acceptJob = useCallback(async () => {
@@ -88,14 +88,14 @@ const JobDetailsPage = ({
             <Text style={styles.name}>{part.name}</Text>
             <Text style={styles.text}>{`${part.completionTime} hours`}</Text>
             <Text style={styles.text}>{`${job.price} MAD`}</Text>
-            <Text style={styles.text}>{address.city}</Text>
+            <Text style={styles.text}>{address?.city}</Text>
           </View>
           <Button onPress={acceptJob} style={styles.button}>
             Accept Job
           </Button>
         </>
       ) : (
-        <Text style={styles.text}>No part found with id{job?.customPartId}</Text>
+        <Text style={styles.text}>No part found with id{job?.partTypeId}</Text>
       )}
     </SafeAreaView>
   );

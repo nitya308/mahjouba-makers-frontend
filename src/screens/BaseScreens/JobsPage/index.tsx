@@ -30,7 +30,6 @@ const JobsPage = ({
 }) => {
   const { userData } = useAppSelector(userDataSelector);
   const { jobs, cursor, partsMap } = useAppSelector(jobsSelector);
-  console.log(jobs, partsMap);
 
   return (
     <ScrollView>
@@ -44,7 +43,8 @@ const JobsPage = ({
           {
             partsMap && jobs && jobs.map((j) => (
               <Pressable key={j._id} onPress={() => handleSelect(j)}>
-                <JobCard job={j} part={partsMap[j.customPartId]} />
+                <JobCard job={j} part={partsMap[j.partTypeId]} />
+                <Text>{JSON.stringify(j)}</Text>
               </Pressable>
             ))
           }

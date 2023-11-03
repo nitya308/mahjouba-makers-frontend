@@ -1,28 +1,41 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Text, View, Image } from 'react-native';
 import { StyleSheet } from 'react-native';
 import { Job } from 'types/job';
 import { PartType } from 'types/part_type';
+import { DEFAULT_PART_URI } from 'utils/constants';
 
 const JobCard = ({ job, part }: { job: Job, part: PartType }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (job && part) {
+      console.log('Part', part);
       setLoading(false);
     }
   }, [job, part]);
+
+  const partUri = useMemo(() => (
+    part && part.imageIds && part?.imageIds.length > 0 ?
+      part.imageIds[0] :
+      DEFAULT_PART_URI
+  ), [part]);
+
+  const name = useMemo(() => (
+    part?.name || 'Unnamed part'
+  ), [part]);
+
+  const price = useMemo(() => {
+    return job?.price || 0;
+  }, [part]);
 
   if (loading) {
     return <Text>Loading...</Text>;
   }
 
-  const { price } = job;
-  const { name, imageIds: partImageIds } = part;
-
   return (
     <View style={styles.jobCardContainer}>
-      <Image source={{ uri: partImageIds[0] }} style={styles.image} />
+      <Image source={{ uri: partUri }} style={styles.image} />
       <View style={styles.namePriceContainer}>
         <Text style={styles.name}>{name}</Text>
         <Text style={styles.price}>{price} MAD</Text>
