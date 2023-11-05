@@ -44,7 +44,7 @@ const JobsPage = ({
             partsMap && jobs && jobs.map((j) => (
               <Pressable key={j._id} onPress={() => handleSelect(j)}>
                 <JobCard job={j} part={partsMap[j.partTypeId]} />
-                <Text>{JSON.stringify(j)}</Text>
+                {/* <Text>{JSON.stringify(j)}</Text> */}
               </Pressable>
             ))
           }
