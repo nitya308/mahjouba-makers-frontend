@@ -4,37 +4,38 @@ import { phonePassSignup, userPassSignUp } from 'utils/auth';
 import SharpButton from 'components/SharpButton';
 import IDSetup from 'controllers/SetupController/IDSetup';
 import { FirebaseRecaptchaVerifierModal, FirebaseRecaptchaBanner } from 'expo-firebase-recaptcha';
-import { app } from '../../../firebase';
-import { ConfirmationResult } from 'firebase/auth';
+import { app, auth } from '../../../firebase';
+import { ConfirmationResult, PhoneAuthProvider, signInWithCredential } from 'firebase/auth';
 
 export default function Signup() {
   const recaptchaVerifier = useRef<any>(null);
   const [phone, setPhone] = useState<string | undefined>();
   const [confirmationCode, setConfirmationCode] = useState<string | undefined>();
-  const [password, setPassword] = useState<string | undefined>();
-  const [passConfirm, setPassConfirm] = useState<string | undefined>();
+  // const [password, setPassword] = useState<string | undefined>();
+  // const [passConfirm, setPassConfirm] = useState<string | undefined>();
   const [error, setError] = useState<string | undefined>();
   const [phoneVerify, setPhoneVerify] = useState(false);
-  const [confirmResult, setConfirmResult] = useState<ConfirmationResult | undefined>();
+  const [confirmResult, setConfirmResult] = useState<string | undefined>();
 
   const handleSubmit = useCallback(async () => {
-    if (!phone || !password) {
+    if (!phone) {
       setError('Complete required fields');
       return;
-    } else if (password != passConfirm) {
-      setError('Passwords do not match');
-      return;
-    }
+    } 
+    // else if (password != passConfirm) {
+    //   setError('Passwords do not match');
+    //   return;
+    // }
     try {
       // console.log(recaptchaVerifier.current);
-      const result = await phonePassSignup(phone, password, recaptchaVerifier.current);
+      const result = await phonePassSignup(phone, recaptchaVerifier.current);
       console.log(result);
       setConfirmResult(result);
       setPhoneVerify(true);
     } catch (err) {
       setError((err as any).message);
     }
-  }, [phone, passConfirm, password, recaptchaVerifier]);
+  }, [phone, recaptchaVerifier]);
 
   const handlePhoneConfirm = useCallback(async () => {
     if (!confirmationCode || !confirmResult) {
@@ -42,7 +43,8 @@ export default function Signup() {
       return;
     }
     try {
-      await confirmResult?.confirm(confirmationCode);
+      const credential = await PhoneAuthProvider.credential(confirmResult, confirmationCode);
+      await signInWithCredential(auth, credential);
     } catch (err) {
       console.log(err);
       setError('Confirmation failed');
@@ -76,7 +78,7 @@ export default function Signup() {
               value={phone} 
               onChangeText={setPhone} 
             />
-            <Text fontSize='md' mx='auto'>
+            {/* <Text fontSize='md' mx='auto'>
               Password
             </Text>
             <Input 
@@ -109,7 +111,7 @@ export default function Signup() {
               size='sm'
               value={passConfirm} 
               onChangeText={setPassConfirm} 
-            />
+            /> */}
             <SharpButton w='100%' my='10px'
               size='sm' onPress={handleSubmit}>
               <Text color='black' fontWeight='medium'>Submit</Text>

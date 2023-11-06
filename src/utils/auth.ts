@@ -28,13 +28,14 @@ try {
   console.log(err);
 }
 
-export const phonePassSignup = async (phone: string, password: string, verifyRef: any) => {
+export const phonePassSignup = async (phone: string, verifyRef: any) => {
   try {
-    // const phoneAuthProvider = new PhoneAuthProvider(auth);
     console.log(verifyRef);
-    // const verifier = new RecaptchaVerifier(auth, verifyRef);
-    const credential = await createUserWithEmailAndPassword(auth, `${phone}@${EMAIL_DOMAIN}`, password);
-    return await linkWithPhoneNumber(credential.user, phone, verifyRef);
+    // const credential = await createUserWithEmailAndPassword(auth, `${phone}@${EMAIL_DOMAIN}`, password);
+    // return await linkWithPhoneNumber(credential.user, phone, verifyRef);
+    const provider = new PhoneAuthProvider(auth);
+    const verificationId = await provider.verifyPhoneNumber(phone, verifyRef);
+    return verificationId;
   } catch (err) {
     return Promise.reject(err);
   }
