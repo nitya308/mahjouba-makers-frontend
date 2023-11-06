@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Text, Input, VStack, Center, Button } from 'native-base';
 import { userPassLogin } from 'utils/auth';
+import SharpButton from 'components/SharpButton';
 
 export default function Login() {
   const [email, setEmail] = useState<string | undefined>();
@@ -19,22 +20,28 @@ export default function Login() {
   return <VStack space={2}>
     <Input 
       w='100%' 
-      borderRadius='40px'  
-      paddingY='8px' 
+      borderRadius='2px'  
+      paddingY='10px' 
       paddingX='16px'
       placeholder='Email' 
       autoCapitalize='none'
+      borderColor='black'
+      borderWidth='1px'
+      size='sm'
       value={email} 
       onChangeText={setEmail} 
     />
     <Input 
       w='100%' 
-      borderRadius='40px'  
+      borderRadius='2px'  
       autoCapitalize='none' 
-      paddingY='8px' 
+      paddingY='10px' 
       paddingX='16px' 
       placeholder='Password' 
+      borderColor='black'
+      borderWidth='1px'
       type='password' 
+      size='sm'
       value={password} 
       onChangeText={setPassword} 
     />
@@ -44,9 +51,9 @@ export default function Login() {
           <Text color='red.500' textAlign='center' fontSize='xs'>{error}</Text>
         </Center>
     }
-    <Button w='100%' borderRadius='40px' backgroundColor='#ddd' marginY='8px' paddingY='4px' paddingX='16px' color='#444' 
+    <SharpButton w='100%' marginY='10px' color='#444' 
       size='sm' onPress={handleSubmit}>
       <Text color='black' fontWeight='medium'>Submit</Text>
-    </Button>
+    </SharpButton>
   </VStack>;
 }
