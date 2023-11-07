@@ -6,6 +6,7 @@ export interface PartType {
   instructions: string;
   imageIds: string[];
   completionTime: number;
+  materialIds: string[];
 }
 
 export interface PartTypeParams {
@@ -15,4 +16,5 @@ export interface PartTypeParams {
   instructions?: string;
   imageIds?: string[];
   completionTime?: number;
+  materialIds: string[];
 }
