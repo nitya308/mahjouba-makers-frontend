@@ -33,41 +33,33 @@ const JobsPage = ({
   const { userData } = useAppSelector(userDataSelector);
   const { jobs, cursor, partsMap, materialsMap } = useAppSelector(jobsSelector);
 
-  console.log('materialsMap', materialsMap); 
-  console.log('partsMap', partsMap);
+  if (!partsMap || !materialsMap) {
+    return <Text>Error: Missing partsMap or materialsMap.</Text>;
+  }
 
   return (
     <ScrollView>
       <BaseView smallLogo showTopRightIcon logoText={'App Title'}>
-        <VStack height="100%" width='90%' pt={150} paddingBottom={100}>
+        <VStack height="100%" width="90%" pt={150} paddingBottom={100}>
           <Text fontSize={24} fontFamily={fonts.medium}>Job Search</Text>
           {
-            jobs && partsMap && materialsMap && jobs.map((j: Job) => {
+            Object.keys(partsMap).length > 0 && jobs.map((j: Job) => {
               const job = j;
               const part = partsMap[j.partTypeId];
-              let materials: Material[] = [];
-              if (part.materialIds) {
-                materials = part.materialIds.map((materialId: string) => materialsMap[materialId]);
-              }
-
-              console.log('materials', materials);
-
-              // const materialIds = part.materialIds || [];
-              // const materials = materialIds.map((materialId) => materialsMap[materialId]);
+              const materials = part.materialIds?.map((materialId: string) => materialsMap[materialId]) || [];
 
               return (
                 <Pressable style={styles.jobCard} key={job._id} onPress={() => handleSelect(job)}>
-                  <JobCard job={job} part={part} materials={materials}/>
+                  <JobCard job={job} part={part} materials={materials} />
                 </Pressable>
               );
             })
           }
-          {
-            cursor &&
+          {cursor && (
             <Button onPress={pullNextPage} m='5px'>
               pull next page
             </Button>
-          }
+          )}
           <Button onPress={reloadJobs} m='5px'>
             reload
           </Button>

@@ -22,6 +22,8 @@ const JobCard = ({ job, part, materials }: { job: Job, part: PartType, materials
   const { price } = job;
   const { name, imageIds: partImageIds } = part;
 
+  console.log('MATERIALS', materials);
+
   return (
     <View style={styles.jobCardContainer}>
       <View style={styles.imageWrapper}>

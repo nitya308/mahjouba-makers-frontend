@@ -58,12 +58,11 @@ export const getPartsAndMaterialsForJobs = createAsyncThunk(
         if (!j.partTypeId || j.partTypeId in partsMap) return j;
         else {
           try {
-            // const dbCustomPart = await customPartsApi.getCustomPart(j.customPartId, req.fbUserRef);
             const dbPart = await partsApi.getPart(j.partTypeId, req.fbUserRef);
             console.log('dbPart', dbPart);
             dispatch(addPart({ part: dbPart, id: j.partTypeId }));
-
             const materialIds = dbPart.materialIds;
+            console.log('dbMaterial', materialIds);
             await Promise.all(
               materialIds.map(async (mId) => {
                 const dbMaterial = await materialsApi.getMaterial(mId, req.fbUserRef);
