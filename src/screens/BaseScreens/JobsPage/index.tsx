@@ -30,21 +30,22 @@ const JobsPage = ({
 }) => {
   const { userData } = useAppSelector(userDataSelector);
   const { jobs, cursor, partsMap } = useAppSelector(jobsSelector);
-  console.log(jobs, partsMap);
+  console.log('PARTSMAP', partsMap);
+
+  console.log(userData?.homeAddressId);
 
   return (
     <ScrollView>
       <BaseView smallLogo showTopRightIcon logoText={'App Title'}>
         <VStack height="100%" width='90%' pt={150} paddingBottom={100}>
           {
-            userData?.name &&
-            <Text fontSize={24} fontFamily={fonts.medium}>{`Welcome back, ${userData.name}`}</Text>
+            <Text fontSize={24} fontFamily={fonts.medium}>Job Search</Text>
           }
           <Text>Jobs:</Text>
           {
-            partsMap && jobs && jobs.map((j) => (
+            jobs && jobs.map((j) => (
               <Pressable key={j._id} onPress={() => handleSelect(j)}>
-                <JobCard job={j} part={partsMap[j.customPartId]} />
+                <JobCard job={j} part={partsMap[j.partTypeId]} />
               </Pressable>
             ))
           }
