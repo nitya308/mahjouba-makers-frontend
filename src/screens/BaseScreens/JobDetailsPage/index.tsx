@@ -15,47 +15,23 @@ import XIcon from 'assets/x.svg';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 const JobDetailsPage = ({
-  jobId,
+  job,
   exit,
 }: {
-  jobId: string;
+  job?: Job;
   exit: () => void;
 }): JSX.Element => {
   const dispatch = useAppDispatch();
   const { fbUserRef } = useAppSelector(authSelector);
   const { userData } = useAppSelector(userDataSelector);
   const { partsMap } = useAppSelector(jobsSelector);
-  const [job, setJob] = useState<Job | undefined>();
   const [address, setAddress] = useState<Address | undefined>();
   const [part, setPart] = useState<PartType | undefined>();
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (job) return;
-    const pullJob = async () => {
-      if (!fbUserRef) return;
-      try {
-        setLoading(true);
-        const dbJob = await jobsApi.getJob(jobId, fbUserRef);
-        const dbAddress = await addressApi.getAddress(dbJob.dropoffAddressId, fbUserRef);
-        if (dbJob) {
-          setJob(dbJob);
-        }
-        if (dbAddress) {
-          setAddress(dbAddress);
-        }
-        setLoading(false);
-      } catch (err) {
-        setLoading(false);
-        console.log(err);
-      }
-    };
-    pullJob();
-  }, [jobId, fbUserRef]);
-
-  useEffect(() => {
-    if (!job || !(job.customPartId in partsMap)) return;
-    setPart(partsMap[job.customPartId]);
+    if (!job || !(job.partTypeId in partsMap)) return;
+    setPart(partsMap[job.partTypeId]);
   }, [job, partsMap]);
 
   const acceptJob = useCallback(async () => {
@@ -63,14 +39,14 @@ const JobDetailsPage = ({
     try {
       dispatch(updateUser({
         updates: {
-          currentJobId: jobId,
+          currentJobId: job?._id,
         },
         fbUserRef,
       }));
     } catch (err) {
       console.log(err);
     }
-  }, [jobId, fbUserRef]);
+  }, [job, fbUserRef]);
 
   console.log(job, part, address);
 
@@ -88,14 +64,14 @@ const JobDetailsPage = ({
             <Text style={styles.name}>{part.name}</Text>
             <Text style={styles.text}>{`${part.completionTime} hours`}</Text>
             <Text style={styles.text}>{`${job.price} MAD`}</Text>
-            <Text style={styles.text}>{address.city}</Text>
+            <Text style={styles.text}>{address?.city}</Text>
           </View>
           <Button onPress={acceptJob} style={styles.button}>
             Accept Job
           </Button>
         </>
       ) : (
-        <Text style={styles.text}>No part found with id{job?.customPartId}</Text>
+        <Text style={styles.text}>No part found with id{job?.partTypeId}</Text>
       )}
     </SafeAreaView>
   );

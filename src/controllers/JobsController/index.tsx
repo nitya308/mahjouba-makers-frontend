@@ -48,12 +48,12 @@ export default function JobsController(): JSX.Element {
       setDetailsPageOpen(false);
       setSelectedJob(undefined);
     }
-  }, [detailsPageOpen, selectedJob]);
+  }, [detailsPageOpen, selectedJob, setSelectedJob]);
 
   return <View flex={1}>
     {detailsPageOpen && selectedJob ?
       <JobDetailsPage
-        jobId={selectedJob._id}
+        job={selectedJob}
         exit={handleJobSelect} /> : 
       <JobsPage 
         handleSelect={handleJobSelect}

@@ -3,23 +3,12 @@ import { SERVER_URL } from 'utils/constants';
 import { User } from 'firebase/auth';
 import { CreateUserModel, IUser } from 'types/user';
 import { getAxiosConfigForFBUser } from 'utils/requestUtils';
+import IMaterial from 'types/material';
 
-const initUser = async (userData: CreateUserModel, fbUserRef: User) => {
+const getMaterial = async (_id : string, fbUserRef: User) => {
   const config = await getAxiosConfigForFBUser(fbUserRef);
   if (!config) throw new Error('Unable to create auth config');
-  return axios.post<IUser>(`${SERVER_URL}auth/signUp`, userData, config)
-    .then((res) => ({ ...res.data }))
-    .catch((err) => {
-      alert('Unable to initialize user');
-      console.log(err);
-      throw err;
-    });
-};
-
-const getCurrUser = async (fbUserRef: User) => {
-  const config = await getAxiosConfigForFBUser(fbUserRef);
-  if (!config) throw new Error('Unable to create auth config');
-  return axios.get<IUser>(`${SERVER_URL}users/${fbUserRef.uid}`, config)
+  return axios.get<IMaterial>(`${SERVER_URL}materials/${_id}`, config)
     .then((res) => ({ ...res.data }))
     .catch((err) => {
       console.log(err);
@@ -27,10 +16,22 @@ const getCurrUser = async (fbUserRef: User) => {
     });
 };
 
-const updateUser = async (updates: Partial<IUser>, fbUserRef: User) => {
+const getMaterials = async (fbUserRef: User) => {
   const config = await getAxiosConfigForFBUser(fbUserRef);
   if (!config) throw new Error('Unable to create auth config');
-  return axios.patch<IUser>(`${SERVER_URL}users/${fbUserRef.uid}`, updates, config)
+  return axios.get<IMaterial[]>(`${SERVER_URL}materials`, config)
+    .then((res) => ([ ...res.data ]))
+    .catch((err) => {
+      console.log(err);
+      throw err;
+    });
+};
+
+const searchMaterials = async (idList: string[], fbUserRef: User) => {
+  const config = await getAxiosConfigForFBUser(fbUserRef);
+  if (!config) throw new Error('Unable to create auth config');
+  const body = { _ids: idList };
+  return axios.post<IMaterial[]>(`${SERVER_URL}materials/search`, body, config)
     .then((res) => ({ ...res.data }))
     .catch((err) => {
       console.log(err);
@@ -38,10 +39,10 @@ const updateUser = async (updates: Partial<IUser>, fbUserRef: User) => {
     });
 };
 
-const usersApi = {
-  initUser,
-  getCurrUser,
-  updateUser,
+const materialsApi = {
+  getMaterials,
+  getMaterial,
+  searchMaterials,
 };
 
-export default usersApi;
+export default materialsApi;
