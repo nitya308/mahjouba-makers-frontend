@@ -19,7 +19,7 @@ const getMaterial = async (_id : string, fbUserRef: User) => {
 const getMaterials = async (fbUserRef: User) => {
   const config = await getAxiosConfigForFBUser(fbUserRef);
   if (!config) throw new Error('Unable to create auth config');
-  return axios.get<IMaterial[]>(`${SERVER_URL}materials`, config)
+  return axios.get<IMaterial[]>(`${SERVER_URL}materials/`, config)
     .then((res) => ([ ...res.data ]))
     .catch((err) => {
       console.log(err);

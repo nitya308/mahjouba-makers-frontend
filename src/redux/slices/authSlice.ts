@@ -223,6 +223,9 @@ export const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
+    setName: (state, action: PayloadAction<string>) => {
+      return { ...state, name: action.payload };
+    },
     startAuthLoading: (state) => ({ ...state, loading: true }),
     stopAuthLoading: (state) => ({ ...state, loading: false }),
     handleFirebaseNoAuth: (state) => {
@@ -273,6 +276,7 @@ export const authSlice = createSlice({
 });
 
 export const {
+  setName,
   startAuthLoading,
   stopAuthLoading,
   handleFirebaseUser,

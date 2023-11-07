@@ -10,3 +10,5 @@ export const fonts = {
 export const DEFAULT_PROFILE_URI = 'https://mahjouba-media.s3.eu-west-3.amazonaws.com/defaultProfile.jpeg';
 
 export const DEFAULT_PART_URI = 'https://mahjouba-media.s3.eu-west-3.amazonaws.com/partPlaceholder.jpeg';
+
+export const EMAIL_DOMAIN = 'mahjouba.com';

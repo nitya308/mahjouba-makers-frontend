@@ -1,8 +1,18 @@
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithCredential, AuthCredential } from 'firebase/auth';
+import { 
+  createUserWithEmailAndPassword, 
+  signInWithEmailAndPassword, 
+  signInWithCredential, 
+  AuthCredential, 
+  PhoneAuthProvider, 
+  signInWithPhoneNumber, 
+  RecaptchaVerifier, 
+  linkWithPhoneNumber,
+} from 'firebase/auth';
 import { auth } from '../../firebase';
 import { GOOGLE_WCID } from '@env';
 import { GoogleAuthProvider } from 'firebase/auth';
 import Constants from 'expo-constants';
+import { EMAIL_DOMAIN } from './constants';
 
 let GoogleSignin: any | null = null;
 try {
@@ -17,6 +27,19 @@ try {
 } catch (err) {
   console.log(err);
 }
+
+export const phonePassSignup = async (phone: string, verifyRef: any) => {
+  try {
+    console.log(verifyRef);
+    // const credential = await createUserWithEmailAndPassword(auth, `${phone}@${EMAIL_DOMAIN}`, password);
+    // return await linkWithPhoneNumber(credential.user, phone, verifyRef);
+    const provider = new PhoneAuthProvider(auth);
+    const verificationId = await provider.verifyPhoneNumber(phone, verifyRef);
+    return verificationId;
+  } catch (err) {
+    return Promise.reject(err);
+  }
+};
 
 export const userPassSignUp = async (email: string, password: string) => {
   try {

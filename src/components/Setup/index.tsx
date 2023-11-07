@@ -29,7 +29,7 @@ export default function UserSetup() {
     dispatch(initUser({
       userData: {
         name,
-        email: fbUserRef.email,
+        email: fbUserRef.email !== null ? fbUserRef.email : fbUserRef.phoneNumber,
         homeAddress: selectedHomeAddr,
         shippingAddress: selectedShippingAddr,
         profilePic: uploadRes ? {

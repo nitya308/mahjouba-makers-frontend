@@ -13,6 +13,7 @@ import UserSetup from 'components/Setup';
 import { getUser, userDataSelector } from 'redux/slices/userDataSlice';
 import { Center, Spinner, View } from 'native-base';
 import ProfileImageSelector from 'components/ProfileImageSelector';
+import { SetupController } from 'controllers';
 
 const RootNavigation = () => {
   const { isConnected } = useAppSelector((state) => state.connection);
@@ -64,7 +65,7 @@ const RootNavigation = () => {
     </View>;
   } else if (authenticated && !initialized) {
     return (
-      <UserSetup />
+      <SetupController />
     );
   } else {
     return (
