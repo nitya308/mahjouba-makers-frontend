@@ -1,0 +1,63 @@
+import React, { useCallback } from 'react';
+import { launchCamera, Asset, launchImageLibrary } from 'react-native-image-picker';
+import { Image as ExpoImage } from 'expo-image';
+import { Box, Icon, Text } from 'native-base';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import SharpButton from 'components/SharpButton';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+
+export default function CameraButton({
+  selectedImageAsset,
+  setSelectedImageAsset,
+}: {
+  selectedImageAsset?: Asset,
+  setSelectedImageAsset: (newAsset?: Asset) => void;
+}): JSX.Element {
+  const handleCameraSelect = useCallback(async () => {
+    try {
+      const cameraRes = await launchCamera({
+        saveToPhotos: false,
+        mediaType: 'photo',
+      });
+      if (cameraRes.assets && cameraRes.assets.length > 0) {
+        setSelectedImageAsset(cameraRes.assets[0]);
+      } else {
+        const libraryRes = await launchImageLibrary({
+          selectionLimit: 1,
+          mediaType: 'photo',
+        });
+        if (libraryRes.assets && libraryRes.assets.length > 0) {
+          console.log(libraryRes.assets[0]);
+          setSelectedImageAsset(libraryRes.assets[0]);
+        }
+      }
+    } catch (err) {
+      console.log(err);
+      return;
+    }
+  }, [selectedImageAsset, setSelectedImageAsset]);
+
+  return (
+    selectedImageAsset?.uri ?
+      <Box>
+        <ExpoImage
+          source={{
+            uri: selectedImageAsset.uri,
+          }}
+          style={{
+            width: 100,
+            height: 100,
+            borderColor: 'green',
+            borderWidth: 5,
+            borderRadius: 5,
+          }}
+        />
+        <TouchableOpacity onPress={handleCameraSelect}>
+          <Text fontSize='xs' textDecorationLine='underline' fontWeight='bold' ml='auto'>Retake</Text>
+        </TouchableOpacity>
+      </Box> :
+      <Box>
+        <SharpButton leftIcon={<Icon as={MaterialCommunityIcons} name='camera-outline' size='xl' color='black'  />} bgColor='white' py='20px' px='30px' onPress={handleCameraSelect}></SharpButton>
+      </Box>
+  );
+}

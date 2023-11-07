@@ -6,9 +6,14 @@ import IDSetup from 'controllers/SetupController/IDSetup';
 import { FirebaseRecaptchaVerifierModal, FirebaseRecaptchaBanner } from 'expo-firebase-recaptcha';
 import { app, auth } from '../../../firebase';
 import { ConfirmationResult, PhoneAuthProvider, signInWithCredential } from 'firebase/auth';
+import useAppDispatch from 'hooks/useAppDispatch';
+import { setName as setReduxName } from 'redux/slices/authSlice';
 
 export default function Signup() {
+  const dispatch = useAppDispatch();
+
   const recaptchaVerifier = useRef<any>(null);
+  const [name, setName] = useState<string | undefined>();
   const [phone, setPhone] = useState<string | undefined>();
   const [confirmationCode, setConfirmationCode] = useState<string | undefined>();
   // const [password, setPassword] = useState<string | undefined>();
@@ -18,7 +23,7 @@ export default function Signup() {
   const [confirmResult, setConfirmResult] = useState<string | undefined>();
 
   const handleSubmit = useCallback(async () => {
-    if (!phone) {
+    if (!phone || !name) {
       setError('Complete required fields');
       return;
     } 
@@ -28,6 +33,7 @@ export default function Signup() {
     // }
     try {
       // console.log(recaptchaVerifier.current);
+      dispatch(setReduxName(name));
       const result = await phonePassSignup(phone, recaptchaVerifier.current);
       console.log(result);
       setConfirmResult(result);
@@ -35,7 +41,7 @@ export default function Signup() {
     } catch (err) {
       setError((err as any).message);
     }
-  }, [phone, recaptchaVerifier]);
+  }, [phone, name, recaptchaVerifier]);
 
   const handlePhoneConfirm = useCallback(async () => {
     if (!confirmationCode || !confirmResult) {
@@ -61,6 +67,23 @@ export default function Signup() {
       {
         !phoneVerify ?
           <VStack space={2} mb='10px'>
+            <Text fontSize='md' mx='auto'>
+              Name
+            </Text>
+            <Input 
+              w='100%' 
+              borderRadius='2px'  
+              paddingY='10px' 
+              paddingX='16px'
+              borderColor='black'
+              borderWidth='1px'
+              placeholder='Name' 
+              autoCapitalize='none'
+              size='sm'
+              type='text'
+              value={name} 
+              onChangeText={setName} 
+            />
             <Text fontSize='md' mx='auto'>
               Phone
             </Text>

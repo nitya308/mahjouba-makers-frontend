@@ -23,6 +23,7 @@ export default function MaterialSelector({
       if (!fbUserRef) return;
       try {
         const dbMaterials = await materialsApi.getMaterials(fbUserRef);
+        console.log('materials: ');
         console.log(dbMaterials);
         if (dbMaterials && dbMaterials.length > 0) {
           setMaterialList(dbMaterials);
@@ -63,6 +64,8 @@ export default function MaterialSelector({
 
   return <Box w='100%'>
     <FlatList
+      scrollEnabled={false}
+      nestedScrollEnabled
       w='100%'
       columnWrapperStyle={{
         width: '100%',

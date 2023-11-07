@@ -27,4 +27,10 @@ export interface CreateUserModel {
   homeAddress?: Address;
   shippingAddress?: Address;
   profilePic?: Photo;
+  idFront?: Photo;
+  idBack?: Photo;
+  iceFront?: Photo;
+  iceBack?: Photo;
+  idNo?: string;
+  iceNo?: string;
 }

@@ -26,6 +26,7 @@ export const initUser = createAsyncThunk(
     fbUserRef: User
   }, { dispatch }) => {
     dispatch(startUsersLoading());
+    console.log(req.userData);
     try {
       const res = await usersApi.initUser(req.userData, req.fbUserRef);
       dispatch(stopUsersLoading());
