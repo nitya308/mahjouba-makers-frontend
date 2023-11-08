@@ -13,6 +13,7 @@ import Address from 'types/address';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import XIcon from 'assets/x.svg';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import Placeholder from 'assets/no_image_placeholder.png';
 
 const JobDetailsPage = ({
   jobId,
@@ -24,10 +25,11 @@ const JobDetailsPage = ({
   const dispatch = useAppDispatch();
   const { fbUserRef } = useAppSelector(authSelector);
   const { userData } = useAppSelector(userDataSelector);
-  const { partsMap } = useAppSelector(jobsSelector);
+  const { partsMap, materialsMap } = useAppSelector(jobsSelector);
   const [job, setJob] = useState<Job | undefined>();
   const [address, setAddress] = useState<Address | undefined>();
   const [part, setPart] = useState<PartType | undefined>();
+  const [materials, setMaterials] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -56,7 +58,19 @@ const JobDetailsPage = ({
   useEffect(() => {
     if (!job || !(job.partTypeId in partsMap)) return;
     setPart(partsMap[job.partTypeId]);
+
   }, [job, partsMap]);
+
+  useEffect(() => {
+    if (!part) return;
+    const newMaterials: string[] = [];
+    part.materialIds.forEach((materialId) => {
+      if (materialId in materialsMap) {
+        newMaterials.push(materialsMap[materialId].name);
+      }
+    });
+    setMaterials(newMaterials);
+  }, [part, materialsMap]);
 
   const acceptJob = useCallback(async () => {
     if (!fbUserRef) return;
@@ -72,58 +86,91 @@ const JobDetailsPage = ({
     }
   }, [jobId, fbUserRef]);
 
-  console.log(job, part, address);
+  console.log(job, part, address, materials);
 
-  // need to get address from api using job.dropoffAddressId
   return (
     <SafeAreaView style={styles.container}>
       {loading && <Spinner />}
       {part && job ? (
         <>
-          <TouchableOpacity onPress={exit}>
+          <TouchableOpacity style={styles.exit} onPress={exit}>
             <XIcon width={30} height={30} />
           </TouchableOpacity>
-          <Image source={{ uri: part.imageIds[0] }} alt="image of part" style={styles.image} />
+          { !part.imageIds.length ? <Image alt='placeholder' source={Placeholder} style={styles.image} /> :  <Image alt='part' source={{ uri: part.imageIds[0] }} style={styles.image} />}
           <View style={styles.infoContainer}>
-            <Text style={styles.name}>{part.name}</Text>
-            <Text style={styles.text}>{`${part.completionTime} hours`}</Text>
-            <Text style={styles.text}>{`${job.price} MAD`}</Text>
-            <Text style={styles.text}>{address?.city}</Text>
+            <View style={styles.infoHeader}>
+              <Text style={styles.name}>{part.name}</Text>
+            </View>
+            <View style={styles.infoBody}>
+              <Text style={styles.text}>{`${part.completionTime} hours`}</Text>
+              <Text style={styles.text}>{address?.description}</Text>
+              <Text style={styles.text}>{`${job.price} MAD`}</Text>
+            </View>
+          </View>
+          <View style={styles.materialContainer}>
+            {materials.map((material) => (
+              <View key={material}>
+                <Text style={styles.text}>{material}</Text>
+              </View>
+            ))}
           </View>
           <Button onPress={acceptJob} style={styles.button}>
             Accept Job
           </Button>
         </>
       ) : (
-        <Text style={styles.text}>No part found with id{job?.partTypeId}</Text>
+        <Text style={styles.text}>Loading{job?.partTypeId}</Text>
       )}
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  exit: {
+    padding: 10,
+  },
   container: {
     flex: 1,
     alignItems: 'flex-start',
     justifyContent: 'flex-start',
   },
   infoContainer: {
-    width: '100%',
-    padding: 20,
+    width: '90%',
+    alignSelf: 'center',
+    borderColor: '#000000',
+    borderWidth: 1,
+    marginBottom: 15,
+  },
+  materialContainer: {
+    width: '90%',
+    alignSelf: 'center',
+    borderColor: '#000000',
+    borderWidth: 1,
+    marginBottom: 15,
+    padding: 10,
+  },
+  infoHeader: {
+    backgroundColor: '#FFF4D8',
+    padding: 10,
+    borderBottomColor: '#000000',
+    borderBottomWidth: 1,
+  },
+  infoBody: {
+    padding: 10,
   },
   image: {
     width: '100%',
-    height: 300,
+    height: 200,
     marginBottom: 20,
   },
   name: {
     fontSize: 30,
-    lineHeight: 30,
-    marginBottom: 10,
+    lineHeight: 28,
   },
   text: {
-    fontSize: 18,
-    marginBottom: 10,
+    fontSize: 20,
+    marginTop: 5,
+    marginBottom: 5,
   },
   button: {
     marginTop: 10,

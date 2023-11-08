@@ -6,7 +6,7 @@ import { PartType } from 'types/part_type';
 import { Material } from 'types/material';
 import Placeholder from 'assets/no_image_placeholder.png';
 
-const JobCard = ({ job, part, materials }: { job: Job, part: PartType, materials: Material[] }) => {
+const JobCard = ({ job, part, materials }: { job: Job, part: PartType, materials: string[] }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -37,8 +37,8 @@ const JobCard = ({ job, part, materials }: { job: Job, part: PartType, materials
         { materials.length > 0 && (
           <View style={styles.materialContainer}>
             {materials.map((material) => (
-              <View key={material.id} style={styles.materialChip}>
-                <Text>{material.name}</Text>
+              <View key={material} style={styles.materialChip}>
+                <Text>{material}</Text>
               </View>
             ))}
           </View>

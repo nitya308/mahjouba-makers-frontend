@@ -38,7 +38,6 @@ export const pullJobs = createAsyncThunk(
       if (jobs) {
         dispatch(setJobs(jobs));
         dispatch(getPartsAndMaterialsForJobs({ fbUserRef: req.fbUserRef }));
-        console.log('dispatched');
         dispatch(setCursor(cursorContainer.cursor));
       }
       dispatch(stopJobsLoading());
@@ -66,6 +65,7 @@ export const getPartsAndMaterialsForJobs = createAsyncThunk(
             await Promise.all(
               materialIds.map(async (mId) => {
                 const dbMaterial = await materialsApi.getMaterial(mId, req.fbUserRef);
+                console.log('ADDING MATERIAL', dbMaterial);
                 dispatch(addMaterial({ material: dbMaterial, id: mId }));
               }),
             ); 

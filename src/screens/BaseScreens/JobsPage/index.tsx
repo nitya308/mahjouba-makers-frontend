@@ -1,21 +1,15 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import BaseView from 'components/BaseView';
 import JobCard from 'components/JobCard';
 import { StyleSheet } from 'react-native';
 import { Text, VStack, Button } from 'native-base';
 import useAppSelector from 'hooks/useAppSelector';
 import { fonts } from 'utils/constants';
-import { useNavigation } from '@react-navigation/native';
-import { BaseTabRoutes } from 'navigation/routeTypes';
-import NavType from 'utils/NavType';
 import { userDataSelector } from 'redux/slices/userDataSlice';
 import { jobsSelector, pullNextJobsPage } from 'redux/slices/jobsSlice';
-import useAppDispatch from 'hooks/useAppDispatch';
-import { authSelector } from 'redux/slices/authSlice';
 import { Pressable } from 'react-native';
 import { Job } from 'types/job';
 import { ScrollView } from 'react-native-gesture-handler';
-import { Material } from 'types/material';
 
 const JobsPage = ({
   setSortField,
@@ -33,8 +27,16 @@ const JobsPage = ({
   const { userData } = useAppSelector(userDataSelector);
   const { jobs, cursor, partsMap, materialsMap } = useAppSelector(jobsSelector);
 
-  if (!partsMap || !materialsMap) {
-    return <Text>Error: Missing partsMap or materialsMap.</Text>;
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (partsMap && Object.keys(partsMap).length > 0 && materialsMap && Object.keys(materialsMap).length > 0) {
+      setLoading(false);
+    }
+  }, [partsMap, materialsMap]);
+
+  if (loading) {
+    return <Text>Loading...</Text>;
   }
 
   return (
@@ -42,19 +44,20 @@ const JobsPage = ({
       <BaseView smallLogo showTopRightIcon logoText={'App Title'}>
         <VStack height="100%" width="90%" pt={150} paddingBottom={100}>
           <Text fontSize={24} fontFamily={fonts.medium}>Job Search</Text>
-          {
-            Object.keys(partsMap).length > 0 && jobs.map((j: Job) => {
-              const job = j;
-              const part = partsMap[j.partTypeId];
-              const materials = part.materialIds?.map((materialId: string) => materialsMap[materialId]) || [];
+          {jobs.map((j: Job) => {
+            const job = j;
+            const part = partsMap[j.partTypeId];
+            const materials = part.materialIds.map((materialId: string) => {
+              const material = materialsMap[materialId];
+              return material ? material.name : ''; // Return the name if available, otherwise an empty string
+            });
 
-              return (
-                <Pressable style={styles.jobCard} key={job._id} onPress={() => handleSelect(job)}>
-                  <JobCard job={job} part={part} materials={materials} />
-                </Pressable>
-              );
-            })
-          }
+            return (
+              <Pressable style={styles.jobCard} key={job._id} onPress={() => handleSelect(job)}>
+                <JobCard job={job} part={part} materials={materials} />
+              </Pressable>
+            );
+          })}
           {cursor && (
             <Button onPress={pullNextPage} m='5px'>
               pull next page
