@@ -3,7 +3,7 @@ import { SERVER_URL } from 'utils/constants';
 import { User } from 'firebase/auth';
 import { CreateUserModel, IUser } from 'types/user';
 import { getAxiosConfigForFBUser } from 'utils/requestUtils';
-import IMaterial from 'types/material';
+import { IMaterial } from 'types/material';
 
 const getMaterial = async (_id : string, fbUserRef: User) => {
   const config = await getAxiosConfigForFBUser(fbUserRef);

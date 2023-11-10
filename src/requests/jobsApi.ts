@@ -20,10 +20,10 @@ const getJobs = async (params: JobParams, fbUserRef: User, sortOptions?: SortOpt
     .then((res) => {
       if ('cursor' in res.headers && cursorContainer) {
         cursorContainer.cursor = res.headers.cursor;
-        // console.log(cursorContainer.cursor);
       } else if (cursorContainer) {
         cursorContainer.cursor = undefined;
       }
+      console.log('api call return', res.data);
       return res.data as Job[];
     })
     .catch((err) => {

@@ -21,6 +21,12 @@ export default function AddressInput({
     setAddress(buildAddr(selectedPlace));
   }, [selectedPlace]);
 
+  const CustomListEmptyComponent = () => (
+    <View style={{ flex: 1 }}>
+      <Text>No results were found</Text>
+    </View>
+  );
+
   return (
     <View w='100%' h={active ? '150px' : '50px'}>
       <GooglePlacesAutocomplete
@@ -44,11 +50,7 @@ export default function AddressInput({
         onFail={(err) => {
           console.error(err);
         }}
-        listEmptyComponent={() => (
-          <View style={{ flex: 1 }}>
-            <Text>No results were found</Text>
-          </View>
-        )}
+        listEmptyComponent={<CustomListEmptyComponent />}
         styles={{
           container: {
             overflow: 'visible',

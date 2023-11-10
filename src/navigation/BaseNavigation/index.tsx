@@ -59,7 +59,7 @@ const BaseNavigation = () => {
         screenOptions={{
           header: () => null,
           tabBarStyle: {
-            backgroundColor: 'rgba(230,230,230,0.95)',
+            backgroundColor: '#D3D3D3',
             bottom: 15,
             width: '90%',
             alignSelf: 'center',
