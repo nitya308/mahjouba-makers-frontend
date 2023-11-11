@@ -11,6 +11,7 @@
     "lint": "eslint ./src"
   },
   "dependencies": {
+    "@expo-google-fonts/barlow": "^0.2.3",
     "@expo-google-fonts/montserrat": "^0.2.3",
     "@expo-google-fonts/raleway": "^0.2.2",
     "@expo/metro-config": "^0.10.7",

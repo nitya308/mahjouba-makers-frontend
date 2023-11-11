@@ -2,10 +2,17 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
-import { AntDesign, Entypo } from '@expo/vector-icons';
+import { AntDesign, Entypo, FontAwesome5 } from '@expo/vector-icons';
 import { BaseTabRoutes, BaseNavigationList } from '../routeTypes';
-import { Icon } from 'native-base';
+import { Icon, View, Text } from 'native-base';
 import { JobsController, ProfileController, CurrentJobController } from 'controllers';
+import { fonts } from 'utils/constants';
+import SearchIcon from '../../assets/search_icon.svg';
+import SearchIconFilled from '../../assets/search_icon_filled.svg';
+import PersonIcon from '../../assets/person_icon.svg';
+import PersonIconFilled from '../../assets/person_icon_filled.svg';
+import HammerIcon from '../../assets/hammer.svg';
+import HammerIconFilled from '../../assets/hammer_filled.svg';
 
 const BaseTab = createBottomTabNavigator<BaseNavigationList>();
 const BaseStack = createStackNavigator<BaseNavigationList>();
@@ -59,37 +66,56 @@ const BaseNavigation = () => {
         screenOptions={{
           header: () => null,
           tabBarStyle: {
-            backgroundColor: '#D3D3D3',
-            bottom: 15,
-            width: '90%',
+            backgroundColor: 'white',
+            width: '100%',
             alignSelf: 'center',
-            borderRadius: 30,
-            borderTopWidth: 0,
+            borderTopWidth: 2,
+            borderTopColor: 'black',
             position: 'absolute',
-            left: '5%',
-            height: 60,
+            height: 110,
           },
-          tabBarShowLabel: false,
           tabBarIconStyle: {
-            marginTop: 50,
+            marginTop: 10,
           },
+          tabBarActiveTintColor: '#FFC01D',
         }}
         initialRouteName={BaseTabRoutes.JOBS}
       >
         <BaseTab.Screen
           name={BaseTabRoutes.JOBS}
           component={JobsController}
-          options={{ tabBarIcon: (props) => <Icon as={Entypo} name='tools' color={props.color} /> }}
+          options={{ 
+            tabBarIcon: (props) => ((props.focused) ? <SearchIconFilled /> : <SearchIcon />),
+            tabBarLabel: (props) => (
+              <Text fontFamily={props.focused ? fonts.semiBold : fonts.medium}>
+                {BaseTabRoutes.JOBS}
+              </Text>
+            ),
+          }}
         />
         <BaseTab.Screen
           name={BaseTabRoutes.CURRJOB}
           component={CurrentJobController}
-          options={{ tabBarIcon: (props) => <Icon as={Entypo} name='suitcase' color={props.color} /> }}
+          options={{ 
+            tabBarIcon: (props) => ((props.focused) ? <HammerIconFilled /> : <HammerIcon />),
+            tabBarLabel: (props) => (
+              <Text fontFamily={props.focused ? fonts.semiBold : fonts.medium}>
+                {BaseTabRoutes.CURRJOB}
+              </Text>
+            ),
+          }}
         />
         <BaseTab.Screen
           name={BaseTabRoutes.PROFILE}
           component={ProfileController}
-          options={{ tabBarIcon: (props) => <Icon as={AntDesign} name='user' color={props.color} /> }}
+          options={{ 
+            tabBarIcon: (props) => ((props.focused) ? <PersonIconFilled /> : <PersonIcon />),
+            tabBarLabel: (props) => (
+              <Text fontFamily={props.focused ? fonts.semiBold : fonts.medium}>
+                {BaseTabRoutes.PROFILE}
+              </Text>
+            ),
+          }}
         />
       </BaseTab.Navigator>
     </NavigationContainer>
