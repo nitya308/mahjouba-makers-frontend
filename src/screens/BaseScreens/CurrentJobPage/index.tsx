@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { View, Image, SafeAreaView } from 'react-native';
-import { Box, Center, Text, Heading, Spinner } from 'native-base';
+import { View, Image } from 'react-native';
+import { Box, Center, Text, IconButton, Spinner, ScrollView, HStack } from 'native-base';
 import useAppSelector from 'hooks/useAppSelector';
 import { userDataSelector } from 'redux/slices/userDataSlice';
 import { Job } from 'types/job';
@@ -11,8 +11,13 @@ import { PartType } from 'types/part_type';
 import Placeholder from 'assets/no_image_placeholder.png';
 import { StyleSheet } from 'react-native';
 import Address from 'types/address';
-
-
+import SharpButton from 'components/SharpButton';
+import BaseView from 'components/BaseView';
+import { fonts } from 'utils/constants';
+import Colors from 'utils/Colors';
+import AppModal from 'components/AddModal';
+import AudioIcon from '../../../assets/audio_icon.svg';
+import * as Speech from 'expo-speech';
 
 export default function CurrentJobPage(): JSX.Element {
   const { userData } = useAppSelector(userDataSelector);
@@ -29,6 +34,7 @@ export default function CurrentJobPage(): JSX.Element {
   const [address, setAddress] = useState<Address | undefined>(undefined);
 
   const [jobLoading, setJobLoading] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     const pullJobForUser = async () => {
@@ -71,11 +77,11 @@ export default function CurrentJobPage(): JSX.Element {
   // console.log('Current Materials', currentMaterials);
 
   return (
-    <SafeAreaView>
+    <ScrollView>
       {jobLoading ? (
         <Spinner />
       ) : (
-        <View style={styles.container}>
+        <BaseView>
           { currentPart?.imageIds.length ? <Image alt='part' source={{ uri: currentPart?.imageIds[0] }} style={styles.image} /> : 
             <Image alt='placeholder' source={Placeholder} style={styles.image} /> }
           <View style={styles.infoContainer}>
@@ -98,9 +104,45 @@ export default function CurrentJobPage(): JSX.Element {
               </View>
             ))}
           </View>
-        </View>
+          <Center>
+            <AppModal 
+              showModal={showModal}
+              setShowModal={setShowModal}
+              modalButton={
+                <SharpButton
+                  width={'200px'} 
+                  backgroundColor={Colors.yellow} 
+                  my='2px'
+                  size='sm' 
+                  onPress={() => { 
+                    setShowModal(true);
+                  }}
+                >
+                  <Text fontFamily={fonts.medium}>
+                    Complete Job
+                  </Text>
+                </SharpButton>
+              }
+              backgroundColor={Colors.beige}
+              closeButton={true}
+            >
+              <HStack alignItems={'center'}>
+                <Text fontStyle={fonts.medium} marginTop={'20px'} maxWidth={'220px'}>
+                  Please upload at least 1 image of the completed part.
+                </Text>
+                <IconButton
+                  icon={<AudioIcon />}
+                  onPress={() => {
+                    Speech.speak('My Profile');
+                    console.log('here1'); // TODO: Temp
+                  }}
+                />
+              </HStack>
+            </AppModal>
+          </Center>
+        </BaseView>
       )}
-    </SafeAreaView>
+    </ScrollView>
   );
 }
 

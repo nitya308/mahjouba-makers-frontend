@@ -10,7 +10,6 @@ import { authSelector } from 'redux/slices/authSlice';
 import { fonts } from 'utils/constants';
 import AudioIcon from '../../assets/audio_icon.svg';
 import EditIcon from '../../assets/edit_icon.svg';
-import AddIcon from '../../assets/add_icon.svg';
 import MapPinIcon from '../../assets/map_pin.svg';
 import addressApi from 'requests/addressApi';
 import { jobsSelector, getUserJobHistory } from 'redux/slices/jobsSlice';

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import BaseView from 'components/BaseView';
 import JobCard from 'components/JobCard';
 import { StyleSheet } from 'react-native';
-import { Text, VStack, Button } from 'native-base';
+import { Text, VStack, Button, IconButton } from 'native-base';
 import useAppSelector from 'hooks/useAppSelector';
 import { fonts } from 'utils/constants';
 import { userDataSelector } from 'redux/slices/userDataSlice';
@@ -10,6 +10,9 @@ import { jobsSelector, pullNextJobsPage } from 'redux/slices/jobsSlice';
 import { Pressable } from 'react-native';
 import { Job } from 'types/job';
 import { ScrollView } from 'react-native-gesture-handler';
+import AppModal from 'components/AddModal';
+import AddIcon from '../../../assets/add_icon.svg';
+import MaterialSelector from 'components/MaterialSelector';
 
 const JobsPage = ({
   setSortField,
@@ -28,6 +31,8 @@ const JobsPage = ({
   const { jobs, cursor, partsMap, materialsMap } = useAppSelector(jobsSelector);
 
   const [loading, setLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedMaterialIds, setSelectedMaterialIds] = useState<string[]>([]);
 
   useEffect(() => {
     if (partsMap && Object.keys(partsMap).length > 0 && materialsMap && Object.keys(materialsMap).length > 0) {
@@ -41,8 +46,22 @@ const JobsPage = ({
 
   return (
     <ScrollView>
-      <BaseView smallLogo showTopRightIcon logoText={'App Title'}>
-        <VStack height="100%" width="90%" pt={150} paddingBottom={100}>
+      <BaseView smallLogo showTopRightIcon>
+        <VStack height="100%" width="90%" marginTop={'150px'} paddingBottom={100}>
+          <AppModal 
+            showModal={showModal}
+            setShowModal={setShowModal}
+            modalButton={
+              <IconButton
+                icon={<AddIcon />}
+                onPress={() => {
+                  setShowModal(true);
+                }}
+              />
+            }
+          >
+            {/* TODO: Put MaterialSelector here */}
+          </AppModal>
           <Text fontSize={24} fontFamily={fonts.medium}>Job Search</Text>
           {jobs.map((j: Job) => {
             const job = j;
