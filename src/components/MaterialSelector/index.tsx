@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import useAppSelector from 'hooks/useAppSelector';
 import { authSelector } from 'redux/slices/authSlice';
-import IMaterial from 'types/material';
+import { IMaterial } from 'types/material';
 import { Box, Checkbox, FlatList, HStack, Spacer, Text } from 'native-base';
 import materialsApi from 'requests/materialsApi';
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -23,8 +23,8 @@ export default function MaterialSelector({
       if (!fbUserRef) return;
       try {
         const dbMaterials = await materialsApi.getMaterials(fbUserRef);
-        console.log('materials: ');
-        console.log(dbMaterials);
+        // console.log('materials: ');
+        // console.log(dbMaterials);
         if (dbMaterials && dbMaterials.length > 0) {
           setMaterialList(dbMaterials);
         }

@@ -19,4 +19,12 @@ export default {
   successGreen: '#6FD18A',
   failRed: '#D17B6F',
   textInputBackground: 'rgba(147,111,209,0.4)',
+
+  // Specified by style guide
+  yellow: '#FFC01D',
+  beige: '#FFF4D8',
+  backgroundWhite: '#FFFDF6',
+  lightBrown: '#B78333',
+  darkBrown: '#573E17',
+  darkPurple: '#Q80026',
 };

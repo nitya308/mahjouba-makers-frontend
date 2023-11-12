@@ -2,9 +2,9 @@
 // Use NavigatorScreenParams to nest navigators within navigators
 
 export enum BaseTabRoutes {
-  JOBS = 'Browse Jobs',
-  PROFILE = 'Your Profile',
-  CURRJOB = 'Current Job',
+  JOBS = 'search',
+  PROFILE = 'profile',
+  CURRJOB = 'my job',
 }
 
 export type BaseNavigationList = {

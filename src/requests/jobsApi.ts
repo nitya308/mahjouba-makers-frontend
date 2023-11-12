@@ -20,10 +20,10 @@ const getJobs = async (params: JobParams, fbUserRef: User, sortOptions?: SortOpt
     .then((res) => {
       if ('cursor' in res.headers && cursorContainer) {
         cursorContainer.cursor = res.headers.cursor;
-        // console.log(cursorContainer.cursor);
       } else if (cursorContainer) {
         cursorContainer.cursor = undefined;
       }
+      console.log('api call return', res.data);
       return res.data as Job[];
     })
     .catch((err) => {
@@ -36,6 +36,19 @@ const getJob = async (id: string, fbUserRef: User) => {
   const config = await getAxiosConfigForFBUser(fbUserRef);
   return axios.get<Job>(`${SERVER_URL}jobs/${id}`, config)
     .then((res) => ({ ...res.data }))
+    .catch(err => {
+      console.log(err);
+      throw err;
+    });
+};
+
+const getJobHistory = async (fbUserRef: User) => {
+  const config = await getAxiosConfigForFBUser(fbUserRef);
+  if (!config) throw new Error('Unable to create auth config');
+  return axios.get<Job[]>(`${SERVER_URL}jobs/jobHistory/`, config)
+    .then((res) => {
+      return res.data;
+    })
     .catch(err => {
       console.log(err);
       throw err;
@@ -75,6 +88,7 @@ const deleteJob = async (id: string, fbUserRef: User) => {
 const jobsApi = {
   getJob,
   getJobs,
+  getJobHistory,
   updateJob,
   createJob,
   deleteJob,
