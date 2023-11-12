@@ -17,6 +17,7 @@ import MaterialChip from '../MaterialChip';
 import Colors from 'utils/Colors';
 import { Job } from 'types/job';
 import JobCard from 'components/JobCard';
+import * as Speech from 'expo-speech';
 
 export default function ProfileDisplay({
   toggleEditing,
@@ -46,19 +47,25 @@ export default function ProfileDisplay({
 
   return (
     <Box pt='75px' width={'100%'}>
-      <HStack>
-        <Heading marginLeft={'20px'} marginRight={'10px'} fontFamily={fonts.semiBold}>
-          My Profile
-        </Heading>
-        <AudioIcon />
+      <HStack justifyContent={'space-between'}>
+        <HStack alignItems={'center'}>
+          <Heading marginLeft={'20px'} marginRight={'10px'} fontFamily={fonts.semiBold}>
+            My Profile
+          </Heading>
+          <IconButton
+            icon={<AudioIcon />}
+            onPress={() => {
+              Speech.speak('My Profile');
+              console.log('here1'); // TODO: Temp
+            }}
+          />
+        </HStack>
+        <IconButton
+          icon={<EditIcon />}
+          onPress={toggleEditing}
+          marginRight={'20px'}
+        />
       </HStack>
-      <IconButton
-        icon={<EditIcon />}
-        onPress={toggleEditing}
-        right={'10px'}
-        top={'55px'}
-        position={'absolute'}
-      />
       <View
         width={'100%'}
       >

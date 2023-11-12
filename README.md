@@ -1,12 +1,12 @@
-# CRUD Template - Mobile Frontend - Expo - Redux Toolkit
+# mahjouba-makers-frontend
 
-This repository is an optional frontend starter for new DALI React projects. Installation and setup instructions are included below. You should eventually customize this README file with project-specific documentation.
+** TODO: Rename the repo. **
+
+Frontend for craftsmen to accept and update the status of jobs undertaken for the Mahjouba Initiative.
 
 ## Designs
 
-[Screenshot description]
-
-[Link to the project Figma]()
+[Link to the project Figma](https://www.figma.com/file/rcOfcvZOeWk6nu4GqHAHI1/Mahjouba-Initiative-23F?type=design&mode=design&t=m3PQAB3jcMtY0YEQ-0)
 
 [2-4 screenshots from the app]
 
@@ -19,7 +19,9 @@ This repository is an optional frontend starter for new DALI React projects. Ins
 - [TypeScript](https://www.typescriptlang.org/docs/)
 
 #### External Packages
-- [Description of any notable added services]
+- [native-base](https://nativebase.io/)
+- [react-i18next](https://react.i18next.com/)
+- [expo-speech](https://docs.expo.dev/versions/latest/sdk/speech/)
 
 ### Style
 [Describe notable code style conventions]
@@ -33,9 +35,11 @@ We are using [typically a configuration like [CS52's React-Native ESLint Configu
     ├── src                
     │   └── assets             # static assets   
     │   └── components         # reusable components across several screens
-    │   └── hooks              # useAppDispatch, useAppSelector
+    │   └── controllers        # controls subscreens of a given page
+    │   └── hooks              # useAppDispatch, useAppSelector, useIsLoading
     │   └── navigation         # defines navigation flow
     │   └── redux              # Redux store and setup
+    │   └── requests           # API calls + handling of backend
     │   └── screens            # individual pages
     │   └── types              # TS types
     │   └── utils              # utility folder containing helper files
@@ -45,17 +49,20 @@ We are using [typically a configuration like [CS52's React-Native ESLint Configu
 
 For more detailed documentation on our file structure and specific functions in the code, feel free to check the project files themselves.
 
-## Setup Steps (example)
+## Setup Steps
+
+Due to the native code being used in this project, you need to run this thorugh the iOS simulator on MacOS rather than through the Expo mobile app scanning a QR code. (Sorry, Windows users - you're out of luck.)
 
 1. clone repo and `yarn install`
    - We are using yarn because npm has issues with installing peer dependencies, which in turn causes issues when you eventually want to deploy to TestFlight
-2. Change `SERVER_URL` endpoint to exact IPv4 address + port used by backend
-   - You can view your IPv4 address by running `ipconfig` in command terminal
-3. App should be ready for use now
-   - `yarn start` to run with hot reloading
-      - If you are getting "This is taking much longer than it should..." error, try doing `expo start --tunnel` instead. This error happens sometimes when trying to run on Dartmouth eduroam.
+2. Change `SERVER_URL` endpoint depending on if you are using hosted backend or local backend
+3. `cd ios` and `pod install`
+4. `npx run-ios`, and the app should be ready for use
+   - If the build fails, usually it is enough to try building the `.xcworkspace` file from XCode and fixing whatever error shows up based on XCode's recommendation
 
 #### Redux Debugging
+
+** Note: Broken since Expo 67. Maybe there's a fix recently, but not sure. **
 
 1. Download [react-native-debugger](https://github.com/jhen0409/react-native-debugger/releases) release
 2. Run `.exe` file
@@ -63,17 +70,21 @@ For more detailed documentation on our file structure and specific functions in 
 
 #### Linting
 
-ESLint is set up in this project. To keep code clean, always remember to run `yarn run lint` and fix any lint problems before merging into master.
+ESLint is set up in this project. To keep code clean, always remember to run `yarn run lint` and fix any lint problems before merging into the main branch.
 
 ## Deployment
-[Where is the app deployed? i.e. Expo, Surge, TestFlight etc.]
+[TODO: Where is the app deployed? i.e. Expo, Surge, TestFlight etc.]
 
-[What are the steps to re-deploy the project with any new changes?]
+[TODO: What are the steps to re-deploy the project with any new changes?]
 
-[How does one get access to the deployed project?]
+[TODO: How does one get access to the deployed project?]
 
 ## Authors
-* Firstname Lastname 'YY, role
+- 23F
+   - Sid Hathi '24
+   - Eric Lu '25
+   - Josh Pfefferkorn '24
+   - Brendan Berkman '24
 
 ## Acknowledgments
 We would like to thank [anyone you would like to acknowledge] for [what you would like to acknowledge them for].
