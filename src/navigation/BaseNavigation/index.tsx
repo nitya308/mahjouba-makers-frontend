@@ -88,7 +88,7 @@ const BaseNavigation = () => {
           options={{ 
             tabBarIcon: (props) => ((props.focused) ? <SearchIconFilled /> : <SearchIcon />),
             tabBarLabel: (props) => (
-              <Text fontFamily={props.focused ? fonts.semiBold : fonts.medium}>
+              <Text fontFamily={props.focused ? fonts.bold : fonts.regular}>
                 {BaseTabRoutes.JOBS}
               </Text>
             ),
@@ -100,7 +100,7 @@ const BaseNavigation = () => {
           options={{ 
             tabBarIcon: (props) => ((props.focused) ? <HammerIconFilled /> : <HammerIcon />),
             tabBarLabel: (props) => (
-              <Text fontFamily={props.focused ? fonts.semiBold : fonts.medium}>
+              <Text fontFamily={props.focused ? fonts.bold : fonts.regular}>
                 {BaseTabRoutes.CURRJOB}
               </Text>
             ),
@@ -112,7 +112,7 @@ const BaseNavigation = () => {
           options={{ 
             tabBarIcon: (props) => ((props.focused) ? <PersonIconFilled /> : <PersonIcon />),
             tabBarLabel: (props) => (
-              <Text fontFamily={props.focused ? fonts.semiBold : fonts.medium}>
+              <Text fontFamily={props.focused ? fonts.bold : fonts.regular}>
                 {BaseTabRoutes.PROFILE}
               </Text>
             ),

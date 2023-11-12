@@ -1,67 +1,40 @@
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Provider } from 'react-redux';
 import { store } from './src/redux/store';
 import RootNavigation from './src/navigation';
-import { useFonts, Raleway_400Regular, Raleway_600SemiBold, Raleway_800ExtraBold } from '@expo-google-fonts/raleway';
-import { Montserrat_600SemiBold, Montserrat_400Regular, Montserrat_500Medium } from '@expo-google-fonts/montserrat';
-import { Barlow_600SemiBold, Barlow_300Light, Barlow_400Regular } from '@expo-google-fonts/barlow';
 import { NativeBaseProvider, extendTheme } from 'native-base';
 import { fonts } from 'utils/constants';
-import firebase, { initializeApp } from 'firebase/app';
-import { firebaseConfig } from './firebase';
+import { useFonts as ExpoUseFonts } from 'expo-font';
 
 const theme = extendTheme({
   fontConfig: {
-    Montserrat: {
+    UniversCondensed: {
       400: {
         normal: fonts.regular,
       },
       500: {
-        normal: fonts.medium,
-      },
-      600: {
-        normal: fonts.semiBold,
-      },
-    },
-    Barlow: {
-      300: {
         normal: fonts.regular,
       },
-      500: {
-        normal: fonts.medium,
-      },
       600: {
-        normal: fonts.semiBold,
+        normal: fonts.bold,
       },
     },
   },
   fonts: {
-    heading: 'Barlow',
-    body: 'Barlow',
-    mono: 'Barlow',
+    heading: [fonts.bold],
+    body: [fonts.regular],
+    mono: [fonts.regular],
   },
 });
 
 export default function App() {
-  const [fontsLoaded] = useFonts({
-    Raleway_400Regular,
-    Raleway_600SemiBold,
-    Raleway_800ExtraBold,
-    Montserrat_600SemiBold,
-    Montserrat_400Regular,
-    Montserrat_500Medium,
-    // 
-    Barlow_600SemiBold,
-    Barlow_300Light,
-    Barlow_400Regular,
+  const [fontsLoaded] = ExpoUseFonts({
+    [fonts.regular]: require('./src/assets/fonts/universCondensed.otf'),
+    [fonts.bold]: require('./src/assets/fonts/universCondensedBold.ttf'),
+    [fonts.regular]: require('./src/assets/fonts/universCondensedItalic.ttf'),
+    [fonts.regular]: require('./src/assets/fonts/universCondensedRegular.otf'),
   });
-
-  // useEffect(() => {
-  //   if (!(firebase as any).apps.length) {
-  //     initializeApp(firebaseConfig);
-  //   }
-  // }, []);
 
   if (!fontsLoaded) {
     return <></>;

@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Text, View, Image } from 'react-native';
+import { Text, View, Image } from 'native-base';
 import { StyleSheet } from 'react-native';
 import { Job } from 'types/job';
 import { PartType } from 'types/part_type';
@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   name: {
-    fontSize: 24,
+    fontSize: 20,
     color: '#000000',
   },
   price: {

@@ -6,7 +6,7 @@ import { fonts } from 'utils/constants';
 const MaterialChip = ({ materialName }: { materialName: string }) => {
   return (
     <View key={materialName} style={styles.materialChip}>
-      <Text fontFamily={fonts.semiBold}>{materialName}</Text>
+      <Text fontFamily={fonts.regular}>{materialName}</Text>
     </View>
   );
 };

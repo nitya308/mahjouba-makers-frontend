@@ -118,7 +118,7 @@ export default function CurrentJobPage(): JSX.Element {
                     setShowModal(true);
                   }}
                 >
-                  <Text fontFamily={fonts.medium}>
+                  <Text fontFamily={fonts.regular}>
                     Complete Job
                   </Text>
                 </SharpButton>
@@ -127,7 +127,7 @@ export default function CurrentJobPage(): JSX.Element {
               closeButton={true}
             >
               <HStack alignItems={'center'}>
-                <Text fontStyle={fonts.medium} marginTop={'20px'} maxWidth={'220px'}>
+                <Text fontStyle={fonts.regular} marginTop={'20px'} maxWidth={'220px'}>
                   Please upload at least 1 image of the completed part.
                 </Text>
                 <IconButton
@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: 30,
-    lineHeight: 28,
+    lineHeight: 36,
   },
   timeRemainingText: {
     fontSize: 20,

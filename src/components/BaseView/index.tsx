@@ -54,7 +54,7 @@ const BaseView = ({
         {!!logoText && (
           <VStack>
             <Text 
-              fontFamily={fonts.medium}
+              fontFamily={fonts.regular}
               fontSize='18px'
               textAlign="center"
               mb='-6px'
@@ -94,7 +94,7 @@ const BaseView = ({
             dispatch(logout({}));
             dispatch(clearUserData());
           }}>
-            <Text style={{ color: Colors.primary, fontFamily: fonts.semiBold, fontSize: 16 }}>Log out</Text>
+            <Text style={{ color: Colors.primary, fontFamily: fonts.bold, fontSize: 16 }}>Log out</Text>
           </Actionsheet.Item>
         </Actionsheet.Content>
       </Actionsheet>

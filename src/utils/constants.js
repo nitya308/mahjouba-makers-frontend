@@ -3,9 +3,9 @@
 export const SERVER_URL = 'https://mahjouba-backend.onrender.com/';
 
 export const fonts = {
-  regular: 'Barlow_300Light',
-  medium: 'Barlow_400Regular',
-  semiBold: 'Barlow_600SemiBold',
+  italic: 'UniversCondensedItalic',
+  regular: 'UniversCondensedRegular',
+  bold: 'UniversCondensedBold',
 };
 
 export const DEFAULT_PROFILE_URI = 'https://mahjouba-media.s3.eu-west-3.amazonaws.com/defaultProfile.jpeg';

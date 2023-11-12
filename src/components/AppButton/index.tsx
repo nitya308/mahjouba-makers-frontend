@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
   appButtonText: {
     ...TextStyles.subTitle,
     alignSelf: 'center',
-    fontFamily: fonts.semiBold,
+    fontFamily: fonts.bold,
     fontSize: 18,
   },
 });

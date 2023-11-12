@@ -59,7 +59,7 @@ export default function ProfileDisplay({
     <Box pt='75px' width={'100%'}>
       <HStack justifyContent={'space-between'}>
         <HStack alignItems={'center'}>
-          <Heading marginLeft={'20px'} marginRight={'10px'} fontFamily={fonts.semiBold}>
+          <Heading marginLeft={'20px'} marginRight={'10px'} fontFamily={fonts.bold}>
             My Profile
           </Heading>
           <IconButton
@@ -92,14 +92,14 @@ export default function ProfileDisplay({
               borderWidth: 3,
             }}
           />
-          <Heading fontFamily={fonts.semiBold} marginTop={'10px'}>
+          <Heading fontFamily={fonts.bold} marginTop={'10px'}>
             {userData?.name}
           </Heading>
           {
             addressString &&
             <HStack marginBottom={'10px'}>
               <MapPinIcon />
-              <Text maxW='300px' numberOfLines={1} fontSize='sm' marginLeft={'5px'} fontFamily={fonts.semiBold}>
+              <Text maxW='300px' numberOfLines={1} fontSize='sm' marginLeft={'5px'} fontFamily={fonts.regular}>
                 {addressString ? addressString : null}
               </Text>
             </HStack>
@@ -127,7 +127,7 @@ export default function ProfileDisplay({
             borderBottomWidth={'1px'}
           >
             <HStack alignItems={'center'}>
-              <Heading fontFamily={fonts.semiBold} marginRight={'10px'}>
+              <Heading fontFamily={fonts.bold} marginRight={'10px'}>
                 Past Projects
               </Heading>
               <IconButton

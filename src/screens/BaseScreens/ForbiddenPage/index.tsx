@@ -6,10 +6,10 @@ import { fonts } from 'utils/constants';
 const ForbiddenPage = () => {
   return (
     <BaseView>
-      <Text color="white" fontSize={24} fontFamily={fonts.medium}>
+      <Text color="white" fontSize={24} fontFamily={fonts.regular}>
         403 - Forbidden
       </Text>
-      <Text color="white" fontSize={24} fontFamily={fonts.medium}>
+      <Text color="white" fontSize={24} fontFamily={fonts.regular}>
         You do not have permissions to view this page.
       </Text>
     </BaseView>

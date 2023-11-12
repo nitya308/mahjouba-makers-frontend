@@ -62,7 +62,7 @@ const JobsPage = ({
           >
             {/* TODO: Put MaterialSelector here */}
           </AppModal>
-          <Text fontSize={24} fontFamily={fonts.medium}>Job Search</Text>
+          <Text fontSize={24} fontFamily={fonts.regular}>Job Search</Text>
           {jobs.map((j: Job) => {
             const job = j;
             const part = partsMap[j.partTypeId];
