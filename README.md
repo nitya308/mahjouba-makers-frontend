@@ -59,6 +59,7 @@ Due to the native code being used in this project, you need to run this thorugh 
 3. `cd ios` and `pod install`
 4. `npx run-ios`, and the app should be ready for use
    - If the build fails, usually it is enough to try building the `.xcworkspace` file from XCode and fixing whatever error shows up based on XCode's recommendation
+      - ![img](https://i.imgur.com/6WCL7Gd.png)
 
 #### Redux Debugging
 

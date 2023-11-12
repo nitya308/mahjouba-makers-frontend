@@ -66,8 +66,9 @@ export default function ProfileDisplay({
           marginRight={'20px'}
         />
       </HStack>
-      <View
+      <ScrollView
         width={'100%'}
+        marginBottom={'180px'}
       >
         <Center my='20px'>
           <ExpoImage
@@ -115,25 +116,23 @@ export default function ProfileDisplay({
             borderTopWidth={'1px'}
             borderBottomWidth={'1px'}
           >
-            <HStack>
+            <HStack alignItems={'center'}>
               <Heading fontFamily={fonts.semiBold} marginRight={'10px'}>
                 Past Projects
               </Heading>
-              <AudioIcon />
+              <IconButton
+                icon={<AudioIcon />}
+                onPress={() => {
+                  Speech.speak('Past Projects');
+                }}
+              />
             </HStack>
           </View>
         </Center>
-      </View>
-      <ScrollView flex='1' marginBottom={'100px'}>
         {/* <Text>
           {JSON.stringify(userData)}
         </Text> */}
         {/* TODO: change to user's own job history */}
-        <Text>
-          {
-            JSON.stringify(jobs)
-          }
-        </Text>
         {jobs.map((j: Job) => {
           const job = j;
           const part = partsMap[j.partTypeId];
