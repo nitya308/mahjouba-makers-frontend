@@ -15,7 +15,7 @@ export interface JobState {
   jobs: Job[];
   partsMap: { [id: string]: PartType };
   materialsMap: { [id: string]: IMaterial };
-  userPastJobs: { [id: string]: Job };
+  userJobs: { [id: string]: Job };
   cursor?: string;
   sortParams?: any;
 }
@@ -25,7 +25,7 @@ const initialState: JobState = {
   jobs: [],
   partsMap: {},
   materialsMap: {},
-  userPastJobs: {},
+  userJobs: {},
   cursor: undefined,
   sortParams: undefined,
 };
@@ -60,14 +60,14 @@ export const getPartsAndMaterialsForJobs = createAsyncThunk(
         else {
           try {
             const dbPart = await partsApi.getPart(j.partTypeId, req.fbUserRef);
-            console.log('dbPart', dbPart);
+            // console.log('dbPart', dbPart);
             dispatch(addPart({ part: dbPart, id: j.partTypeId }));
             const materialIds = dbPart.materialIds;
-            console.log('dbMaterial', materialIds);
+            // console.log('dbMaterial', materialIds);
             await Promise.all(
               materialIds.map(async (mId) => {
                 const dbMaterial = await materialsApi.getMaterial(mId, req.fbUserRef);
-                console.log('ADDING MATERIAL', dbMaterial);
+                // console.log('ADDING MATERIAL', dbMaterial);
                 dispatch(addMaterial({ material: dbMaterial, id: mId }));
               }),
             ); 
@@ -102,12 +102,17 @@ export const pullNextJobsPage = createAsyncThunk(
   },
 );
 
-export const getUserPastJobs = createAsyncThunk(
+export const getUserJobHistory = createAsyncThunk(
   'jobs/getUserPastJobs',
   async (req: { fbUserRef: User }, { dispatch, getState }) => {
     dispatch(startJobsLoading());
     try {
-
+      const userJobs = await jobsApi.getJobHistory(req.fbUserRef);
+      await Promise.all(
+        userJobs.map(async (userJob) => {
+          dispatch(addUserJob({ job: userJob, id: userJob._id }));
+        }),
+      ); 
       dispatch(stopJobsLoading());
     } catch (err) {
       console.log(err);
@@ -141,6 +146,13 @@ export const jobsSlice = createSlice({
         ...state.jobs,
         action.payload,
       ],
+    }),
+    addUserJob: (state, action: PayloadAction<{ job: Job, id: string }>) => ({
+      ...state,
+      userJobs: {
+        ...state.userJobs,
+        [action.payload.id]: action.payload.job,
+      },
     }),
     editJob: (state, action: PayloadAction<Job>) => ({
       ...state,
@@ -191,6 +203,7 @@ export const {
   stopJobsLoading,
   addPart,
   addMaterial,
+  addUserJob,
 } = jobsSlice.actions;
 export const jobsSelector = (state: RootState) => state.jobs;
 

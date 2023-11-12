@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { userDataSelector } from 'redux/slices/userDataSlice';
+import useAppDispatch from 'hooks/useAppDispatch';
 import useAppSelector from 'hooks/useAppSelector';
 import { Box, HStack, Spacer, IconButton, Icon, Button, Center, Text, Heading, ScrollView, View, Pressable } from 'native-base';
 import { Image as ExpoImage } from 'expo-image';
@@ -12,7 +13,7 @@ import EditIcon from '../../assets/edit_icon.svg';
 import AddIcon from '../../assets/add_icon.svg';
 import MapPinIcon from '../../assets/map_pin.svg';
 import addressApi from 'requests/addressApi';
-import { jobsSelector } from 'redux/slices/jobsSlice';
+import { jobsSelector, getUserJobHistory } from 'redux/slices/jobsSlice';
 import MaterialChip from '../MaterialChip';
 import Colors from 'utils/Colors';
 import { Job } from 'types/job';
@@ -26,10 +27,12 @@ export default function ProfileDisplay({
   toggleEditing: () => void;
   toggleSettingsOpen: () => void;
 }): JSX.Element {
+  const dispatch = useAppDispatch();
+  
   const { fbUserRef } = useAppSelector(authSelector);
   const { userData, profileImageUri } = useAppSelector(userDataSelector);
   const [addressString, setAddressString] = useState<string | undefined>();
-  const { jobs, cursor, partsMap, materialsMap } = useAppSelector(jobsSelector);
+  const { jobs, cursor, partsMap, materialsMap, userJobs } = useAppSelector(jobsSelector);
 
   useEffect(() => {
     if (addressString) return;
@@ -40,6 +43,14 @@ export default function ProfileDisplay({
     };
     pullAddress();
   }, [userData, fbUserRef, addressString]);
+
+  useEffect(() => {
+    if (fbUserRef) {
+      dispatch(getUserJobHistory({
+        fbUserRef,
+      }));
+    }
+  }, [fbUserRef]);
 
   // <Button mr='auto' onPress={toggleSettingsOpen}>
   // Account Settings
@@ -133,7 +144,7 @@ export default function ProfileDisplay({
           {JSON.stringify(userData)}
         </Text> */}
         {/* TODO: change to user's own job history */}
-        {jobs.map((j: Job) => {
+        {Object.values(userJobs).map((j: Job) => {
           const job = j;
           const part = partsMap[j.partTypeId];
           const materials = part.materialIds.map((materialId: string) => {

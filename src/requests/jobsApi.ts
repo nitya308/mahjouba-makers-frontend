@@ -42,6 +42,19 @@ const getJob = async (id: string, fbUserRef: User) => {
     });
 };
 
+const getJobHistory = async (fbUserRef: User) => {
+  const config = await getAxiosConfigForFBUser(fbUserRef);
+  if (!config) throw new Error('Unable to create auth config');
+  return axios.get<Job[]>(`${SERVER_URL}jobs/jobHistory/`, config)
+    .then((res) => {
+      return res.data;
+    })
+    .catch(err => {
+      console.log(err);
+      throw err;
+    });
+};
+
 const createJob = async (newJob: Job, fbUserRef: User) => {
   const config = await getAxiosConfigForFBUser(fbUserRef);
   return axios.post<Job>(`${SERVER_URL}jobs/`, newJob, config)
@@ -75,6 +88,7 @@ const deleteJob = async (id: string, fbUserRef: User) => {
 const jobsApi = {
   getJob,
   getJobs,
+  getJobHistory,
   updateJob,
   createJob,
   deleteJob,

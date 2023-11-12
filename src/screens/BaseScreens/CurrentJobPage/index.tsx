@@ -20,8 +20,8 @@ export default function CurrentJobPage(): JSX.Element {
 
   const { partsMap, materialsMap } = useAppSelector(jobsSelector);
 
-  console.log('PARTS MAP', partsMap);
-  console.log('MATERIALS MAP', materialsMap);
+  // console.log('PARTS MAP', partsMap);
+  // console.log('MATERIALS MAP', materialsMap);
 
   const [currentJob, setCurrentJob] = useState<Job | null>(null);
   const [currentPart, setCurrentPart] = useState<PartType | null>(null);
@@ -66,9 +66,9 @@ export default function CurrentJobPage(): JSX.Element {
     setCurrentMaterials(materials);
   }, [currentPart, materialsMap]);
 
-  console.log('Current Job', currentJob);
-  console.log('Current Part', currentPart);
-  console.log('Current Materials', currentMaterials);
+  // console.log('Current Job', currentJob);
+  // console.log('Current Part', currentPart);
+  // console.log('Current Materials', currentMaterials);
 
   return (
     <SafeAreaView>

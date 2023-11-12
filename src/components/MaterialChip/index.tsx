@@ -13,7 +13,7 @@ const MaterialChip = ({ materialName }: { materialName: string }) => {
 
 const styles = StyleSheet.create({
   materialChip: {
-    backgroundColor: Colors.lightBrown,
+    backgroundColor: '#D1963A',
     borderRadius: 2,
     padding: 5,
     borderColor: '#000000',

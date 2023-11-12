@@ -12,7 +12,7 @@ const JobCard = ({ job, part, materials }: { job: Job, part: PartType, materials
 
   useEffect(() => {
     if (job && part) {
-      console.log('Part', part);
+      // console.log('Part', part);
       setLoading(false);
     }
   }, [job, part]);
@@ -38,7 +38,7 @@ const JobCard = ({ job, part, materials }: { job: Job, part: PartType, materials
   const { price } = job;
   const { name, imageIds: partImageIds } = part;
 
-  console.log('MATERIALS', materials);
+  // console.log('MATERIALS', materials);
 
   return (
     <View style={styles.jobCardContainer}>
