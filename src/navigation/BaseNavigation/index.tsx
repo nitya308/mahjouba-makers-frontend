@@ -13,6 +13,7 @@ import PersonIcon from '../../assets/person_icon.svg';
 import PersonIconFilled from '../../assets/person_icon_filled.svg';
 import HammerIcon from '../../assets/hammer.svg';
 import HammerIconFilled from '../../assets/hammer_filled.svg';
+import Colors from 'utils/Colors';
 
 const BaseTab = createBottomTabNavigator<BaseNavigationList>();
 const BaseStack = createStackNavigator<BaseNavigationList>();
@@ -66,7 +67,7 @@ const BaseNavigation = () => {
         screenOptions={{
           header: () => null,
           tabBarStyle: {
-            backgroundColor: 'white',
+            backgroundColor: Colors.backgroundWhite,
             width: '100%',
             alignSelf: 'center',
             borderTopWidth: 2,

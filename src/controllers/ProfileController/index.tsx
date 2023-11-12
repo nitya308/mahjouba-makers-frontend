@@ -5,7 +5,7 @@ import useAppDispatch from 'hooks/useAppDispatch';
 import { pullUserProfileImg, userDataSelector } from 'redux/slices/userDataSlice';
 import useAppSelector from 'hooks/useAppSelector';
 import { authSelector } from 'redux/slices/authSlice';
-
+import Colors from 'utils/Colors';
 
 export default function ProfileController(): JSX.Element {
   const dispatch = useAppDispatch();
@@ -33,7 +33,7 @@ export default function ProfileController(): JSX.Element {
     }
   }, []);
 
-  return <View flex={1}>
+  return <View flex={1} backgroundColor={Colors.backgroundWhite}>
     {
       settingsOpen ? 
         <AccountSettingsPage exit={() => toggleSettingsOpen()} /> :

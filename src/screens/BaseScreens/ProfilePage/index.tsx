@@ -1,7 +1,7 @@
 import useAppSelector from 'hooks/useAppSelector';
 import React from 'react';
 import { userDataSelector } from 'redux/slices/userDataSlice';
-import { Button, Text, Center, Heading, HStack, IconButton, Icon, Spacer } from 'native-base';
+import { Button, Text, Center, Heading, HStack, IconButton, Icon, Spacer, View } from 'native-base';
 import { AntDesign } from '@expo/vector-icons';
 import { Image as ExpoImage } from 'expo-image';
 import { DEFAULT_PROFILE_URI } from 'utils/constants';
@@ -17,7 +17,7 @@ export default function ProfilePage({
   toggleEditing: () => void;
   toggleSettingsOpen: () => void;
 }) {
-  return <Center h='100%' px='10px'>
+  return <View h='100%'>
     { editing ?
       <ProfileEditor toggleEditing={toggleEditing} /> :
       <ProfileDisplay 
@@ -25,5 +25,5 @@ export default function ProfilePage({
         toggleSettingsOpen={toggleSettingsOpen}
       />
     }
-  </Center>;
+  </View>;
 }

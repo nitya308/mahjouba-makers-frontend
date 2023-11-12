@@ -16,8 +16,10 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import Placeholder from 'assets/no_image_placeholder.png';
 
 const JobDetailsPage = ({
+  selectedJob,
   exit,
 }: {
+  selectedJob: Job,
   exit: () => void;
 }): JSX.Element => {
   const dispatch = useAppDispatch();

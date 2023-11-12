@@ -8,6 +8,7 @@ import { authSelector } from 'redux/slices/authSlice';
 import SortOptions from 'types/sortOptions';
 import { Job } from 'types/job';
 import JobDetailsPage from 'screens/BaseScreens/JobDetailsPage';
+import Colors from 'utils/Colors';
 
 export default function JobsController(): JSX.Element {
   const dispatch = useAppDispatch();
@@ -50,10 +51,10 @@ export default function JobsController(): JSX.Element {
     }
   }, [detailsPageOpen, selectedJob, setSelectedJob]);
 
-  return <View flex={1}>
+  return <View flex={1} backgroundColor={Colors.backgroundWhite}>
     {detailsPageOpen && selectedJob ?
       <JobDetailsPage
-        job={selectedJob}
+        selectedJob={selectedJob}
         exit={handleJobSelect} /> : 
       <JobsPage 
         handleSelect={handleJobSelect}

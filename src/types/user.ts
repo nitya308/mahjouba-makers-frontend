@@ -18,6 +18,15 @@ export interface IUser {
   shippingAddressId: string | null;
   profilePicId: string | null;
   currentJobId: string | null;
+  jobHistory: string[] | null,
+  materialIds: string[] | null,
+  idNo: string | null,
+  iceNo: string | null,
+  idPhotoFrontId: string | null,
+  idPhotoBackId: string | null,
+  icePhotoFrontId: string | null,
+  icePhotoBackId: string | null,
+  iceStatus: string | null,
   fcmTokens: string[] | null;
 }
 

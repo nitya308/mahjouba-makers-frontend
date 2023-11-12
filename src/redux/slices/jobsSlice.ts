@@ -15,6 +15,7 @@ export interface JobState {
   jobs: Job[];
   partsMap: { [id: string]: PartType };
   materialsMap: { [id: string]: IMaterial };
+  userPastJobs: { [id: string]: Job };
   cursor?: string;
   sortParams?: any;
 }
@@ -24,6 +25,7 @@ const initialState: JobState = {
   jobs: [],
   partsMap: {},
   materialsMap: {},
+  userPastJobs: {},
   cursor: undefined,
   sortParams: undefined,
 };
@@ -92,6 +94,20 @@ export const pullNextJobsPage = createAsyncThunk(
         dispatch(setCursor(cursorContainer.cursor));
         dispatch(getPartsAndMaterialsForJobs({ fbUserRef: req.fbUserRef }));
       }
+      dispatch(stopJobsLoading());
+    } catch (err) {
+      console.log(err);
+      dispatch(stopJobsLoading());
+    }
+  },
+);
+
+export const getUserPastJobs = createAsyncThunk(
+  'jobs/getUserPastJobs',
+  async (req: { fbUserRef: User }, { dispatch, getState }) => {
+    dispatch(startJobsLoading());
+    try {
+
       dispatch(stopJobsLoading());
     } catch (err) {
       console.log(err);
