@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { Center, View, Heading } from 'native-base';
+import { Center, View, Heading, Spinner } from 'native-base';
 import ArchScroll from 'components/ArchScroll';
 import Address from 'types/address';
 import { Asset } from 'react-native-image-picker';
@@ -10,15 +10,16 @@ import { Image } from 'react-native-image-crop-picker';
 import MaterialSetup from './MaterialSetup';
 import AddressSetup from './AddressSetup';
 import ProfileSetup from './ProfileSetup';
-import { authSelector } from 'redux/slices/authSlice';
+import { authSelector, logout } from 'redux/slices/authSlice';
 import useAppSelector from 'hooks/useAppSelector';
 import { uploadMedia } from 'utils/mediaUtils';
 import useAppDispatch from 'hooks/useAppDispatch';
-import { initUser } from 'redux/slices/userDataSlice';
+import { clearUserData, initUser, userDataSelector } from 'redux/slices/userDataSlice';
 
 export default function SetupController(): JSX.Element {
   const dispatch = useAppDispatch();
   const { fbUserRef, name } = useAppSelector(authSelector);
+  const { loading } = useAppSelector(userDataSelector);
 
   const [progress, setProgress] = useState(0);
   const [idNo, setIdNo] = useState<string | undefined>();
@@ -33,8 +34,9 @@ export default function SetupController(): JSX.Element {
   const [error, setError] = useState<string | undefined>();
 
   const handleSubmit = useCallback(async () => {
-    if (!idNo || !iceNo || !selectedLocation || !idPicBack?.uri || !idPicFront?.uri || !icePicBack?.uri || !icePicFront?.uri || !fbUserRef) return;
+    if (!idNo || !iceNo || !selectedLocation || !idPicBack?.uri || !idPicFront?.uri || !icePicBack?.uri || !icePicFront?.uri || !fbUserRef || !name) return;
 
+    console.log([idPicFront, idPicBack]);
     const idPicFrontUploadUri = await uploadMedia(`${fbUserRef?.uid}-idFront.jpeg`, idPicFront.uri);
     const idPicBackUploadUri = await uploadMedia(`${fbUserRef?.uid}-idBack.jpeg`, idPicBack.uri);
 
@@ -88,6 +90,9 @@ export default function SetupController(): JSX.Element {
     if (!idNo || !idPicBack || !idPicFront) {
       setError('Please complete required fields');
     } else {
+      console.log(idNo);
+      console.log(idPicBack);
+      console.log(idPicFront);
       setError(undefined);
       setProgress(progress + 1);
     }
@@ -120,6 +125,9 @@ export default function SetupController(): JSX.Element {
     if (progress > 0) {
       setError(undefined);
       setProgress(progress - 1);
+    } else {
+      dispatch(logout({}));
+      dispatch(clearUserData());
     }
   }, [progress, setProgress]);
 
@@ -192,7 +200,17 @@ export default function SetupController(): JSX.Element {
       default:
         return <></>;
     }
-  }, [progress, selectedLocation, selectedProfileImage, selectedMaterialIds, idPicBack, idPicFront, icePicBack, icePicBack, idNo, iceNo]);
+  }, [progress, selectedLocation, selectedProfileImage, selectedMaterialIds, idPicBack, idPicFront, icePicFront, icePicBack, idNo, iceNo, handleSubmit]);
+
+  if (loading) {
+    return <View flex='1'>
+      <ArchScroll>
+        <Center h='100%'>
+          <Spinner />
+        </Center>
+      </ArchScroll>
+    </View>;
+  }
 
   return <View flex='1'>
     <ArchScroll>

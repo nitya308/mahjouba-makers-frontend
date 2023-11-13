@@ -31,7 +31,7 @@ export default function ProfileController(): JSX.Element {
     if (fbUserRef && userData?.profilePicId && !profileImageUri) {
       dispatch(pullUserProfileImg({ fbUserRef }));
     }
-  }, []);
+  }, [userData, fbUserRef, profileImageUri]);
 
   return <View flex={1} backgroundColor={Colors.backgroundWhite}>
     {
