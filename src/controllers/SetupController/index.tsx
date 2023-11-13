@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { Center, View, Heading } from 'native-base';
+import { Center, View, Heading, Spinner } from 'native-base';
 import ArchScroll from 'components/ArchScroll';
 import Address from 'types/address';
 import { Asset } from 'react-native-image-picker';
@@ -14,11 +14,12 @@ import { authSelector, logout } from 'redux/slices/authSlice';
 import useAppSelector from 'hooks/useAppSelector';
 import { uploadMedia } from 'utils/mediaUtils';
 import useAppDispatch from 'hooks/useAppDispatch';
-import { clearUserData, initUser } from 'redux/slices/userDataSlice';
+import { clearUserData, initUser, userDataSelector } from 'redux/slices/userDataSlice';
 
 export default function SetupController(): JSX.Element {
   const dispatch = useAppDispatch();
   const { fbUserRef, name } = useAppSelector(authSelector);
+  const { loading } = useAppSelector(userDataSelector);
 
   const [progress, setProgress] = useState(0);
   const [idNo, setIdNo] = useState<string | undefined>();
@@ -200,6 +201,16 @@ export default function SetupController(): JSX.Element {
         return <></>;
     }
   }, [progress, selectedLocation, selectedProfileImage, selectedMaterialIds, idPicBack, idPicFront, icePicFront, icePicBack, idNo, iceNo, handleSubmit]);
+
+  if (loading) {
+    return <View flex='1'>
+      <ArchScroll>
+        <Center h='100%'>
+          <Spinner />
+        </Center>
+      </ArchScroll>
+    </View>;
+  }
 
   return <View flex='1'>
     <ArchScroll>
