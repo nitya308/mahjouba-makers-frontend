@@ -17,6 +17,9 @@ import { fonts } from 'utils/constants';
 import Colors from 'utils/Colors';
 import AppModal from 'components/AddModal';
 import AudioIcon from '../../../assets/audio_icon.svg';
+import TimeRemainingIcon from '../../../assets/time-remaining.svg';
+import MapPinIcon from '../../../assets/map_pin.svg';
+import MADIcon from '../../../assets/MADIcon.png';
 import * as Speech from 'expo-speech';
 
 export default function CurrentJobPage(): JSX.Element {
@@ -89,12 +92,18 @@ export default function CurrentJobPage(): JSX.Element {
               <Text style={styles.name}>{currentPart?.name}</Text>
             </View>
             <View style={styles.timeRemaining}>
+              <TimeRemainingIcon />
               <Text style={styles.timeRemainingText}>{`${currentPart?.completionTime} hours remaining`}</Text>
             </View>
             <View style={styles.infoBody}>
-              <Text style={styles.text}>{`${currentPart?.completionTime} hours`}</Text>
-              <Text style={styles.text}>{address?.description}</Text>
-              <Text style={styles.text}>{`${currentJob?.price} MAD`}</Text>
+              <View style={styles.textAndIcon}>
+                <MapPinIcon width={28} height={28}/>
+                <Text style={[styles.text, { maxWidth: '90%' }]}>{address?.description}</Text>
+              </View>
+              <View style={styles.textAndIcon}>
+                <Image source={MADIcon}/>
+                <Text style={styles.text}>{`${currentJob?.price} MAD`}</Text>
+              </View>
             </View>
           </View>
           <View style={styles.materialContainer}>
@@ -167,14 +176,23 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   timeRemaining: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
     backgroundColor: '#FFC01D',
     borderBottomColor: '#000000',
     borderBottomWidth: 1,
     padding: 10,
   },
+  textAndIcon: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
   infoHeader: {
     backgroundColor: '#FFF4D8',
-    padding: 10,
+    paddingTop: 10,
+    paddingHorizontal: 10,
     borderBottomColor: '#000000',
     borderBottomWidth: 1,
   },
@@ -187,14 +205,16 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   name: {
-    fontSize: 30,
-    lineHeight: 36,
+    fontSize: 40,
+    lineHeight: 40,
   },
   timeRemainingText: {
     fontSize: 20,
+    lineHeight: 24,
   },
   text: {
     fontSize: 20,
+    lineHeight: 24,
     marginTop: 5,
     marginBottom: 5,
   },
