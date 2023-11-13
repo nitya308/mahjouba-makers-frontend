@@ -199,7 +199,7 @@ export default function SetupController(): JSX.Element {
       default:
         return <></>;
     }
-  }, [progress, selectedLocation, selectedProfileImage, selectedMaterialIds, idPicBack, idPicFront, icePicBack, icePicBack, idNo, iceNo]);
+  }, [progress, selectedLocation, selectedProfileImage, selectedMaterialIds, idPicBack, idPicFront, icePicFront, icePicBack, idNo, iceNo, handleSubmit]);
 
   return <View flex='1'>
     <ArchScroll>
