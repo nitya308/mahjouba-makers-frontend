@@ -10,11 +10,11 @@ import { Image } from 'react-native-image-crop-picker';
 import MaterialSetup from './MaterialSetup';
 import AddressSetup from './AddressSetup';
 import ProfileSetup from './ProfileSetup';
-import { authSelector } from 'redux/slices/authSlice';
+import { authSelector, logout } from 'redux/slices/authSlice';
 import useAppSelector from 'hooks/useAppSelector';
 import { uploadMedia } from 'utils/mediaUtils';
 import useAppDispatch from 'hooks/useAppDispatch';
-import { initUser } from 'redux/slices/userDataSlice';
+import { clearUserData, initUser } from 'redux/slices/userDataSlice';
 
 export default function SetupController(): JSX.Element {
   const dispatch = useAppDispatch();
@@ -33,8 +33,9 @@ export default function SetupController(): JSX.Element {
   const [error, setError] = useState<string | undefined>();
 
   const handleSubmit = useCallback(async () => {
-    if (!idNo || !iceNo || !selectedLocation || !idPicBack?.uri || !idPicFront?.uri || !icePicBack?.uri || !icePicFront?.uri || !fbUserRef) return;
+    if (!idNo || !iceNo || !selectedLocation || !idPicBack?.uri || !idPicFront?.uri || !icePicBack?.uri || !icePicFront?.uri || !fbUserRef || !name) return;
 
+    console.log([idPicFront, idPicBack]);
     const idPicFrontUploadUri = await uploadMedia(`${fbUserRef?.uid}-idFront.jpeg`, idPicFront.uri);
     const idPicBackUploadUri = await uploadMedia(`${fbUserRef?.uid}-idBack.jpeg`, idPicBack.uri);
 
@@ -88,6 +89,9 @@ export default function SetupController(): JSX.Element {
     if (!idNo || !idPicBack || !idPicFront) {
       setError('Please complete required fields');
     } else {
+      console.log(idNo);
+      console.log(idPicBack);
+      console.log(idPicFront);
       setError(undefined);
       setProgress(progress + 1);
     }
@@ -120,6 +124,9 @@ export default function SetupController(): JSX.Element {
     if (progress > 0) {
       setError(undefined);
       setProgress(progress - 1);
+    } else {
+      dispatch(logout({}));
+      dispatch(clearUserData());
     }
   }, [progress, setProgress]);
 
