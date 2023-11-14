@@ -2,7 +2,7 @@ import React, { useCallback, useRef, useState } from 'react';
 import { Text, Input, VStack, Center, Button, Box } from 'native-base';
 import { phonePassSignup, userPassSignUp } from 'utils/auth';
 import SharpButton from 'components/SharpButton';
-import IDSetup from 'controllers/SetupController/IDSetup';
+import IDSetup from '..//SetupController/IDSetup';
 import { FirebaseRecaptchaVerifierModal, FirebaseRecaptchaBanner } from 'expo-firebase-recaptcha';
 import { app, auth } from '../../../firebase';
 import { ConfirmationResult, PhoneAuthProvider, signInWithCredential } from 'firebase/auth';

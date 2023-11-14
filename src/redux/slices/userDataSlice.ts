@@ -31,6 +31,7 @@ export const initUser = createAsyncThunk(
       const res = await usersApi.initUser(req.userData, req.fbUserRef);
       dispatch(stopUsersLoading());
       dispatch(setUser(res));
+      dispatch(getUser( { fbUserRef: req.fbUserRef }));
       return res;
     } catch (err) {
       dispatch(stopUsersLoading());
@@ -48,7 +49,10 @@ export const getUser = createAsyncThunk(
       const res = await usersApi.getCurrUser(req.fbUserRef);
       dispatch(stopUsersLoading());
       if (res) {
+        console.log('NEW USER:');
+        console.log(res);
         dispatch(setUser(res));
+        dispatch(pullUserProfileImg({ fbUserRef: req.fbUserRef }));
       }
       return res;
     } catch (err) {
@@ -132,9 +136,9 @@ export const userDataSlice = createSlice({
     clearUserData: (state) => ({ ...state, userData: undefined, profileImageUri: undefined }),
   },
   extraReducers: (builder) => {
-    builder.addCase(initUser.fulfilled, (state, action) => {
-      alert('Created user as: ' + JSON.stringify(action.payload));
-    });
+    // builder.addCase(initUser.fulfilled, (state, action) => {
+    //   alert('Created user as: ' + JSON.stringify(action.payload));
+    // });
     builder.addCase(getUser.fulfilled, (state, action) => {
       state.userData = action.payload as IUser;
       // alert('Retrieved user as: ' + JSON.stringify(action.payload));
