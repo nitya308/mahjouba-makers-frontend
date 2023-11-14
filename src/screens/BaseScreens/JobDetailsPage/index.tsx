@@ -6,7 +6,9 @@ import useAppDispatch from 'hooks/useAppDispatch';
 import { authSelector } from 'redux/slices/authSlice';
 import { jobsSelector } from 'redux/slices/jobsSlice';
 import { getUser, updateUser, userDataSelector } from 'redux/slices/userDataSlice';
+import SharpButton from 'components/SharpButton';
 import { addressApi, jobsApi, usersApi } from 'requests';
+import { fonts } from 'utils/constants';
 import { Job } from 'types/job';
 import { PartType } from 'types/part_type';
 import Address from 'types/address';
@@ -14,6 +16,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import XIcon from 'assets/x.svg';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Placeholder from 'assets/no_image_placeholder.png';
+import TimeRemainingIcon from '../../../assets/time-remaining.svg';
+import MapPinIcon from '../../../assets/map_pin.svg';
+import MADIcon from '../../../assets/MADIcon.png';
 import Colors from 'utils/Colors';
 
 const JobDetailsPage = ({
@@ -103,9 +108,19 @@ const JobDetailsPage = ({
               <Text style={styles.name}>{part.name}</Text>
             </View>
             <View style={styles.infoBody}>
-              <Text style={styles.text}>{`${part.completionTime} hours`}</Text>
-              <Text style={styles.text}>{address?.description}</Text>
-              <Text style={styles.text}>{`${job.price} MAD`}</Text>
+              <View style={styles.textAndIcon}>
+                <TimeRemainingIcon/>
+                <Text style={styles.text}>{`${part.completionTime} hours`}</Text>
+              </View>
+              <View style={styles.textAndIcon}>
+                <MapPinIcon width={28} height={28}/>
+                <Text style={[styles.text, { maxWidth: '90%' }]}>{address?.description}</Text>
+              </View>
+
+              <View style={styles.textAndIcon}>
+                <Image alt='MAD icon' source={MADIcon} style={{ width: 28, height: 28 }} />
+                <Text style={styles.text}>{`${job.price} MAD`}</Text>
+              </View>
             </View>
           </View>
           <View style={styles.materialContainer}>
@@ -115,9 +130,20 @@ const JobDetailsPage = ({
               </View>
             ))}
           </View>
-          <Button onPress={acceptJob} style={styles.button}>
-            Accept Job
-          </Button>
+          <View style={styles.acceptButton}>
+            <SharpButton
+              width={'120px'} 
+              backgroundColor={Colors.yellow} 
+              my='2px'
+              size='sm' 
+              onPress={acceptJob}
+              marginTop={'10px'}
+            >
+              <Text fontFamily={fonts.regular}>
+              Accept Job
+              </Text>
+            </SharpButton>
+          </View>
         </>
       ) : (
         <Text style={styles.text}>Loading{job?.partTypeId}</Text>
@@ -129,6 +155,9 @@ const JobDetailsPage = ({
 const styles = StyleSheet.create({
   exit: {
     padding: 10,
+  },
+  acceptButton: {
+    alignSelf: 'center',
   },
   container: {
     flex: 1,
@@ -151,6 +180,11 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     padding: 10,
   },
+  textAndIcon: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
   infoHeader: {
     backgroundColor: '#FFF4D8',
     padding: 10,
@@ -159,6 +193,10 @@ const styles = StyleSheet.create({
   },
   infoBody: {
     padding: 10,
+  },
+  timeRemainingText: {
+    fontSize: 20,
+    lineHeight: 24,
   },
   image: {
     width: '100%',
