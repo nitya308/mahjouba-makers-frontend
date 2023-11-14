@@ -43,12 +43,22 @@ const JobCard = ({ job, part, materials }: { job: Job, part: PartType, materials
   return (
     <View style={styles.jobCardContainer}>
       <View style={styles.imageWrapper}>
+        {
+          // TODO: image need to be returned separately for partImageIds[0]? - Eric
+        }
         { !partImageIds.length ? <Image source={Placeholder} style={styles.image} /> :  <Image source={{ uri: partImageIds[0] }} style={styles.image} />}
       </View>
       <View style={styles.cardContent}>
         <View style={styles.namePriceContainer}>
           <Text style={styles.name}>{name}</Text>
           <Text style={styles.price}>{price} MAD</Text>
+        </View>
+        <View>
+          {
+            // TODO: TBH we probably should be displaying jobId, it's hard to distinguish between jobs
+            // just off of the part name - Eric
+          }
+          <Text>{job._id}</Text>
         </View>
         { materials.length > 0 && (
           <View style={styles.materialContainer}>
