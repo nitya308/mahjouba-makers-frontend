@@ -16,17 +16,17 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import Placeholder from 'assets/no_image_placeholder.png';
 
 const JobDetailsPage = ({
-  selectedJob,
+  jobId,
   exit,
 }: {
-  selectedJob: Job,
+  jobId: string;
   exit: () => void;
 }): JSX.Element => {
   const dispatch = useAppDispatch();
   const { fbUserRef } = useAppSelector(authSelector);
   const { userData } = useAppSelector(userDataSelector);
   const { partsMap, materialsMap } = useAppSelector(jobsSelector);
-  const [job, setJob] = useState<Job>();
+  const [job, setJob] = useState<Job | undefined>();
   const [address, setAddress] = useState<Address | undefined>();
   const [part, setPart] = useState<PartType | undefined>();
   const [materials, setMaterials] = useState<string[]>([]);
@@ -38,8 +38,7 @@ const JobDetailsPage = ({
       if (!fbUserRef) return;
       try {
         setLoading(true);
-        // TODO: Incorrect Typescript typing
-        const dbJob = await jobsApi.getJob((job as any)._id, fbUserRef);
+        const dbJob = await jobsApi.getJob(jobId, fbUserRef);
         const dbAddress = await addressApi.getAddress(dbJob.dropoffAddressId, fbUserRef);
         if (dbJob) {
           setJob(dbJob);
@@ -54,7 +53,7 @@ const JobDetailsPage = ({
       }
     };
     pullJob();
-  }, [job, fbUserRef]); // TODO: Had to replace jobId with job._id
+  }, [jobId, fbUserRef]);
 
   useEffect(() => {
     if (!job || !(job.partTypeId in partsMap)) return;
@@ -78,14 +77,14 @@ const JobDetailsPage = ({
     try {
       dispatch(updateUser({
         updates: {
-          currentJobId: job?._id,
+          currentJobId: jobId,
         },
         fbUserRef,
       }));
     } catch (err) {
       console.log(err);
     }
-  }, [job, fbUserRef]);
+  }, [jobId, fbUserRef]);
 
   console.log(job, part, address, materials);
 
