@@ -105,7 +105,7 @@ export default function CurrentJobPage(): JSX.Element {
                 <Text style={[styles.text, { maxWidth: '90%' }]}>{address?.description}</Text>
               </View>
               <View style={styles.textAndIcon}>
-                <Image source={MADIcon}/>
+                <Image alt='MAD icon' source={MADIcon}/>
                 <Text style={styles.text}>{`${currentJob?.price} MAD`}</Text>
               </View>
             </View>
