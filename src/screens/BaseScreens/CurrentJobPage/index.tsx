@@ -18,9 +18,11 @@ import Colors from 'utils/Colors';
 import AppModal from 'components/AddModal';
 import AudioIcon from '../../../assets/audio_icon.svg';
 import TimeRemainingIcon from '../../../assets/time-remaining.svg';
+import CameraButton from 'components/CameraButton';
 import MapPinIcon from '../../../assets/map_pin.svg';
 import MADIcon from '../../../assets/MADIcon.png';
 import * as Speech from 'expo-speech';
+import { Asset } from 'react-native-image-picker';
 
 export default function CurrentJobPage(): JSX.Element {
   const { userData } = useAppSelector(userDataSelector);
@@ -38,6 +40,8 @@ export default function CurrentJobPage(): JSX.Element {
 
   const [jobLoading, setJobLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
+
+  const [completeJobPhoto, setCompleteJobPhoto] = useState<Asset | undefined>();
 
   useEffect(() => {
     const pullJobForUser = async () => {
@@ -132,7 +136,7 @@ export default function CurrentJobPage(): JSX.Element {
                   </Text>
                 </SharpButton>
               }
-              backgroundColor={Colors.beige}
+              backgroundColor={Colors.white}
               closeButton={true}
             >
               <HStack alignItems={'center'}>
@@ -147,6 +151,30 @@ export default function CurrentJobPage(): JSX.Element {
                   }}
                 />
               </HStack>
+              <Center marginTop={'10px'}>
+                <CameraButton
+                  selectedImageAsset={completeJobPhoto}
+                  setSelectedImageAsset={setCompleteJobPhoto}
+                />
+              </Center>
+              <Center marginTop={'10px'}>
+                <SharpButton
+                  width={'80px'} 
+                  backgroundColor={Colors.yellow} 
+                  my='2px'
+                  size='sm' 
+                  onPress={() => {
+                    setShowModal(false);
+                    setCompleteJobPhoto(undefined);
+                    alert('Placeholder submit for now'); // TODO
+                  }}
+                  marginTop={'10px'}
+                >
+                  <Text fontFamily={fonts.regular}>
+                    Finalize
+                  </Text>
+                </SharpButton>
+              </Center>
             </AppModal>
           </Center>
         </BaseView>

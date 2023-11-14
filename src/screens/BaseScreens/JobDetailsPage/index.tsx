@@ -14,6 +14,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import XIcon from 'assets/x.svg';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Placeholder from 'assets/no_image_placeholder.png';
+import Colors from 'utils/Colors';
 
 const JobDetailsPage = ({
   jobId,
@@ -133,6 +134,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'flex-start',
     justifyContent: 'flex-start',
+    backgroundColor: Colors.backgroundWhite,
   },
   infoContainer: {
     width: '90%',

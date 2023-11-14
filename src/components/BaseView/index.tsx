@@ -45,11 +45,11 @@ const BaseView = ({
 
   return (
     <View style={[FormatStyle.container, style]}>
-      {showTopRightIcon && (
+      {/* {showTopRightIcon && (
         <Pressable style={{ position: 'absolute', top: 60, right: 20, zIndex: 200 }} onPress={onOpen}>
           <Ionicons name="ellipsis-vertical-outline" size={20} />
         </Pressable>
-      )}
+      )} */}
       <View style={styles.logo}>
         {!!logoText && (
           <VStack>
@@ -88,7 +88,7 @@ const BaseView = ({
           Loading...
         </Text>
       </Overlay> */}
-      <Actionsheet isOpen={isOpen} onClose={onClose}>
+      {/* <Actionsheet isOpen={isOpen} onClose={onClose}>
         <Actionsheet.Content>
           <Actionsheet.Item onPress={() => {
             dispatch(logout({}));
@@ -97,7 +97,7 @@ const BaseView = ({
             <Text style={{ color: Colors.primary, fontFamily: fonts.bold, fontSize: 16 }}>Log out</Text>
           </Actionsheet.Item>
         </Actionsheet.Content>
-      </Actionsheet>
+      </Actionsheet> */}
     </View>
   );
 };

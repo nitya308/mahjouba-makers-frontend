@@ -73,7 +73,7 @@ const BaseNavigation = () => {
             borderTopWidth: 2,
             borderTopColor: 'black',
             position: 'absolute',
-            height: 110,
+            height: 120,
           },
           tabBarIconStyle: {
             marginTop: 10,
