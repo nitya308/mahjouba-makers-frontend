@@ -1,13 +1,13 @@
 import ProfileImageSelector from 'components/ProfileImageSelector';
-import { 
-  Box, 
-  Center, 
-  HStack, 
-  Heading, 
-  Icon, 
-  IconButton, 
-  Spacer, 
-  Input, 
+import {
+  Box,
+  Center,
+  HStack,
+  Heading,
+  Icon,
+  IconButton,
+  Spacer,
+  Input,
   View,
   Text,
 } from 'native-base';
@@ -60,10 +60,15 @@ export default function ProfileEditor({
     pullAddress();
   }, [userData, fbUserRef, currAddressString]);
 
+  useEffect(() => {
+    if (userData?.materialIds) {
+      setSelectedMaterialIds(userData?.materialIds);
+    }
+  }, [userData]);
+
   const saveNewAddress = useCallback(async () => {
     if (!newAddress || !fbUserRef) return;
     try {
-      console.log(newAddress);
       const uploadRes = await addressApi.createAddress(newAddress, fbUserRef);
       return uploadRes._id;
     } catch (err) {
@@ -89,7 +94,7 @@ export default function ProfileEditor({
   }, [userData, fbUserRef, selectedImage]);
 
   const saveChanges = useCallback(async () => {
-    if (!(selectedImage || newName || newAddress) || !fbUserRef || !userData) return;
+    if (!(selectedImage || newName || newAddress || selectedMaterialIds) || !fbUserRef || !userData) return;
     try {
       let newProfilePicId: string | undefined = undefined;
       let newAddressId: string | undefined = undefined;
@@ -100,25 +105,19 @@ export default function ProfileEditor({
         newProfilePicId = await saveNewProfilePic();
       }
 
-      if (newProfilePicId || newAddressId || newName) {
-        dispatch(updateUser({
-          updates: cleanUndefinedFields({
-            profilePicId: newProfilePicId,
-            shippingAddressId: newAddressId,
-            name: newName,
-          }),
-          fbUserRef,
-        }));
-      }
+      dispatch(updateUser({
+        updates: cleanUndefinedFields({
+          profilePicId: newProfilePicId,
+          shippingAddressId: newAddressId,
+          name: newName,
+          materialIds: selectedMaterialIds,
+        }),
+        fbUserRef,
+      }));
     } catch (err) {
       console.log(err);
     }
-  }, [selectedImage, saveNewAddress, saveNewProfilePic, selectedImage, newName, newAddress, fbUserRef, userData]);
-
-  const hasChanges = useMemo(() => {
-    if (selectedImage !== undefined || newName !== undefined || newAddress !== undefined) return true;
-    return false;
-  }, [selectedImage, newName, newAddress]);
+  }, [selectedImage, saveNewAddress, saveNewProfilePic, selectedImage, newName, newAddress, fbUserRef, userData, selectedMaterialIds]);
 
   const [showModal, setShowModal] = useState(false);
 
@@ -148,9 +147,9 @@ export default function ProfileEditor({
           placeholder={userData?.name || 'Name'}
           value={newName}
           onChangeText={setNewName}
-          w='60%' 
-          borderRadius='2px'  
-          paddingY='10px' 
+          w='60%'
+          borderRadius='2px'
+          paddingY='10px'
           paddingX='16px'
           borderColor='black'
           borderWidth='1px'
@@ -195,27 +194,31 @@ export default function ProfileEditor({
         {/* </HStack> */}
         <MaterialSelector
           selectedMaterialIds={selectedMaterialIds}
-          setSelectedMaterialIds={setSelectedMaterialIds} 
+          setSelectedMaterialIds={setSelectedMaterialIds}
         />
       </Center>
-      {
-        hasChanges && (
-          <Center>
-            <SharpButton
-              width={'80px'} 
-              backgroundColor={Colors.yellow} 
-              my='2px'
-              size='sm' 
-              onPress={saveChanges}
-              marginTop={'10px'}
-            >
-              <Text fontFamily={fonts.regular}>
-                Save
-              </Text>
-            </SharpButton>
-          </Center>
-        )
-      }
+      <Text>
+        {
+          JSON.stringify(userData?.materialIds) // TODO: Temp
+        }
+        {
+          JSON.stringify(selectedMaterialIds)
+        }
+      </Text>
+      <Center>
+        <SharpButton
+          width={'80px'}
+          backgroundColor={Colors.yellow}
+          my='2px'
+          size='sm'
+          onPress={saveChanges}
+          marginTop={'10px'}
+        >
+          <Text fontFamily={fonts.regular}>
+            Save
+          </Text>
+        </SharpButton>
+      </Center>
     </Box>
   );
 }
