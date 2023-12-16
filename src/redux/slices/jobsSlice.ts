@@ -101,26 +101,7 @@ export const getPartsAndMaterialsForJobs = createAsyncThunk(
     if (!jobs || jobs.length === 0) return;
     await Promise.all(
       jobs.map(async (j) => {
-        if (!j.partTypeId || j.partTypeId in partsMap) return j;
-        else {
-          try {
-            const dbPart = await partsApi.getPart(j.partTypeId, req.fbUserRef);
-            // console.log('dbPart', dbPart);
-            dispatch(addPart({ part: dbPart, id: j.partTypeId }));
-            const materialIds = dbPart.materialIds;
-            // console.log('dbMaterial', materialIds);
-            await Promise.all(
-              materialIds.map(async (mId) => {
-                const dbMaterial = await materialsApi.getMaterial(mId, req.fbUserRef);
-                // console.log('ADDING MATERIAL', dbMaterial);
-                dispatch(addMaterial({ material: dbMaterial, id: mId }));
-              }),
-            );
-
-          } catch (e) {
-            console.log(e);
-          }
-        }
+        dispatch(getPartsAndMaterialsForJob({ job: j, fbUserRef: req.fbUserRef }));
       }),
     );
   });
@@ -156,6 +137,7 @@ export const getUserJobHistory = createAsyncThunk(
       await Promise.all(
         userJobs.map(async (userJob) => {
           dispatch(addUserJob({ job: userJob, id: userJob._id }));
+          dispatch(getPartsAndMaterialsForJob({ job: userJob, fbUserRef: req.fbUserRef }));
         }),
       );
       dispatch(stopJobsLoading());
