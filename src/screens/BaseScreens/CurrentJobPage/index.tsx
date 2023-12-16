@@ -6,7 +6,7 @@ import { userDataSelector } from 'redux/slices/userDataSlice';
 import { Job } from 'types/job';
 import { addressApi, jobsApi } from 'requests';
 import { authSelector } from 'redux/slices/authSlice';
-import { jobsSelector } from 'redux/slices/jobsSlice';
+import { getPartsAndMaterialsForJob, jobsSelector } from 'redux/slices/jobsSlice';
 import { PartType } from 'types/part_type';
 import Placeholder from 'assets/no_image_placeholder.png';
 import { StyleSheet } from 'react-native';
@@ -23,6 +23,7 @@ import MapPinIcon from '../../../assets/map_pin.svg';
 import MADIcon from '../../../assets/MADIcon.png';
 import * as Speech from 'expo-speech';
 import { Asset } from 'react-native-image-picker';
+import useAppDispatch from 'hooks/useAppDispatch';
 
 export default function CurrentJobPage(): JSX.Element {
   const { userData } = useAppSelector(userDataSelector);
@@ -43,6 +44,8 @@ export default function CurrentJobPage(): JSX.Element {
 
   const [completeJobPhoto, setCompleteJobPhoto] = useState<Asset | undefined>();
 
+  const dispatch = useAppDispatch();
+
   useEffect(() => {
     const pullJobForUser = async () => {
       if (!userData?.currentJobId || !fbUserRef) return;
@@ -50,6 +53,8 @@ export default function CurrentJobPage(): JSX.Element {
       try {
         const pulledJob = await jobsApi.getJob(userData.currentJobId, fbUserRef);
         const pulledAddress = await addressApi.getAddress(pulledJob.dropoffAddressId, fbUserRef);
+        dispatch(getPartsAndMaterialsForJob({ job: pulledJob, fbUserRef }));
+        
         if (pulledJob) {
           setCurrentJob(pulledJob);
         }
