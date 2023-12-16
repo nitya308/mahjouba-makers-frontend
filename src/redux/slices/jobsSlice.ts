@@ -1,6 +1,6 @@
 import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { jobsApi } from 'requests';
-import { Job, JobParams, JobUpdateFields } from 'types/job';
+import { JOB_STATUS_ENUM, Job, JobParams, JobUpdateFields } from 'types/job';
 import { PartType } from 'types/part_type';
 import { IMaterial } from 'types/material';
 import { User } from 'firebase/auth';
@@ -36,11 +36,31 @@ export const pullJobs = createAsyncThunk(
     dispatch(startJobsLoading());
     try {
       const cursorContainer: CursorContainer = {};
-      const jobs = await jobsApi.getJobs({}, req.fbUserRef, req.sortOptions, cursorContainer);
+      const jobs = await jobsApi.getJobs({ jobStatus: JOB_STATUS_ENUM.UNASSIGNED }, req.fbUserRef, req.sortOptions, cursorContainer);
       if (jobs) {
         dispatch(setJobs(jobs));
         dispatch(getPartsAndMaterialsForJobs({ fbUserRef: req.fbUserRef }));
         dispatch(setCursor(cursorContainer.cursor));
+      }
+      dispatch(stopJobsLoading());
+    } catch (err) {
+      dispatch(stopJobsLoading());
+    }
+  },
+);
+
+export const pullSelectedJob = createAsyncThunk(
+  'jobs/pullSelectedJob',
+  async (req: { jobId: string, fbUserRef: User }, { dispatch }) => {
+    dispatch(startJobsLoading());
+    try {
+      const job = await jobsApi.getJob(req.jobId, req.fbUserRef);
+      if (job) {
+        dispatch(addUserJob({
+          job,
+          id: job._id,
+        }));
+        dispatch(getPartsAndMaterialsForJobs({ fbUserRef: req.fbUserRef }));
       }
       dispatch(stopJobsLoading());
     } catch (err) {
@@ -88,7 +108,7 @@ export const pullNextJobsPage = createAsyncThunk(
     try {
       const { cursor } = (getState() as RootState).jobs;
       const cursorContainer = { cursor };
-      const nextPage = await jobsApi.getJobs({}, req.fbUserRef, undefined, cursorContainer);
+      const nextPage = await jobsApi.getJobs({ jobStatus: JOB_STATUS_ENUM.UNASSIGNED }, req.fbUserRef, undefined, cursorContainer);
       if (nextPage) {
         dispatch(addPage(nextPage));
         dispatch(setCursor(cursorContainer.cursor));

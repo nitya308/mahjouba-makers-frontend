@@ -92,7 +92,7 @@ const JobDetailsPage = ({
     }
   }, [jobId, fbUserRef]);
 
-  console.log(job, part, address, materials);
+  // console.log(job, part, address, materials);
 
   return (
     <SafeAreaView style={styles.container}>
