@@ -146,7 +146,7 @@ export default function ProfileDisplay({
         {Object.values(userJobs).map((j: Job) => {
           const job = j;
           const part = partsMap[j.partTypeId];
-          const materials = part.materialIds.map((materialId: string) => {
+          const materials = part?.materialIds?.map((materialId: string) => {
             const material = materialsMap[materialId];
             return material ? material.name : ''; // Return the name if available, otherwise an empty string
           });

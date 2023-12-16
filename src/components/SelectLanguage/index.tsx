@@ -13,15 +13,21 @@ const SelectLanguage = () => {
   return (
     <Button
       onPress={() => {
-        if (language === 'EN') {
-          setLanguage('FR');
-          i18next.changeLanguage('fr');
-        } else {
-          setLanguage('EN');
-          i18next.changeLanguage('en');
+        try {
+          if (language === 'EN') {
+            setLanguage('FR');
+            console.log('here1');
+            i18next.changeLanguage('fr');
+            console.log('here2');
+          } else {
+            setLanguage('EN');
+            i18next.changeLanguage('en');
+          }
+        } catch (e) {
+          console.log(e);
         }
       }}
-      title="Change Language"
+      title={`Change Language (selected = ${language})` }
     />
   );
 };

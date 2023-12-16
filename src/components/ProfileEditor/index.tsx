@@ -11,7 +11,7 @@ import {
   View,
   Text,
 } from 'native-base';
-import React, { useState, useCallback, useMemo, useEffect } from 'react';
+import React, { useState, useCallback, useMemo, useEffect, useTransition } from 'react';
 import { Image } from 'react-native-image-crop-picker';
 import { Ionicons } from '@expo/vector-icons';
 import { uploadMedia } from 'utils/mediaUtils';
@@ -34,6 +34,8 @@ import BackArrowIcon from '../../assets/back_arrow.svg';
 import Colors from 'utils/Colors';
 import AddIcon from '../../assets/add_icon.svg';
 import { fonts } from 'utils/constants';
+import { useTranslation } from 'react-i18next';
+import SelectLanguage from 'components/SelectLanguage';
 
 export default function ProfileEditor({
   toggleEditing,
@@ -121,6 +123,8 @@ export default function ProfileEditor({
 
   const [showModal, setShowModal] = useState(false);
 
+  const { t } = useTranslation();
+
   return (
     <Box pt='75px' width={'100%'}>
       <HStack alignItems={'center'} justifyContent={'center'} width={'100%'}>
@@ -197,14 +201,6 @@ export default function ProfileEditor({
           setSelectedMaterialIds={setSelectedMaterialIds}
         />
       </Center>
-      <Text>
-        {
-          JSON.stringify(userData?.materialIds) // TODO: Temp
-        }
-        {
-          JSON.stringify(selectedMaterialIds)
-        }
-      </Text>
       <Center>
         <SharpButton
           width={'80px'}
@@ -218,6 +214,17 @@ export default function ProfileEditor({
             Save
           </Text>
         </SharpButton>
+      </Center>
+      {
+        // demo translation functionality
+      }
+      <Center>
+        <Text>
+          {
+            t('Hello world')
+          }
+        </Text>
+        <SelectLanguage />
       </Center>
     </Box>
   );

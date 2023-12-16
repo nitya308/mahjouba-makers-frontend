@@ -77,7 +77,7 @@ export default function CurrentJobPage(): JSX.Element {
 
   useEffect(() => {
     if (!currentPart) return;
-    const materials = currentPart.materialIds.map((materialId: string) => {
+    const materials = currentPart?.materialIds?.map((materialId: string) => {
       const material = materialsMap[materialId];
       return material ? material.name : '';
     });

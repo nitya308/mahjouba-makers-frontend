@@ -70,7 +70,7 @@ const JobDetailsPage = ({
   useEffect(() => {
     if (!part) return;
     const newMaterials: string[] = [];
-    part.materialIds.forEach((materialId) => {
+    part?.materialIds?.forEach((materialId) => {
       if (materialId in materialsMap) {
         newMaterials.push(materialsMap[materialId].name);
       }
