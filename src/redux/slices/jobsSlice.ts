@@ -5,6 +5,8 @@ import { PartType } from 'types/part_type';
 import { IMaterial } from 'types/material';
 import { User } from 'firebase/auth';
 import { RootState } from 'redux/store';
+import { getPhotos } from './photosSlice';
+import { getAddress, getAddresses } from './addressSlice';
 import CursorContainer from 'types/cursorContainer';
 import SortOptions from 'types/sortOptions';
 import partsApi from 'requests/partsApi';
@@ -27,7 +29,7 @@ const initialState: JobState = {
   jobsMap: {},
   partsMap: {},
   materialsMap: {},
-  currentJobId: null,
+  currentJobId: null, // Can only have one active job at a time
   jobHistoryIds: [],
   jobFeedIds: [],
   cursor: undefined,
@@ -44,6 +46,7 @@ export const pullJobs = createAsyncThunk(
       if (jobs) {
         dispatch(getPartsAndMaterialsForJobs({ jobs, fbUserRef: req.fbUserRef }));
         dispatch(setCursor(cursorContainer.cursor));
+        dispatch(getAddresses({ fbUserRef: req.fbUserRef, addressIds: jobs.map((job: Job) => job.dropoffAddressId) }));
       }
 
       return jobs;
@@ -66,6 +69,7 @@ export const pullNextJobsPage = createAsyncThunk(
       if (jobs) {
         dispatch(getPartsAndMaterialsForJobs({ jobs, fbUserRef: req.fbUserRef }));
         dispatch(setCursor(cursorContainer.cursor));
+        dispatch(getAddresses({ fbUserRef: req.fbUserRef, addressIds: jobs.map((job: Job) => job.dropoffAddressId) }));
       }
 
       return jobs;
@@ -87,6 +91,7 @@ export const getPartsAndMaterialsForJob = createAsyncThunk(
       try {
         const dbPart = await partsApi.getPart(req.job.partTypeId, req.fbUserRef);
         dispatch(addPart({ part: dbPart, id: req.job.partTypeId }));
+        dispatch(getPhotos({ photoIds: dbPart.imageIds, fbUserRef: req.fbUserRef }));
         const materialIds = dbPart.materialIds;
         await Promise.all(
           materialIds.map(async (mId) => {
@@ -118,6 +123,12 @@ export const getUserJobHistory = createAsyncThunk(
       const jobs = await jobsApi.getJobHistory(req.fbUserRef);
       if (jobs) {
         dispatch(getPartsAndMaterialsForJobs({ jobs, fbUserRef: req.fbUserRef }));
+        dispatch(getAddresses({ fbUserRef: req.fbUserRef, addressIds: jobs.map((job: Job) => job.dropoffAddressId) }));
+        let photoIds: string[] = [];
+        jobs.forEach((job: Job) => {
+          photoIds = [...photoIds, ...job.imageIds];
+        });
+        dispatch(getPhotos({ fbUserRef: req.fbUserRef, photoIds }));
       }
 
       return jobs;
@@ -136,8 +147,36 @@ export const getUserCurrentJob = createAsyncThunk(
     try {
       const job = await jobsApi.getUserCurrentJob(req.fbUserRef);
       dispatch(getPartsAndMaterialsForJob({ job, fbUserRef: req.fbUserRef }));
-
+      dispatch(getAddress({ fbUserRef: req.fbUserRef, addressId: job.dropoffAddressId }));
       return job;
+    } catch (err) {
+      return null;
+    } finally {
+      dispatch(stopJobsLoading());
+    }
+  },
+);
+
+export const acceptJob = createAsyncThunk(
+  'jobs/acceptJob',
+  async (req: { jobId: string, fbUserRef: User }, { dispatch, getState }) => {
+    dispatch(startJobsLoading());
+    try {
+      return await jobsApi.acceptJob(req.jobId, req.fbUserRef);
+    } catch (err) {
+      return null;
+    } finally {
+      dispatch(stopJobsLoading());
+    }
+  },
+);
+
+export const unacceptJob = createAsyncThunk(
+  'jobs/unacceptJob',
+  async (req: { jobId: string, fbUserRef: User }, { dispatch, getState }) => {
+    dispatch(startJobsLoading());
+    try {
+      return await jobsApi.unacceptJob(req.jobId, req.fbUserRef);
     } catch (err) {
       return null;
     } finally {
@@ -209,6 +248,20 @@ export const jobsSlice = createSlice({
         state.jobsMap[job._id] = job;
         state.currentJobId = job._id;
       } else {
+        state.currentJobId = null;
+      }
+    });
+    builder.addCase(acceptJob.fulfilled, (state, action) => {
+      const job: Job | null = action.payload;
+      if (job) {
+        state.jobsMap[job._id] = job;
+        state.currentJobId = job._id;
+      }
+    });
+    builder.addCase(unacceptJob.fulfilled, (state, action) => {
+      const job: Job | null = action.payload;
+      if (job) {
+        state.jobsMap[job._id] = job;
         state.currentJobId = null;
       }
     });
