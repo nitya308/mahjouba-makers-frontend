@@ -31,52 +31,7 @@ const JobDetailsPage = ({
   const dispatch = useAppDispatch();
   const { fbUserRef } = useAppSelector(authSelector);
   const { userData } = useAppSelector(userDataSelector);
-  const { partsMap, materialsMap } = useAppSelector(jobsSelector);
-  const [job, setJob] = useState<Job | undefined>();
-  const [address, setAddress] = useState<Address | undefined>();
-  const [part, setPart] = useState<PartType | undefined>();
-  const [materials, setMaterials] = useState<string[]>([]);
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (job) return;
-    const pullJob = async () => {
-      if (!fbUserRef) return;
-      try {
-        setLoading(true);
-        const dbJob = await jobsApi.getJob(jobId, fbUserRef);
-        const dbAddress = await addressApi.getAddress(dbJob.dropoffAddressId, fbUserRef);
-        if (dbJob) {
-          setJob(dbJob);
-        }
-        if (dbAddress) {
-          setAddress(dbAddress);
-        }
-        setLoading(false);
-      } catch (err) {
-        setLoading(false);
-        console.log(err);
-      }
-    };
-    pullJob();
-  }, [jobId, fbUserRef]);
-
-  useEffect(() => {
-    if (!job || !(job.partTypeId in partsMap)) return;
-    setPart(partsMap[job.partTypeId]);
-
-  }, [job, partsMap]);
-
-  useEffect(() => {
-    if (!part) return;
-    const newMaterials: string[] = [];
-    part?.materialIds?.forEach((materialId) => {
-      if (materialId in materialsMap) {
-        newMaterials.push(materialsMap[materialId].name);
-      }
-    });
-    setMaterials(newMaterials);
-  }, [part, materialsMap]);
+  const { jobsMap, partsMap, materialsMap, loading } = useAppSelector(jobsSelector);
 
   const acceptJob = useCallback(async () => {
     if (!fbUserRef) return;
@@ -93,9 +48,19 @@ const JobDetailsPage = ({
     }
   }, [jobId, fbUserRef]);
 
+  if (loading) {
+    return <Spinner />;
+  }
+
+  const job = jobsMap[jobId];
+  const part = partsMap[job.partTypeId];
+  const materials = part?.materialIds?.map((materialId: string) => {
+    const material = materialsMap[materialId];
+    return material ? material.name : ''; // Return the name if available, otherwise an empty string
+  });
+
   return (
     <SafeAreaView style={styles.container}>
-      {loading && <Spinner />}
       {part && job ? (
         <>
           <TouchableOpacity style={styles.exit} onPress={exit}>
@@ -113,7 +78,7 @@ const JobDetailsPage = ({
               </View>
               <View style={styles.textAndIcon}>
                 <MapPinIcon width={28} height={28}/>
-                <Text style={[styles.text, { maxWidth: '90%' }]}>{address?.description}</Text>
+                <Text style={[styles.text, { maxWidth: '90%' }]}>{'address TODO'}</Text>
               </View>
 
               <View style={styles.textAndIcon}>

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import BaseView from 'components/BaseView';
 import JobCard from 'components/JobCard';
 import { StyleSheet } from 'react-native';
-import { Text, VStack, Button, IconButton } from 'native-base';
+import { Text, VStack, Button, IconButton, Spinner } from 'native-base';
 import useAppSelector from 'hooks/useAppSelector';
 import { fonts } from 'utils/constants';
 import { userDataSelector } from 'redux/slices/userDataSlice';
@@ -28,7 +28,7 @@ const JobsPage = ({
   const { cursor, jobFeedIds, jobsMap, partsMap, materialsMap, loading } = useAppSelector(jobsSelector);
 
   if (loading) {
-    return <Text>Loading...</Text>;
+    return <Spinner />;
   }
 
   return (

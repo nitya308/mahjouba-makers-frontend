@@ -8,15 +8,6 @@ import { IMaterial } from 'types/material';
 import Placeholder from 'assets/no_image_placeholder.png';
 
 const JobCard = ({ job, part, materials }: { job: Job, part: PartType, materials: string[] }) => {
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (job && part) {
-      // console.log('Part', part);
-      setLoading(false);
-    }
-  }, [job, part]);
-
   const partUri = useMemo(() => (
     part && part.imageIds && part?.imageIds.length > 0 ?
       part.imageIds[0] :
@@ -31,12 +22,7 @@ const JobCard = ({ job, part, materials }: { job: Job, part: PartType, materials
   //   return job?.price || 0;
   // }, [part]);
 
-  if (loading) {
-    return <Text>Loading...</Text>;
-  }
-
   const { price } = job;
-  const { name, imageIds: partImageIds } = part;
 
   // console.log('MATERIALS', materials);
 
@@ -46,11 +32,13 @@ const JobCard = ({ job, part, materials }: { job: Job, part: PartType, materials
         {
           // TODO: image need to be returned separately for partImageIds[0]? - Eric
         }
-        { !partImageIds.length ? <Image source={Placeholder} style={styles.image} /> :  <Image source={{ uri: partImageIds[0] }} style={styles.image} />}
+        { !part?.imageIds?.length 
+          ? <Image source={Placeholder} style={styles.image} /> 
+          : <Image source={{ uri: part?.imageIds[0] }} style={styles.image} />}
       </View>
       <View style={styles.cardContent}>
         <View style={styles.namePriceContainer}>
-          <Text style={styles.name}>{name}</Text>
+          <Text style={styles.name}>{part?.name}</Text>
           <Text style={styles.price}>{price} MAD</Text>
         </View>
         <View>
@@ -60,7 +48,7 @@ const JobCard = ({ job, part, materials }: { job: Job, part: PartType, materials
           }
           <Text>{job._id}</Text>
         </View>
-        { materials.length > 0 && (
+        { materials && materials?.length > 0 && (
           <View style={styles.materialContainer}>
             {materials.map((material) => (
               <View key={material} style={styles.materialChip}>

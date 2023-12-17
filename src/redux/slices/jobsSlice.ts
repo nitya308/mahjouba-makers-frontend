@@ -42,7 +42,7 @@ export const pullJobs = createAsyncThunk(
       const cursorContainer: CursorContainer = {};
       const jobs = await jobsApi.getJobs({ jobStatus: JOB_STATUS_ENUM.UNASSIGNED }, req.fbUserRef, req.sortOptions, cursorContainer);
       if (jobs) {
-        dispatch(getPartsAndMaterialsForJobs({ fbUserRef: req.fbUserRef }));
+        dispatch(getPartsAndMaterialsForJobs({ jobs, fbUserRef: req.fbUserRef }));
         dispatch(setCursor(cursorContainer.cursor));
       }
 
@@ -64,7 +64,7 @@ export const pullNextJobsPage = createAsyncThunk(
       const cursorContainer = { cursor };
       const jobs = await jobsApi.getJobs({ jobStatus: JOB_STATUS_ENUM.UNASSIGNED }, req.fbUserRef, undefined, cursorContainer);
       if (jobs) {
-        dispatch(getPartsAndMaterialsForJobs({ fbUserRef: req.fbUserRef }));
+        dispatch(getPartsAndMaterialsForJobs({ jobs, fbUserRef: req.fbUserRef }));
         dispatch(setCursor(cursorContainer.cursor));
       }
 
@@ -102,10 +102,9 @@ export const getPartsAndMaterialsForJob = createAsyncThunk(
 
 export const getPartsAndMaterialsForJobs = createAsyncThunk(
   'jobs/getPartsAndMaterialsForJobs',
-  async (req: { fbUserRef: User }, { dispatch, getState }) => {
-    const { jobsMap } = (getState() as RootState).jobs;
+  async (req: { jobs: Job[], fbUserRef: User }, { dispatch, getState }) => {
     await Promise.all(
-      Object.values(jobsMap).map(async (j) => {
+      req.jobs.map(async (j) => {
         dispatch(getPartsAndMaterialsForJob({ job: j, fbUserRef: req.fbUserRef }));
       }),
     );
@@ -117,11 +116,9 @@ export const getUserJobHistory = createAsyncThunk(
     dispatch(startJobsLoading());
     try {
       const jobs = await jobsApi.getJobHistory(req.fbUserRef);
-      await Promise.all(
-        jobs.map(async (job) => {
-          dispatch(getPartsAndMaterialsForJob({ job, fbUserRef: req.fbUserRef }));
-        }),
-      );
+      if (jobs) {
+        dispatch(getPartsAndMaterialsForJobs({ jobs, fbUserRef: req.fbUserRef }));
+      }
 
       return jobs;
     } catch (err) {
@@ -153,6 +150,10 @@ export const jobsSlice = createSlice({
   name: 'jobs',
   initialState,
   reducers: {
+    clearJobFeed: (state) => ({
+      ...state,
+      jobHistoryIds: [],
+    }),
     setCursor: (state, action: PayloadAction<string | undefined>) => ({
       ...state,
       cursor: action.payload,
@@ -186,7 +187,7 @@ export const jobsSlice = createSlice({
       jobs.forEach((job: Job) => {
         state.jobsMap[job._id] = job;
       });
-      state.jobFeedIds = [...state.jobFeedIds, ...jobs.map((job: Job) => job._id)];
+      state.jobFeedIds = [...state.jobFeedIds, ...jobs.map((job: Job) => job._id).filter((jobId: string)=> !state.jobFeedIds.includes(jobId))];
     });
     builder.addCase(pullNextJobsPage.fulfilled, (state, action) => {
       const jobs: Job[] = action.payload;
@@ -200,7 +201,7 @@ export const jobsSlice = createSlice({
       jobs.forEach((job: Job) => {
         state.jobsMap[job._id] = job;
       });
-      state.jobHistoryIds = [...state.jobHistoryIds, ...jobs.map((job: Job) => job._id)];
+      state.jobHistoryIds = [...state.jobHistoryIds, ...jobs.map((job: Job) => job._id).filter((jobId: string) => !state.jobHistoryIds.includes(jobId))];
     });
     builder.addCase(getUserCurrentJob.fulfilled, (state, action) => {
       const job: Job | null = action.payload;
@@ -215,6 +216,7 @@ export const jobsSlice = createSlice({
 });
 
 export const {
+  clearJobFeed,
   setCursor,
   addPart,
   addMaterial,

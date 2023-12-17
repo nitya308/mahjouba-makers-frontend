@@ -31,7 +31,7 @@ export default function ProfileDisplay({
   const { fbUserRef } = useAppSelector(authSelector);
   const { userData, profileImageUri } = useAppSelector(userDataSelector);
   const [addressString, setAddressString] = useState<string | undefined>();
-  const { jobs, cursor, partsMap, materialsMap, userJobs } = useAppSelector(jobsSelector);
+  const { jobsMap, partsMap, materialsMap, jobHistoryIds } = useAppSelector(jobsSelector);
 
   useEffect(() => {
     if (addressString) return;
@@ -143,9 +143,9 @@ export default function ProfileDisplay({
           {JSON.stringify(userData)}
         </Text> */}
         {/* TODO: change to user's own job history */}
-        {Object.values(userJobs).map((j: Job) => {
-          const job = j;
-          const part = partsMap[j.partTypeId];
+        {jobHistoryIds.map((jobId: string) => {
+          const job = jobsMap[jobId];
+          const part = partsMap[job.partTypeId];
           const materials = part?.materialIds?.map((materialId: string) => {
             const material = materialsMap[materialId];
             return material ? material.name : ''; // Return the name if available, otherwise an empty string

@@ -87,7 +87,7 @@ const deleteJob = async (id: string, fbUserRef: User) => {
 
 const getUserCurrentJob = async (fbUserRef: User) => {
   const config = await getAxiosConfigForFBUser(fbUserRef);
-  return axios.get<Job>(`${SERVER_URL}currentJob/`, config)
+  return axios.get<Job>(`${SERVER_URL}jobs/currentJob/`, config)
     .then((res) => ({ ...res.data }))
     .catch(err => {
       console.log(err);
