@@ -159,10 +159,14 @@ export const getUserCurrentJob = createAsyncThunk(
 
 export const acceptJob = createAsyncThunk(
   'jobs/acceptJob',
-  async (req: { jobId: string, fbUserRef: User }, { dispatch, getState }) => {
+  async (req: { jobId: string, fbUserRef: User | null }, { dispatch, getState }) => {
     dispatch(startJobsLoading());
     try {
-      return await jobsApi.acceptJob(req.jobId, req.fbUserRef);
+      if (req.fbUserRef) {
+        return await jobsApi.acceptJob(req.jobId, req.fbUserRef);
+      } else {
+        return null;
+      }
     } catch (err) {
       return null;
     } finally {
@@ -173,10 +177,14 @@ export const acceptJob = createAsyncThunk(
 
 export const unacceptJob = createAsyncThunk(
   'jobs/unacceptJob',
-  async (req: { jobId: string, fbUserRef: User }, { dispatch, getState }) => {
+  async (req: { jobId: string, fbUserRef: User | null }, { dispatch, getState }) => {
     dispatch(startJobsLoading());
     try {
-      return await jobsApi.unacceptJob(req.jobId, req.fbUserRef);
+      if (req.fbUserRef) {
+        return await jobsApi.unacceptJob(req.jobId, req.fbUserRef);
+      } else {
+        return null;
+      }
     } catch (err) {
       return null;
     } finally {

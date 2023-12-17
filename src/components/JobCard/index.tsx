@@ -30,7 +30,7 @@ const JobCard = ({ job, part, materials }: { job: Job, part: PartType, materials
     <View style={styles.jobCardContainer}>
       <View style={styles.imageWrapper}>
         {
-          // TODO: image need to be returned separately for partImageIds[0]? - Eric
+          // TODO: display image
         }
         { !part?.imageIds?.length 
           ? <Image source={Placeholder} style={styles.image} /> 

@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { View, Image } from 'react-native';
-import { Box, Center, Text, IconButton, Spinner, ScrollView, HStack } from 'native-base';
+import { Center, Text, IconButton, Spinner, ScrollView, HStack } from 'native-base';
 import useAppSelector from 'hooks/useAppSelector';
 import { userDataSelector } from 'redux/slices/userDataSlice';
 import { Job } from 'types/job';
-import { addressApi, jobsApi } from 'requests';
 import { authSelector } from 'redux/slices/authSlice';
-import { getPartsAndMaterialsForJob, jobsSelector } from 'redux/slices/jobsSlice';
+import { unacceptJob, jobsSelector } from 'redux/slices/jobsSlice';
 import { PartType } from 'types/part_type';
 import Placeholder from 'assets/no_image_placeholder.png';
 import { StyleSheet } from 'react-native';
@@ -27,21 +26,35 @@ import useAppDispatch from 'hooks/useAppDispatch';
 
 export default function CurrentJobPage(): JSX.Element {
   const { userData } = useAppSelector(userDataSelector);
-  const { fbUserRef } = useAppSelector(authSelector);
+  const fbUserRef = useAppSelector(authSelector).fbUserRef;
+  const addressMap = useAppSelector((state) => state.addresses.addressMap);
 
-  const { currentJobId, jobsMap, partsMap, materialsMap } = useAppSelector(jobsSelector);
+  const { currentJobId, jobsMap, partsMap, materialsMap, loading } = useAppSelector(jobsSelector);
   const currentJob = jobsMap?.[currentJobId ?? ''];
   const currentPart = partsMap?.[currentJob?.partTypeId];
+  const currentAddress = addressMap?.[currentJob?.dropoffAddressId];
 
   const [completeJobPhoto, setCompleteJobPhoto] = useState<Asset | undefined>();
   const [showModal, setShowModal] = useState(false);
 
+  const dispatch = useAppDispatch();
+
+  if (loading) {
+    return (
+      <BaseView>
+        <Center>
+          <Spinner />
+        </Center>
+      </BaseView>
+    );
+  }
+
   return (
     <ScrollView>
-      { currentJob ? (
+      {currentJob ? (
         <BaseView>
-          { currentPart?.imageIds.length ? <Image alt='part' source={{ uri: currentPart?.imageIds[0] }} style={styles.image} /> : 
-            <Image alt='placeholder' source={Placeholder} style={styles.image} /> }
+          {currentPart?.imageIds.length ? <Image alt='part' source={{ uri: currentPart?.imageIds[0] }} style={styles.image} /> :
+            <Image alt='placeholder' source={Placeholder} style={styles.image} />}
           <View style={styles.infoContainer}>
             <View style={styles.infoHeader}>
               <Text style={styles.name}>{currentPart?.name}</Text>
@@ -52,11 +65,11 @@ export default function CurrentJobPage(): JSX.Element {
             </View>
             <View style={styles.infoBody}>
               <View style={styles.textAndIcon}>
-                <MapPinIcon width={28} height={28}/>
-                <Text style={[styles.text, { maxWidth: '90%' }]}>{'TODO: address'}</Text>
+                <MapPinIcon width={28} height={28} />
+                <Text style={[styles.text, { maxWidth: '90%' }]}>{currentAddress?.description}</Text>
               </View>
               <View style={styles.textAndIcon}>
-                <Image alt='MAD icon' source={MADIcon}/>
+                <Image alt='MAD icon' source={MADIcon} />
                 <Text style={styles.text}>{`${currentJob?.price} MAD`}</Text>
               </View>
             </View>
@@ -68,17 +81,33 @@ export default function CurrentJobPage(): JSX.Element {
               </View>
             ))}
           </View>
+          <Center marginTop={'10px'}>
+            <SharpButton
+              width={'200px'}
+              backgroundColor={Colors.yellow}
+              my='2px'
+              size='sm'
+              onPress={() => {
+                dispatch(unacceptJob({ jobId: currentJobId ?? '', fbUserRef }));
+              }}
+              marginBottom={'10px'}
+            >
+              <Text fontFamily={fonts.regular}>
+                Unaccept Job
+              </Text>
+            </SharpButton>
+          </Center>
           <Center>
-            <AppModal 
+            <AppModal
               showModal={showModal}
               setShowModal={setShowModal}
               modalButton={
                 <SharpButton
-                  width={'200px'} 
-                  backgroundColor={Colors.yellow} 
+                  width={'200px'}
+                  backgroundColor={Colors.yellow}
                   my='2px'
-                  size='sm' 
-                  onPress={() => { 
+                  size='sm'
+                  onPress={() => {
                     setShowModal(true);
                   }}
                 >
@@ -98,7 +127,6 @@ export default function CurrentJobPage(): JSX.Element {
                   icon={<AudioIcon />}
                   onPress={() => {
                     Speech.speak('My Profile');
-                    console.log('here1'); // TODO: Temp
                   }}
                 />
               </HStack>
@@ -110,10 +138,10 @@ export default function CurrentJobPage(): JSX.Element {
               </Center>
               <Center marginTop={'10px'}>
                 <SharpButton
-                  width={'80px'} 
-                  backgroundColor={Colors.yellow} 
+                  width={'80px'}
+                  backgroundColor={Colors.yellow}
                   my='2px'
-                  size='sm' 
+                  size='sm'
                   onPress={() => {
                     setShowModal(false);
                     setCompleteJobPhoto(undefined);
@@ -130,7 +158,16 @@ export default function CurrentJobPage(): JSX.Element {
           </Center>
         </BaseView>
       )
-        : <Spinner />
+        :
+        <BaseView>
+          <Center
+            marginTop={'100px'}
+          >
+            <Text>
+              You haven't accepted a job yet
+            </Text>
+          </Center>
+        </BaseView>
       }
     </ScrollView>
   );

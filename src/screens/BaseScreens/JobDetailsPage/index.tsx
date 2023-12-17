@@ -1,13 +1,12 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { View, Text, Image, Button, Center, Spinner } from 'native-base';
+import { View, Text, Image, Spinner } from 'native-base';
 import { StyleSheet } from 'react-native';
 import useAppSelector from 'hooks/useAppSelector';
 import useAppDispatch from 'hooks/useAppDispatch';
 import { authSelector } from 'redux/slices/authSlice';
-import { jobsSelector } from 'redux/slices/jobsSlice';
+import { jobsSelector, acceptJob } from 'redux/slices/jobsSlice';
 import { getUser, updateUser, userDataSelector } from 'redux/slices/userDataSlice';
 import SharpButton from 'components/SharpButton';
-import { addressApi, jobsApi, usersApi } from 'requests';
 import { fonts } from 'utils/constants';
 import { Job } from 'types/job';
 import { PartType } from 'types/part_type';
@@ -32,21 +31,7 @@ const JobDetailsPage = ({
   const { fbUserRef } = useAppSelector(authSelector);
   const { userData } = useAppSelector(userDataSelector);
   const { jobsMap, partsMap, materialsMap, loading } = useAppSelector(jobsSelector);
-
-  const acceptJob = useCallback(async () => {
-    if (!fbUserRef) return;
-    try {
-      // dispatch(updateUser({
-      //   updates: {
-      //     currentJobId: jobId,
-      //   },
-      //   fbUserRef,
-      // }));
-      // TODO
-    } catch (err) {
-      console.log(err);
-    }
-  }, [jobId, fbUserRef]);
+  const addressMap = useAppSelector((state) => state.addresses.addressMap);
 
   if (loading) {
     return <Spinner />;
@@ -58,6 +43,7 @@ const JobDetailsPage = ({
     const material = materialsMap[materialId];
     return material ? material.name : ''; // Return the name if available, otherwise an empty string
   });
+  const address = addressMap?.[job?.dropoffAddressId];
 
   return (
     <SafeAreaView style={styles.container}>
@@ -78,7 +64,7 @@ const JobDetailsPage = ({
               </View>
               <View style={styles.textAndIcon}>
                 <MapPinIcon width={28} height={28}/>
-                <Text style={[styles.text, { maxWidth: '90%' }]}>{'address TODO'}</Text>
+                <Text style={[styles.text, { maxWidth: '90%' }]}>{address?.description}</Text>
               </View>
 
               <View style={styles.textAndIcon}>
@@ -100,11 +86,13 @@ const JobDetailsPage = ({
               backgroundColor={Colors.yellow} 
               my='2px'
               size='sm' 
-              onPress={acceptJob}
+              onPress={() => {
+                dispatch(acceptJob({ jobId: jobId ?? '', fbUserRef }));
+              }}
               marginTop={'10px'}
             >
               <Text fontFamily={fonts.regular}>
-              Accept Job
+                Accept Job
               </Text>
             </SharpButton>
           </View>

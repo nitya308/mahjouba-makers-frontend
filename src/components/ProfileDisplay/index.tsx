@@ -66,7 +66,6 @@ export default function ProfileDisplay({
             icon={<AudioIcon />}
             onPress={() => {
               Speech.speak('My Profile');
-              console.log('here1'); // TODO: Temp
             }}
           />
         </HStack>
@@ -139,10 +138,6 @@ export default function ProfileDisplay({
             </HStack>
           </View>
         </Center>
-        {/* <Text>
-          {JSON.stringify(userData)}
-        </Text> */}
-        {/* TODO: change to user's own job history */}
         {jobHistoryIds.map((jobId: string) => {
           const job = jobsMap[jobId];
           const part = partsMap[job.partTypeId];
