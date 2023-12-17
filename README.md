@@ -51,7 +51,7 @@ For more detailed documentation on our file structure and specific functions in 
 
 ## Setup Steps
 
-Due to the native code being used in this project, you need to run this thorugh the iOS simulator on MacOS rather than through the Expo mobile app scanning a QR code. (Sorry, Windows users - you're out of luck.)
+Due to the native code being used in this project, we are using a bare Expo flow rather than a managed Expo flow; i.e., you need to run this thorugh the iOS simulator on MacOS rather than through the Expo mobile app scanning a QR code. (Sorry, Windows users - you're out of luck.)
 
 1. clone repo and `yarn install`
    - We are using yarn because npm has issues with installing peer dependencies, which in turn causes issues when you eventually want to deploy to TestFlight
@@ -63,11 +63,11 @@ Due to the native code being used in this project, you need to run this thorugh 
 
 #### Redux Debugging
 
-** Note: Broken since Expo 67. Maybe there's a fix recently, but not sure. **
-
 1. Download [react-native-debugger](https://github.com/jhen0409/react-native-debugger/releases) release
 2. Run `.exe` file
 3. Hook to port 19000
+
+Note: Since Expo 67 switched the jsEngine from jsc to hermes, the React Native Debugger has been broken in most cases. However, since we are using a bare Expo flow, the [react-native-devsettings](https://github.com/gusgard/react-native-devsettings) package reenables the debugger. 
 
 #### Linting
 
