@@ -29,70 +29,16 @@ export default function CurrentJobPage(): JSX.Element {
   const { userData } = useAppSelector(userDataSelector);
   const { fbUserRef } = useAppSelector(authSelector);
 
-  const { partsMap, materialsMap } = useAppSelector(jobsSelector);
-
-  // console.log('PARTS MAP', partsMap);
-  // console.log('MATERIALS MAP', materialsMap);
-
-  const [currentJob, setCurrentJob] = useState<Job | null>(null);
-  const [currentPart, setCurrentPart] = useState<PartType | null>(null);
-  const [currentMaterials, setCurrentMaterials] = useState<string[]>([]);
-  const [address, setAddress] = useState<Address | undefined>(undefined);
-
-  const [jobLoading, setJobLoading] = useState(false);
-  const [showModal, setShowModal] = useState(false);
+  const { currentJobId, jobsMap, partsMap, materialsMap } = useAppSelector(jobsSelector);
+  const currentJob = jobsMap?.[currentJobId ?? ''];
+  const currentPart = partsMap?.[currentJob?.partTypeId];
 
   const [completeJobPhoto, setCompleteJobPhoto] = useState<Asset | undefined>();
-
-  const dispatch = useAppDispatch();
-
-  useEffect(() => {
-    const pullJobForUser = async () => {
-      if (!userData?.currentJobId || !fbUserRef) return;
-      setJobLoading(true);
-      try {
-        const pulledJob = await jobsApi.getJob(userData.currentJobId, fbUserRef);
-        const pulledAddress = await addressApi.getAddress(pulledJob.dropoffAddressId, fbUserRef);
-        dispatch(getPartsAndMaterialsForJob({ job: pulledJob, fbUserRef }));
-        
-        if (pulledJob) {
-          setCurrentJob(pulledJob);
-        }
-        if (pulledAddress) {
-          setAddress(pulledAddress);
-        }
-        setJobLoading(false);
-      } catch (err) {
-        setJobLoading(false);
-        console.log(err);
-      }
-    };
-    pullJobForUser();
-  }, [userData]);
-
-  useEffect(() => {
-    if (!currentJob || !(currentJob.partTypeId in partsMap)) return;
-    setCurrentPart(partsMap[currentJob.partTypeId]);
-  }, [currentJob, partsMap]);
-
-  useEffect(() => {
-    if (!currentPart) return;
-    const materials = currentPart?.materialIds?.map((materialId: string) => {
-      const material = materialsMap[materialId];
-      return material ? material.name : '';
-    });
-    setCurrentMaterials(materials);
-  }, [currentPart, materialsMap]);
-
-  // console.log('Current Job', currentJob);
-  // console.log('Current Part', currentPart);
-  // console.log('Current Materials', currentMaterials);
+  const [showModal, setShowModal] = useState(false);
 
   return (
     <ScrollView>
-      {jobLoading ? (
-        <Spinner />
-      ) : (
+      { currentJob ? (
         <BaseView>
           { currentPart?.imageIds.length ? <Image alt='part' source={{ uri: currentPart?.imageIds[0] }} style={styles.image} /> : 
             <Image alt='placeholder' source={Placeholder} style={styles.image} /> }
@@ -107,7 +53,7 @@ export default function CurrentJobPage(): JSX.Element {
             <View style={styles.infoBody}>
               <View style={styles.textAndIcon}>
                 <MapPinIcon width={28} height={28}/>
-                <Text style={[styles.text, { maxWidth: '90%' }]}>{address?.description}</Text>
+                <Text style={[styles.text, { maxWidth: '90%' }]}>{'TODO: address'}</Text>
               </View>
               <View style={styles.textAndIcon}>
                 <Image alt='MAD icon' source={MADIcon}/>
@@ -116,9 +62,9 @@ export default function CurrentJobPage(): JSX.Element {
             </View>
           </View>
           <View style={styles.materialContainer}>
-            {currentMaterials.map((material, index) => (
+            {currentPart?.materialIds?.map((materialId, index) => (
               <View key={index}>
-                <Text style={styles.text}>{material}</Text>
+                <Text style={styles.text}>{materialsMap?.[materialId]?.name ?? ''}</Text>
               </View>
             ))}
           </View>
@@ -183,7 +129,9 @@ export default function CurrentJobPage(): JSX.Element {
             </AppModal>
           </Center>
         </BaseView>
-      )}
+      )
+        : <Spinner />
+      }
     </ScrollView>
   );
 }

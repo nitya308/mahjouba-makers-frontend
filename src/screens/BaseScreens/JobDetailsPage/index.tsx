@@ -81,18 +81,17 @@ const JobDetailsPage = ({
   const acceptJob = useCallback(async () => {
     if (!fbUserRef) return;
     try {
-      dispatch(updateUser({
-        updates: {
-          currentJobId: jobId,
-        },
-        fbUserRef,
-      }));
+      // dispatch(updateUser({
+      //   updates: {
+      //     currentJobId: jobId,
+      //   },
+      //   fbUserRef,
+      // }));
+      // TODO
     } catch (err) {
       console.log(err);
     }
   }, [jobId, fbUserRef]);
-
-  // console.log(job, part, address, materials);
 
   return (
     <SafeAreaView style={styles.container}>

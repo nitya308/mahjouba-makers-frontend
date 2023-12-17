@@ -50,7 +50,7 @@ export default function ProfileEditor({
   const [newName, setNewName] = useState<string | undefined>();
   const [newAddress, setNewAddress] = useState<Address | undefined>();
   const [selectedMaterialIds, setSelectedMaterialIds] = useState<string[]>([]);
-  const { jobs, cursor, partsMap, materialsMap, userJobs } = useAppSelector(jobsSelector);
+  const { cursor, jobsMap, partsMap, materialsMap } = useAppSelector(jobsSelector);
 
   useEffect(() => {
     if (currAddressString) return;

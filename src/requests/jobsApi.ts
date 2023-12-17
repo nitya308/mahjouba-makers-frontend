@@ -85,6 +85,16 @@ const deleteJob = async (id: string, fbUserRef: User) => {
     });
 };
 
+const getUserCurrentJob = async (fbUserRef: User) => {
+  const config = await getAxiosConfigForFBUser(fbUserRef);
+  return axios.get<Job>(`${SERVER_URL}currentJob/`, config)
+    .then((res) => ({ ...res.data }))
+    .catch(err => {
+      console.log(err);
+      throw err;
+    });
+};
+
 const jobsApi = {
   getJob,
   getJobs,
@@ -92,6 +102,7 @@ const jobsApi = {
   updateJob,
   createJob,
   deleteJob,
+  getUserCurrentJob,
 };
 
 export default jobsApi;

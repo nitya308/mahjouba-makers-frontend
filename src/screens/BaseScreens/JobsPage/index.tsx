@@ -25,15 +25,7 @@ const JobsPage = ({
   reloadJobs: () => void;
 }) => {
   const { userData } = useAppSelector(userDataSelector);
-  const { jobs, cursor, partsMap, materialsMap } = useAppSelector(jobsSelector);
-
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (partsMap && Object.keys(partsMap).length > 0 && materialsMap && Object.keys(materialsMap).length > 0) {
-      setLoading(false);
-    }
-  }, [partsMap, materialsMap]);
+  const { cursor, jobFeedIds, jobsMap, partsMap, materialsMap, loading } = useAppSelector(jobsSelector);
 
   if (loading) {
     return <Text>Loading...</Text>;
@@ -44,9 +36,9 @@ const JobsPage = ({
       <BaseView smallLogo showTopRightIcon>
         <VStack height="100%" width="90%" marginTop={'150px'} paddingBottom={100}>
           <Text fontSize={24} fontFamily={fonts.regular}>Job Search</Text>
-          {jobs.map((j: Job) => {
-            const job = j;
-            const part = partsMap[j.partTypeId];
+          {jobFeedIds.map((jobId: string) => {
+            const job = jobsMap[jobId];
+            const part = partsMap[job.partTypeId];
             const materials = part?.materialIds?.map((materialId: string) => {
               const material = materialsMap[materialId];
               return material ? material.name : ''; // Return the name if available, otherwise an empty string
