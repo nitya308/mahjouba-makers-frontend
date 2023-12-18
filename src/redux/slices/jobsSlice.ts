@@ -193,6 +193,24 @@ export const unacceptJob = createAsyncThunk(
   },
 );
 
+export const completeJob = createAsyncThunk(
+  'jobs/completeJob',
+  async (req: { jobId: string, fbUserRef: User | null, imageId: string }, { dispatch, getState }) => {
+    dispatch(startJobsLoading());
+    try {
+      if (req.fbUserRef) {
+        return await jobsApi.completeJob(req.jobId, req.fbUserRef, [req.imageId]);
+      } else {
+        return null;
+      }
+    } catch (err) {
+      return null;
+    } finally {
+      dispatch(stopJobsLoading());
+    }
+  },
+);
+
 export const jobsSlice = createSlice({
   name: 'jobs',
   initialState,
@@ -267,6 +285,13 @@ export const jobsSlice = createSlice({
       }
     });
     builder.addCase(unacceptJob.fulfilled, (state, action) => {
+      const job: Job | null = action.payload;
+      if (job) {
+        state.jobsMap[job._id] = job;
+        state.currentJobId = null;
+      }
+    });
+    builder.addCase(completeJob.fulfilled, (state, action) => {
       const job: Job | null = action.payload;
       if (job) {
         state.jobsMap[job._id] = job;

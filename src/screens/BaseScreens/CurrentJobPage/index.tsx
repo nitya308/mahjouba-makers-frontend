@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { View, Image } from 'react-native';
 import { Center, Text, IconButton, Spinner, ScrollView, HStack } from 'native-base';
 import useAppSelector from 'hooks/useAppSelector';
@@ -23,6 +23,10 @@ import MADIcon from '../../../assets/MADIcon.png';
 import * as Speech from 'expo-speech';
 import { Asset } from 'react-native-image-picker';
 import useAppDispatch from 'hooks/useAppDispatch';
+import { uploadMedia } from 'utils/mediaUtils';
+import Photo from 'types/photo';
+import { createPhoto } from 'redux/slices/photosSlice';
+import { completeJob } from 'redux/slices/jobsSlice';
 
 export default function CurrentJobPage(): JSX.Element {
   const { userData } = useAppSelector(userDataSelector);
@@ -39,6 +43,46 @@ export default function CurrentJobPage(): JSX.Element {
   const [showModal, setShowModal] = useState(false);
 
   const dispatch = useAppDispatch();
+
+  const saveNewJobPhoto = useCallback(async () => {
+    if (!completeJobPhoto || !fbUserRef || !userData) return;
+    try {
+      const url = await uploadMedia(`${currentJob?._id}-${(new Date()).toLocaleString()}.jpeg`, completeJobPhoto?.uri ?? '');
+      if (!url) throw new Error('Image upload failed');
+      const newPhoto: Photo = {
+        fullUrl: url,
+        fileType: 'image/jpeg',
+      };
+      return await dispatch(createPhoto({ fbUserRef, newPhoto }))
+        .unwrap()
+        .then((res) => {
+          return res?._id;
+        });
+    } catch (err) {
+      console.log(err);
+    }
+  }, [userData, fbUserRef, completeJobPhoto]);
+
+  const handleCompleteJobSubmit = useCallback(async () => {
+    if (!currentJob || !fbUserRef || !userData) return;
+    try {
+      const imageId = await saveNewJobPhoto();
+      if (imageId) {
+        dispatch(completeJob({
+          jobId: currentJob?._id,
+          fbUserRef,
+          imageId: imageId,
+        }));
+      } else {
+        alert('Either no image selected, or issue with image upload');
+      }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setShowModal(false);
+      setCompleteJobPhoto(undefined);
+    }
+  }, [completeJobPhoto, setCompleteJobPhoto, fbUserRef, userData, currentJob, setShowModal, setCompleteJobPhoto]);
 
   if (loading) {
     return (
@@ -144,11 +188,7 @@ export default function CurrentJobPage(): JSX.Element {
                   backgroundColor={Colors.yellow}
                   my='2px'
                   size='sm'
-                  onPress={() => {
-                    setShowModal(false);
-                    setCompleteJobPhoto(undefined);
-                    alert('Placeholder submit for now'); // TODO
-                  }}
+                  onPress={handleCompleteJobSubmit}
                   marginTop={'10px'}
                 >
                   <Text fontFamily={fonts.regular}>

@@ -115,6 +115,16 @@ const unacceptJob = async (id: string, fbUserRef: User) => {
     });
 };
 
+const completeJob = async (id: string, fbUserRef: User, imageIds: string[]) => {
+  const config = await getAxiosConfigForFBUser(fbUserRef);
+  return axios.patch<Job>(`${SERVER_URL}jobs/complete/${id}`, { imageIds }, config)
+    .then((res) => ({ ...res.data }))
+    .catch(err => {
+      console.log(err);
+      throw err;
+    });
+};
+
 const jobsApi = {
   getJob,
   getJobs,
@@ -125,6 +135,7 @@ const jobsApi = {
   getUserCurrentJob,
   acceptJob,
   unacceptJob,
+  completeJob,
 };
 
 export default jobsApi;
