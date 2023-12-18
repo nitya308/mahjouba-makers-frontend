@@ -1,13 +1,11 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { SERVER_URL } from '../../utils/constants.js';
-import axios from 'axios';
-import Photos from 'types/photo';
+import Photo from 'types/photo';
 import photosApi from 'requests/photosApi';
 import { User } from 'firebase/auth';
 
 export interface PhotosState {
   loading: boolean
-  photosMap: Record<string, Photos>
+  photosMap: Record<string, Photo>
 }
 
 const initialState: PhotosState = {
@@ -15,12 +13,12 @@ const initialState: PhotosState = {
   photosMap: {},
 };
 
-export const createPhotos = createAsyncThunk(
+export const createPhoto = createAsyncThunk(
   'photos/createPhotos',
-  async (req: { fbUserRef: User, newPhotos: Photos }, { dispatch }) => {
+  async (req: { fbUserRef: User, newPhoto: Photo }, { dispatch }) => {
     dispatch(startPhotosLoading());
     try {
-      return await photosApi.createPhoto(req.newPhotos, req.fbUserRef);
+      return await photosApi.createPhoto(req.newPhoto, req.fbUserRef);
     } catch (err) {
       return null;
     } finally {
@@ -57,21 +55,21 @@ export const getPhotos = createAsyncThunk(
 );
 
 export const photosSlice = createSlice({
-  name: 'photoses',
+  name: 'photos',
   initialState,
   reducers: {
     startPhotosLoading: (state) => ({ ...state, loading: true }),
     stopPhotosLoading: (state) => ({ ...state, loading: false }),
   },
   extraReducers: (builder) => {
-    builder.addCase(createPhotos.fulfilled, (state, action) => {
-      const photos: Photos = action.payload as Photos;
+    builder.addCase(createPhoto.fulfilled, (state, action) => {
+      const photos: Photo = action.payload as Photo;
       if (photos && photos._id) {
         state.photosMap[photos._id] = photos;
       }
     });
     builder.addCase(getPhoto.fulfilled, (state, action) => {
-      const photos: Photos = action.payload as Photos;
+      const photos: Photo = action.payload as Photo;
       if (photos && photos._id) {
         state.photosMap[photos._id] = photos;
       }

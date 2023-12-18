@@ -28,6 +28,7 @@ export default function CurrentJobPage(): JSX.Element {
   const { userData } = useAppSelector(userDataSelector);
   const fbUserRef = useAppSelector(authSelector).fbUserRef;
   const addressMap = useAppSelector((state) => state.addresses.addressMap);
+  const photoMap = useAppSelector((state) => state.photos.photosMap);
 
   const { currentJobId, jobsMap, partsMap, materialsMap, loading } = useAppSelector(jobsSelector);
   const currentJob = jobsMap?.[currentJobId ?? ''];
@@ -53,8 +54,9 @@ export default function CurrentJobPage(): JSX.Element {
     <ScrollView>
       {currentJob ? (
         <BaseView>
-          {currentPart?.imageIds.length ? <Image alt='part' source={{ uri: currentPart?.imageIds[0] }} style={styles.image} /> :
-            <Image alt='placeholder' source={Placeholder} style={styles.image} />}
+          {currentPart?.imageIds.length 
+            ? <Image alt='part' source={{ uri: photoMap?.[currentPart?.imageIds[0]]?.fullUrl ?? '' }} style={styles.image} /> 
+            : <Image alt='placeholder' source={Placeholder} style={styles.image} />}
           <View style={styles.infoContainer}>
             <View style={styles.infoHeader}>
               <Text style={styles.name}>{currentPart?.name}</Text>

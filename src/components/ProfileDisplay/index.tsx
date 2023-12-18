@@ -18,6 +18,7 @@ import Colors from 'utils/Colors';
 import { Job } from 'types/job';
 import JobCard from 'components/JobCard';
 import * as Speech from 'expo-speech';
+import { getAddress } from 'redux/slices/addressSlice';
 
 export default function ProfileDisplay({
   toggleEditing,
@@ -29,19 +30,12 @@ export default function ProfileDisplay({
   const dispatch = useAppDispatch();
   
   const { fbUserRef } = useAppSelector(authSelector);
-  const { userData, profileImageUri } = useAppSelector(userDataSelector);
-  const [addressString, setAddressString] = useState<string | undefined>();
+  const { userData } = useAppSelector(userDataSelector);
   const { jobsMap, partsMap, materialsMap, jobHistoryIds } = useAppSelector(jobsSelector);
+  const addressMap = useAppSelector((state) => state.addresses.addressMap);
+  const photoMap = useAppSelector((state) => state.photos.photosMap);
 
-  useEffect(() => {
-    if (addressString) return;
-    const pullAddress = async () => {
-      if (!fbUserRef || !userData?.shippingAddressId) return;
-      const address = await addressApi.getAddress(userData.shippingAddressId, fbUserRef);
-      setAddressString(address.description);
-    };
-    pullAddress();
-  }, [userData, fbUserRef, addressString]);
+  const addressString = addressMap?.[userData?.homeAddressId ?? '']?.description ?? '';
 
   useEffect(() => {
     if (fbUserRef) {
@@ -82,7 +76,7 @@ export default function ProfileDisplay({
         <Center my='20px'>
           <ExpoImage
             source={{
-              uri: profileImageUri || DEFAULT_PROFILE_URI,
+              uri: photoMap?.[userData?.profilePicId ?? '']?.fullUrl ?? DEFAULT_PROFILE_URI,
             }}
             style={{
               width: 120,

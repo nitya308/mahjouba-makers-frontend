@@ -1,45 +1,31 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Text, View, Image } from 'native-base';
 import { StyleSheet } from 'react-native';
-import { Job } from 'types/job';
+import useAppSelector from 'hooks/useAppSelector';
+import { JOB_STATUS_ENUM, Job } from 'types/job';
 import { PartType } from 'types/part_type';
-import { DEFAULT_PART_URI } from 'utils/constants';
-import { IMaterial } from 'types/material';
 import Placeholder from 'assets/no_image_placeholder.png';
 
 const JobCard = ({ job, part, materials }: { job: Job, part: PartType, materials: string[] }) => {
-  const partUri = useMemo(() => (
-    part && part.imageIds && part?.imageIds.length > 0 ?
-      part.imageIds[0] :
-      DEFAULT_PART_URI
-  ), [part]);
+  const photoMap = useAppSelector((state) => state.photos.photosMap);
 
-  // const name = useMemo(() => (
-  //   part?.name || 'Unnamed part'
-  // ), [part]);
-
-  // const price = useMemo(() => {
-  //   return job?.price || 0;
-  // }, [part]);
-
-  const { price } = job;
-
-  // console.log('MATERIALS', materials);
+  // Display different image depending on current jobStatus
+  const imageUrl = (job?.jobStatus === JOB_STATUS_ENUM.COMPLETE || job?.jobStatus === JOB_STATUS_ENUM.PENDING_REVIEW) 
+    ? (photoMap?.[job?.imageIds[0]]?.fullUrl) 
+    : (photoMap?.[part?.imageIds[0]]?.fullUrl);
 
   return (
     <View style={styles.jobCardContainer}>
       <View style={styles.imageWrapper}>
-        {
-          // TODO: display image
+        { part?.imageIds?.length 
+          ? <Image source={{ uri: imageUrl }} style={styles.image} />
+          : <Image source={Placeholder} style={styles.image} /> 
         }
-        { !part?.imageIds?.length 
-          ? <Image source={Placeholder} style={styles.image} /> 
-          : <Image source={{ uri: part?.imageIds[0] }} style={styles.image} />}
       </View>
       <View style={styles.cardContent}>
         <View style={styles.namePriceContainer}>
           <Text style={styles.name}>{part?.name}</Text>
-          <Text style={styles.price}>{price} MAD</Text>
+          <Text style={styles.price}>{job?.price} MAD</Text>
         </View>
         <View>
           {

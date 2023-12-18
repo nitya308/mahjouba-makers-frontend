@@ -16,15 +16,13 @@ import { Image } from 'react-native-image-crop-picker';
 import { Ionicons } from '@expo/vector-icons';
 import { uploadMedia } from 'utils/mediaUtils';
 import useAppSelector from 'hooks/useAppSelector';
-import { setProfileUri, updateUser, userDataSelector } from 'redux/slices/userDataSlice';
+import { updateUser, userDataSelector } from 'redux/slices/userDataSlice';
 import Photo from 'types/photo';
-import photosApi from 'requests/photosApi';
 import { authSelector } from 'redux/slices/authSlice';
 import { jobsSelector, getUserJobHistory } from 'redux/slices/jobsSlice';
 import useAppDispatch from 'hooks/useAppDispatch';
 import Address from '../../types/address';
 import AddressInput from 'components/AddressInput';
-import addressApi from 'requests/addressApi';
 import { cleanUndefinedFields } from 'utils/requestUtils';
 import MaterialSelector from 'components/MaterialSelector';
 import SharpButton from 'components/SharpButton';
@@ -36,6 +34,9 @@ import AddIcon from '../../assets/add_icon.svg';
 import { fonts } from 'utils/constants';
 import { useTranslation } from 'react-i18next';
 import SelectLanguage from 'components/SelectLanguage';
+import { createAddress } from 'redux/slices/addressSlice';
+import { createPhoto } from 'redux/slices/photosSlice';
+import { DEFAULT_PROFILE_URI } from 'utils/constants';
 
 export default function ProfileEditor({
   toggleEditing,
@@ -46,33 +47,30 @@ export default function ProfileEditor({
   const { fbUserRef } = useAppSelector(authSelector);
   const { userData } = useAppSelector(userDataSelector);
   const [selectedImage, setSelectedImage] = useState<Image | undefined>();
-  const [currAddressString, setCurrAddressString] = useState<string | undefined>();
   const [newName, setNewName] = useState<string | undefined>();
   const [newAddress, setNewAddress] = useState<Address | undefined>();
   const [selectedMaterialIds, setSelectedMaterialIds] = useState<string[]>([]);
   const { cursor, jobsMap, partsMap, materialsMap } = useAppSelector(jobsSelector);
-
-  useEffect(() => {
-    if (currAddressString) return;
-    const pullAddress = async () => {
-      if (!fbUserRef || !userData?.shippingAddressId) return;
-      const address = await addressApi.getAddress(userData.shippingAddressId, fbUserRef);
-      setCurrAddressString(address.description);
-    };
-    pullAddress();
-  }, [userData, fbUserRef, currAddressString]);
+  const addressMap = useAppSelector((state) => state.addresses.addressMap);
+  const photoMap = useAppSelector((state) => state.photos.photosMap);
 
   useEffect(() => {
     if (userData?.materialIds) {
       setSelectedMaterialIds(userData?.materialIds);
+      setNewName(userData?.name);
+      setNewAddress(addressMap?.[userData?.homeAddressId ?? ''] ?? undefined);
+      // setSelectedImage(photoMap?.[userData?.profilePicId ?? '']?.fullUrl ?? D)
     }
   }, [userData]);
 
   const saveNewAddress = useCallback(async () => {
     if (!newAddress || !fbUserRef) return;
     try {
-      const uploadRes = await addressApi.createAddress(newAddress, fbUserRef);
-      return uploadRes._id;
+      return await dispatch(createAddress({ fbUserRef, newAddress }))
+        .unwrap()
+        .then((res) => {
+          return res?._id;
+        });
     } catch (err) {
       console.log(err);
     }
@@ -87,9 +85,11 @@ export default function ProfileEditor({
         fullUrl: url,
         fileType: 'image/jpeg',
       };
-      const dbPhoto = await photosApi.createPhoto(newPhoto, fbUserRef);
-      dispatch(setProfileUri(url));
-      return dbPhoto._id;
+      return await dispatch(createPhoto({ fbUserRef, newPhoto }))
+        .unwrap()
+        .then((res) => {
+          return res?._id;
+        });
     } catch (err) {
       console.log(err);
     }
@@ -110,6 +110,7 @@ export default function ProfileEditor({
       dispatch(updateUser({
         updates: cleanUndefinedFields({
           profilePicId: newProfilePicId,
+          homeAddressId: newAddressId,
           shippingAddressId: newAddressId,
           name: newName,
           materialIds: selectedMaterialIds,
@@ -144,6 +145,7 @@ export default function ProfileEditor({
         <ProfileImageSelector
           selectedProfile={selectedImage}
           setSelectedProfile={setSelectedImage}
+          defaultImageUri={photoMap?.[userData?.profilePicId ?? '']?.fullUrl ?? DEFAULT_PROFILE_URI}
           width={120}
           height={120}
         />
@@ -164,7 +166,8 @@ export default function ProfileEditor({
         />
         <AddressInput
           setAddress={setNewAddress}
-          placeholder={currAddressString || 'Address'}
+          // TODO: Make this defaultValue instead of placeholder (so that the text isn't light grey)
+          placeholder={addressMap?.[userData?.homeAddressId ?? '']?.description ?? 'Address'}
         />
         {
           // TODO: Need to figure out why can't put MaterialSelector in AppModal - Eric
@@ -220,6 +223,9 @@ export default function ProfileEditor({
       }
       <Center>
         <Text>
+          {
+            'demo translation functionality: '
+          }
           {
             t('Hello world')
           }
