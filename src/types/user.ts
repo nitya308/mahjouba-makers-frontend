@@ -17,8 +17,6 @@ export interface IUser {
   homeAddressId: string | null;
   shippingAddressId: string | null;
   profilePicId: string | null;
-  currentJobId: string | null;
-  jobHistory: string[] | null,
   materialIds: string[] | null,
   idNo: string | null,
   iceNo: string | null,

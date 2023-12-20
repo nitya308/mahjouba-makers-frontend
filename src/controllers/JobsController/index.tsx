@@ -3,7 +3,7 @@ import { View, Text, Center } from 'native-base';
 import { JobsPage } from 'screens';
 import useAppDispatch from 'hooks/useAppDispatch';
 import useAppSelector from 'hooks/useAppSelector';
-import { jobsSelector, pullJobs, pullNextJobsPage } from 'redux/slices/jobsSlice';
+import { clearJobFeed, getPartsAndMaterialsForJob, getUserCurrentJob, getUserJobHistory, jobsSelector, pullJobs, pullNextJobsPage } from 'redux/slices/jobsSlice';
 import { authSelector } from 'redux/slices/authSlice';
 import SortOptions from 'types/sortOptions';
 import { Job } from 'types/job';
@@ -33,7 +33,10 @@ export default function JobsController(): JSX.Element {
         order: sortOrder,
       };
     }
+    dispatch(clearJobFeed());
     dispatch(pullJobs({ fbUserRef, sortOptions }));
+    dispatch(getUserJobHistory({ fbUserRef }));
+    dispatch(getUserCurrentJob({ fbUserRef }));
   }, [fbUserRef, sortField, sortOrder]);
   
   useEffect(() => {

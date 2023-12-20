@@ -6,6 +6,8 @@ import RootNavigation from './src/navigation';
 import { NativeBaseProvider, extendTheme } from 'native-base';
 import { fonts } from 'utils/constants';
 import { useFonts as ExpoUseFonts } from 'expo-font';
+import 'react-native-devsettings/withAsyncStorage';
+import './src/utils/i18n';
 
 const theme = extendTheme({
   fontConfig: {

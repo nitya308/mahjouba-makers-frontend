@@ -5,33 +5,28 @@ import { UserScopes, IUser, CreateUserModel } from 'types/user.js';
 import { User } from 'firebase/auth';
 import { usersApi } from 'requests';
 import { RootState } from 'redux/store';
-import photosApi from 'requests/photosApi';
+import { getPhoto } from './photosSlice';
+import { getAddress } from './addressSlice';
 
 export interface UserState {
   loading: boolean;
   userData?: IUser;
-  profileImageUri?: string;
 }
 
 const initialState: UserState = {
   loading: false,
   userData: undefined,
-  profileImageUri: undefined,
 };
 
 export const initUser = createAsyncThunk(
   'userData/initUser',
-  async (req: {
-    userData: CreateUserModel,
-    fbUserRef: User
-  }, { dispatch }) => {
+  async (req: { userData: CreateUserModel, fbUserRef: User }, { dispatch }) => {
     dispatch(startUsersLoading());
-    console.log(req.userData);
     try {
       const res = await usersApi.initUser(req.userData, req.fbUserRef);
       dispatch(stopUsersLoading());
       dispatch(setUser(res));
-      dispatch(getUser( { fbUserRef: req.fbUserRef }));
+      dispatch(getUser({ fbUserRef: req.fbUserRef }));
       return res;
     } catch (err) {
       dispatch(stopUsersLoading());
@@ -49,10 +44,9 @@ export const getUser = createAsyncThunk(
       const res = await usersApi.getCurrUser(req.fbUserRef);
       dispatch(stopUsersLoading());
       if (res) {
-        console.log('NEW USER:');
-        console.log(res);
         dispatch(setUser(res));
-        dispatch(pullUserProfileImg({ fbUserRef: req.fbUserRef }));
+        dispatch(getPhoto({ fbUserRef: req.fbUserRef, photoId: res?.profilePicId ?? '' }));
+        dispatch(getAddress({ fbUserRef: req.fbUserRef, addressId: res?.homeAddressId ?? '' }));
       }
       return res;
     } catch (err) {
@@ -68,9 +62,11 @@ export const updateUser = createAsyncThunk(
   async (req: { updates: Partial<IUser>, fbUserRef: User }, { dispatch }) => {
     dispatch(startUsersLoading());
     try {
-      const updateRes: IUser = await usersApi.updateUser(req.updates, req.fbUserRef);
-      if (updateRes && updateRes._id) {
-        dispatch(setUser(updateRes));
+      const res: IUser = await usersApi.updateUser(req.updates, req.fbUserRef);
+      if (res && res._id) {
+        dispatch(setUser(res));
+        dispatch(getPhoto({ fbUserRef: req.fbUserRef, photoId: res?.profilePicId ?? '' }));
+        dispatch(getAddress({ fbUserRef: req.fbUserRef, addressId: res?.homeAddressId ?? '' }));
       }
       dispatch(stopUsersLoading());
     } catch (err) {
@@ -97,24 +93,6 @@ export const deleteUser = createAsyncThunk(
   },
 );
 
-export const pullUserProfileImg = createAsyncThunk(
-  'userData/pullUserProfileImg',
-  async (req: { fbUserRef: User }, { dispatch, getState }) => {
-    try {
-      const currUserData = (getState() as RootState).userData;
-      if (!currUserData.userData?.profilePicId) {
-        return;
-      }
-      const profilePhoto = await photosApi.getPhoto(currUserData.userData.profilePicId, req.fbUserRef);
-      if (profilePhoto) {
-        dispatch(setProfileUri(profilePhoto.fullUrl));
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  },
-);
-
 export const userDataSlice = createSlice({
   name: 'users',
   initialState,
@@ -123,12 +101,6 @@ export const userDataSlice = createSlice({
       return {
         ...state,
         userData: action.payload,
-      };
-    },
-    setProfileUri: (state, action: PayloadAction<string>) => {
-      return {
-        ...state,
-        profileImageUri: action.payload,
       };
     },
     startUsersLoading: (state) => ({ ...state, loading: true }),
@@ -144,7 +116,7 @@ export const userDataSlice = createSlice({
       // alert('Retrieved user as: ' + JSON.stringify(action.payload));
     });
     builder.addCase(updateUser.fulfilled, (state, action) => {
-      alert('Updated user to: ' + JSON.stringify(action.payload));
+      // alert('Updated user to: ' + JSON.stringify(action.payload));
     });
     builder.addCase(deleteUser.fulfilled, (state, action) => {
       const user: IUser = action.payload as IUser;
@@ -152,7 +124,7 @@ export const userDataSlice = createSlice({
       if (curSelectedUser._id === user._id) {
         state.userData = undefined;
       }
-      alert('Deleted user with id ' + user._id);
+      // alert('Deleted user with id ' + user._id);
     });
   },
 });
@@ -161,10 +133,9 @@ export const {
   startUsersLoading, 
   stopUsersLoading, 
   setUser, 
-  setProfileUri,
   clearUserData,
-} =
-userDataSlice.actions;
+} = userDataSlice.actions;
+
 export const userDataSelector = (state: RootState) => state.userData;
 
 export default userDataSlice.reducer;

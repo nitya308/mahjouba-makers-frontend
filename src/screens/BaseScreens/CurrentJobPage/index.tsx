@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { View, Image } from 'react-native';
-import { Box, Center, Text, IconButton, Spinner, ScrollView, HStack } from 'native-base';
+import { Center, Text, IconButton, Spinner, ScrollView, HStack } from 'native-base';
 import useAppSelector from 'hooks/useAppSelector';
 import { userDataSelector } from 'redux/slices/userDataSlice';
 import { Job } from 'types/job';
-import { addressApi, jobsApi } from 'requests';
 import { authSelector } from 'redux/slices/authSlice';
-import { jobsSelector } from 'redux/slices/jobsSlice';
+import { unacceptJob, jobsSelector } from 'redux/slices/jobsSlice';
 import { PartType } from 'types/part_type';
 import Placeholder from 'assets/no_image_placeholder.png';
 import { StyleSheet } from 'react-native';
@@ -23,74 +22,85 @@ import MapPinIcon from '../../../assets/map_pin.svg';
 import MADIcon from '../../../assets/MADIcon.png';
 import * as Speech from 'expo-speech';
 import { Asset } from 'react-native-image-picker';
+import useAppDispatch from 'hooks/useAppDispatch';
+import { uploadMedia } from 'utils/mediaUtils';
+import Photo from 'types/photo';
+import { createPhoto } from 'redux/slices/photosSlice';
+import { completeJob } from 'redux/slices/jobsSlice';
 
 export default function CurrentJobPage(): JSX.Element {
   const { userData } = useAppSelector(userDataSelector);
-  const { fbUserRef } = useAppSelector(authSelector);
+  const fbUserRef = useAppSelector(authSelector).fbUserRef;
+  const addressMap = useAppSelector((state) => state.addresses.addressMap);
+  const photoMap = useAppSelector((state) => state.photos.photosMap);
 
-  const { partsMap, materialsMap } = useAppSelector(jobsSelector);
-
-  // console.log('PARTS MAP', partsMap);
-  // console.log('MATERIALS MAP', materialsMap);
-
-  const [currentJob, setCurrentJob] = useState<Job | null>(null);
-  const [currentPart, setCurrentPart] = useState<PartType | null>(null);
-  const [currentMaterials, setCurrentMaterials] = useState<string[]>([]);
-  const [address, setAddress] = useState<Address | undefined>(undefined);
-
-  const [jobLoading, setJobLoading] = useState(false);
-  const [showModal, setShowModal] = useState(false);
+  const { currentJobId, jobsMap, partsMap, materialsMap, loading } = useAppSelector(jobsSelector);
+  const currentJob = jobsMap?.[currentJobId ?? ''];
+  const currentPart = partsMap?.[currentJob?.partTypeId];
+  const currentAddress = addressMap?.[currentJob?.dropoffAddressId];
 
   const [completeJobPhoto, setCompleteJobPhoto] = useState<Asset | undefined>();
+  const [showModal, setShowModal] = useState(false);
 
-  useEffect(() => {
-    const pullJobForUser = async () => {
-      if (!userData?.currentJobId || !fbUserRef) return;
-      setJobLoading(true);
-      try {
-        const pulledJob = await jobsApi.getJob(userData.currentJobId, fbUserRef);
-        const pulledAddress = await addressApi.getAddress(pulledJob.dropoffAddressId, fbUserRef);
-        if (pulledJob) {
-          setCurrentJob(pulledJob);
-        }
-        if (pulledAddress) {
-          setAddress(pulledAddress);
-        }
-        setJobLoading(false);
-      } catch (err) {
-        setJobLoading(false);
-        console.log(err);
+  const dispatch = useAppDispatch();
+
+  const saveNewJobPhoto = useCallback(async () => {
+    if (!completeJobPhoto || !fbUserRef || !userData) return;
+    try {
+      const url = await uploadMedia(`${currentJob?._id}-${(new Date()).toLocaleString()}.jpeg`, completeJobPhoto?.uri ?? '');
+      if (!url) throw new Error('Image upload failed');
+      const newPhoto: Photo = {
+        fullUrl: url,
+        fileType: 'image/jpeg',
+      };
+      return await dispatch(createPhoto({ fbUserRef, newPhoto }))
+        .unwrap()
+        .then((res) => {
+          return res?._id;
+        });
+    } catch (err) {
+      console.log(err);
+    }
+  }, [userData, fbUserRef, completeJobPhoto]);
+
+  const handleCompleteJobSubmit = useCallback(async () => {
+    if (!currentJob || !fbUserRef || !userData) return;
+    try {
+      const imageId = await saveNewJobPhoto();
+      if (imageId) {
+        dispatch(completeJob({
+          jobId: currentJob?._id,
+          fbUserRef,
+          imageId: imageId,
+        }));
+      } else {
+        alert('Either no image selected, or issue with image upload');
       }
-    };
-    pullJobForUser();
-  }, [userData]);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setShowModal(false);
+      setCompleteJobPhoto(undefined);
+    }
+  }, [completeJobPhoto, setCompleteJobPhoto, fbUserRef, userData, currentJob, setShowModal, setCompleteJobPhoto]);
 
-  useEffect(() => {
-    if (!currentJob || !(currentJob.partTypeId in partsMap)) return;
-    setCurrentPart(partsMap[currentJob.partTypeId]);
-  }, [currentJob, partsMap]);
-
-  useEffect(() => {
-    if (!currentPart) return;
-    const materials = currentPart.materialIds.map((materialId: string) => {
-      const material = materialsMap[materialId];
-      return material ? material.name : '';
-    });
-    setCurrentMaterials(materials);
-  }, [currentPart, materialsMap]);
-
-  // console.log('Current Job', currentJob);
-  // console.log('Current Part', currentPart);
-  // console.log('Current Materials', currentMaterials);
+  if (loading) {
+    return (
+      <BaseView>
+        <Center>
+          <Spinner />
+        </Center>
+      </BaseView>
+    );
+  }
 
   return (
     <ScrollView>
-      {jobLoading ? (
-        <Spinner />
-      ) : (
+      {currentJob ? (
         <BaseView>
-          { currentPart?.imageIds.length ? <Image alt='part' source={{ uri: currentPart?.imageIds[0] }} style={styles.image} /> : 
-            <Image alt='placeholder' source={Placeholder} style={styles.image} /> }
+          {currentPart?.imageIds.length 
+            ? <Image alt='part' source={{ uri: photoMap?.[currentPart?.imageIds[0]]?.fullUrl ?? '' }} style={styles.image} /> 
+            : <Image alt='placeholder' source={Placeholder} style={styles.image} />}
           <View style={styles.infoContainer}>
             <View style={styles.infoHeader}>
               <Text style={styles.name}>{currentPart?.name}</Text>
@@ -101,33 +111,49 @@ export default function CurrentJobPage(): JSX.Element {
             </View>
             <View style={styles.infoBody}>
               <View style={styles.textAndIcon}>
-                <MapPinIcon width={28} height={28}/>
-                <Text style={[styles.text, { maxWidth: '90%' }]}>{address?.description}</Text>
+                <MapPinIcon width={28} height={28} />
+                <Text style={[styles.text, { maxWidth: '90%' }]}>{currentAddress?.description}</Text>
               </View>
               <View style={styles.textAndIcon}>
-                <Image alt='MAD icon' source={MADIcon}/>
+                <Image alt='MAD icon' source={MADIcon} />
                 <Text style={styles.text}>{`${currentJob?.price} MAD`}</Text>
               </View>
             </View>
           </View>
           <View style={styles.materialContainer}>
-            {currentMaterials.map((material, index) => (
+            {currentPart?.materialIds?.map((materialId, index) => (
               <View key={index}>
-                <Text style={styles.text}>{material}</Text>
+                <Text style={styles.text}>{materialsMap?.[materialId]?.name ?? ''}</Text>
               </View>
             ))}
           </View>
+          <Center marginTop={'10px'}>
+            <SharpButton
+              width={'200px'}
+              backgroundColor={Colors.yellow}
+              my='2px'
+              size='sm'
+              onPress={() => {
+                dispatch(unacceptJob({ jobId: currentJobId ?? '', fbUserRef }));
+              }}
+              marginBottom={'10px'}
+            >
+              <Text fontFamily={fonts.regular}>
+                Unaccept Job
+              </Text>
+            </SharpButton>
+          </Center>
           <Center>
-            <AppModal 
+            <AppModal
               showModal={showModal}
               setShowModal={setShowModal}
               modalButton={
                 <SharpButton
-                  width={'200px'} 
-                  backgroundColor={Colors.yellow} 
+                  width={'200px'}
+                  backgroundColor={Colors.yellow}
                   my='2px'
-                  size='sm' 
-                  onPress={() => { 
+                  size='sm'
+                  onPress={() => {
                     setShowModal(true);
                   }}
                 >
@@ -147,7 +173,6 @@ export default function CurrentJobPage(): JSX.Element {
                   icon={<AudioIcon />}
                   onPress={() => {
                     Speech.speak('My Profile');
-                    console.log('here1'); // TODO: Temp
                   }}
                 />
               </HStack>
@@ -159,15 +184,11 @@ export default function CurrentJobPage(): JSX.Element {
               </Center>
               <Center marginTop={'10px'}>
                 <SharpButton
-                  width={'80px'} 
-                  backgroundColor={Colors.yellow} 
+                  width={'80px'}
+                  backgroundColor={Colors.yellow}
                   my='2px'
-                  size='sm' 
-                  onPress={() => {
-                    setShowModal(false);
-                    setCompleteJobPhoto(undefined);
-                    alert('Placeholder submit for now'); // TODO
-                  }}
+                  size='sm'
+                  onPress={handleCompleteJobSubmit}
                   marginTop={'10px'}
                 >
                   <Text fontFamily={fonts.regular}>
@@ -178,7 +199,18 @@ export default function CurrentJobPage(): JSX.Element {
             </AppModal>
           </Center>
         </BaseView>
-      )}
+      )
+        :
+        <BaseView>
+          <Center
+            marginTop={'100px'}
+          >
+            <Text>
+              You haven't accepted a job yet
+            </Text>
+          </Center>
+        </BaseView>
+      }
     </ScrollView>
   );
 }

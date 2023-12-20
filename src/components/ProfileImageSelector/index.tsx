@@ -11,16 +11,16 @@ import { userDataSelector } from 'redux/slices/userDataSlice';
 export default function ProfileImageSelector({
   selectedProfile,
   setSelectedProfile,
+  defaultImageUri,
   width,
   height,
 }: {
   selectedProfile?: Image;
   setSelectedProfile: (newProfile: Image | undefined) => void;
+  defaultImageUri?: string;
   width: number;
   height: number;
 }): JSX.Element {
-  const { profileImageUri } = useAppSelector(userDataSelector);
-
   const selectImage = async () => {
     try {
       // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -43,8 +43,8 @@ export default function ProfileImageSelector({
   const selectedUri = useMemo(() => {
     if (selectedProfile) {
       return selectedProfile.sourceURL || `file://${selectedProfile.path}`;
-    } else if (profileImageUri) {
-      return profileImageUri;
+    } else if (defaultImageUri) {
+      return defaultImageUri;
     }
     return DEFAULT_PROFILE_URI;
   }, [selectedProfile]);

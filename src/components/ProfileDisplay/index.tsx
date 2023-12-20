@@ -18,6 +18,7 @@ import Colors from 'utils/Colors';
 import { Job } from 'types/job';
 import JobCard from 'components/JobCard';
 import * as Speech from 'expo-speech';
+import { getAddress } from 'redux/slices/addressSlice';
 
 export default function ProfileDisplay({
   toggleEditing,
@@ -29,19 +30,12 @@ export default function ProfileDisplay({
   const dispatch = useAppDispatch();
   
   const { fbUserRef } = useAppSelector(authSelector);
-  const { userData, profileImageUri } = useAppSelector(userDataSelector);
-  const [addressString, setAddressString] = useState<string | undefined>();
-  const { jobs, cursor, partsMap, materialsMap, userJobs } = useAppSelector(jobsSelector);
+  const { userData } = useAppSelector(userDataSelector);
+  const { jobsMap, partsMap, materialsMap, jobHistoryIds } = useAppSelector(jobsSelector);
+  const addressMap = useAppSelector((state) => state.addresses.addressMap);
+  const photoMap = useAppSelector((state) => state.photos.photosMap);
 
-  useEffect(() => {
-    if (addressString) return;
-    const pullAddress = async () => {
-      if (!fbUserRef || !userData?.shippingAddressId) return;
-      const address = await addressApi.getAddress(userData.shippingAddressId, fbUserRef);
-      setAddressString(address.description);
-    };
-    pullAddress();
-  }, [userData, fbUserRef, addressString]);
+  const addressString = addressMap?.[userData?.homeAddressId ?? '']?.description ?? '';
 
   useEffect(() => {
     if (fbUserRef) {
@@ -66,7 +60,6 @@ export default function ProfileDisplay({
             icon={<AudioIcon />}
             onPress={() => {
               Speech.speak('My Profile');
-              console.log('here1'); // TODO: Temp
             }}
           />
         </HStack>
@@ -83,7 +76,7 @@ export default function ProfileDisplay({
         <Center my='20px'>
           <ExpoImage
             source={{
-              uri: profileImageUri || DEFAULT_PROFILE_URI,
+              uri: photoMap?.[userData?.profilePicId ?? '']?.fullUrl ?? DEFAULT_PROFILE_URI,
             }}
             style={{
               width: 120,
@@ -139,14 +132,10 @@ export default function ProfileDisplay({
             </HStack>
           </View>
         </Center>
-        {/* <Text>
-          {JSON.stringify(userData)}
-        </Text> */}
-        {/* TODO: change to user's own job history */}
-        {Object.values(userJobs).map((j: Job) => {
-          const job = j;
-          const part = partsMap[j.partTypeId];
-          const materials = part.materialIds.map((materialId: string) => {
+        {jobHistoryIds.map((jobId: string) => {
+          const job = jobsMap[jobId];
+          const part = partsMap[job.partTypeId];
+          const materials = part?.materialIds?.map((materialId: string) => {
             const material = materialsMap[materialId];
             return material ? material.name : ''; // Return the name if available, otherwise an empty string
           });

@@ -1,3 +1,6 @@
+// This is just an example file for code style alignment
+// Eventually remove
+
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { SERVER_URL } from '../../utils/constants.js';
 import axios from 'axios';

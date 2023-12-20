@@ -1,13 +1,12 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { View, Text, Image, Button, Center, Spinner } from 'native-base';
+import { View, Text, Image, Spinner } from 'native-base';
 import { StyleSheet } from 'react-native';
 import useAppSelector from 'hooks/useAppSelector';
 import useAppDispatch from 'hooks/useAppDispatch';
 import { authSelector } from 'redux/slices/authSlice';
-import { jobsSelector } from 'redux/slices/jobsSlice';
+import { jobsSelector, acceptJob } from 'redux/slices/jobsSlice';
 import { getUser, updateUser, userDataSelector } from 'redux/slices/userDataSlice';
 import SharpButton from 'components/SharpButton';
-import { addressApi, jobsApi, usersApi } from 'requests';
 import { fonts } from 'utils/constants';
 import { Job } from 'types/job';
 import { PartType } from 'types/part_type';
@@ -31,72 +30,23 @@ const JobDetailsPage = ({
   const dispatch = useAppDispatch();
   const { fbUserRef } = useAppSelector(authSelector);
   const { userData } = useAppSelector(userDataSelector);
-  const { partsMap, materialsMap } = useAppSelector(jobsSelector);
-  const [job, setJob] = useState<Job | undefined>();
-  const [address, setAddress] = useState<Address | undefined>();
-  const [part, setPart] = useState<PartType | undefined>();
-  const [materials, setMaterials] = useState<string[]>([]);
-  const [loading, setLoading] = useState(false);
+  const { jobsMap, partsMap, materialsMap, loading } = useAppSelector(jobsSelector);
+  const addressMap = useAppSelector((state) => state.addresses.addressMap);
 
-  useEffect(() => {
-    if (job) return;
-    const pullJob = async () => {
-      if (!fbUserRef) return;
-      try {
-        setLoading(true);
-        const dbJob = await jobsApi.getJob(jobId, fbUserRef);
-        const dbAddress = await addressApi.getAddress(dbJob.dropoffAddressId, fbUserRef);
-        if (dbJob) {
-          setJob(dbJob);
-        }
-        if (dbAddress) {
-          setAddress(dbAddress);
-        }
-        setLoading(false);
-      } catch (err) {
-        setLoading(false);
-        console.log(err);
-      }
-    };
-    pullJob();
-  }, [jobId, fbUserRef]);
+  if (loading) {
+    return <Spinner />;
+  }
 
-  useEffect(() => {
-    if (!job || !(job.partTypeId in partsMap)) return;
-    setPart(partsMap[job.partTypeId]);
-
-  }, [job, partsMap]);
-
-  useEffect(() => {
-    if (!part) return;
-    const newMaterials: string[] = [];
-    part.materialIds.forEach((materialId) => {
-      if (materialId in materialsMap) {
-        newMaterials.push(materialsMap[materialId].name);
-      }
-    });
-    setMaterials(newMaterials);
-  }, [part, materialsMap]);
-
-  const acceptJob = useCallback(async () => {
-    if (!fbUserRef) return;
-    try {
-      dispatch(updateUser({
-        updates: {
-          currentJobId: jobId,
-        },
-        fbUserRef,
-      }));
-    } catch (err) {
-      console.log(err);
-    }
-  }, [jobId, fbUserRef]);
-
-  console.log(job, part, address, materials);
+  const job = jobsMap[jobId];
+  const part = partsMap[job.partTypeId];
+  const materials = part?.materialIds?.map((materialId: string) => {
+    const material = materialsMap[materialId];
+    return material ? material.name : ''; // Return the name if available, otherwise an empty string
+  });
+  const address = addressMap?.[job?.dropoffAddressId];
 
   return (
     <SafeAreaView style={styles.container}>
-      {loading && <Spinner />}
       {part && job ? (
         <>
           <TouchableOpacity style={styles.exit} onPress={exit}>
@@ -136,11 +86,13 @@ const JobDetailsPage = ({
               backgroundColor={Colors.yellow} 
               my='2px'
               size='sm' 
-              onPress={acceptJob}
+              onPress={() => {
+                dispatch(acceptJob({ jobId: jobId ?? '', fbUserRef }));
+              }}
               marginTop={'10px'}
             >
               <Text fontFamily={fonts.regular}>
-              Accept Job
+                Accept Job
               </Text>
             </SharpButton>
           </View>

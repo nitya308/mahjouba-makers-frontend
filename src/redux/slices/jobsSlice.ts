@@ -1,10 +1,12 @@
 import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { jobsApi } from 'requests';
-import { Job, JobParams, JobUpdateFields } from 'types/job';
+import { JOB_STATUS_ENUM, Job, JobParams, JobUpdateFields } from 'types/job';
 import { PartType } from 'types/part_type';
 import { IMaterial } from 'types/material';
 import { User } from 'firebase/auth';
 import { RootState } from 'redux/store';
+import { getPhotos } from './photosSlice';
+import { getAddress, getAddresses } from './addressSlice';
 import CursorContainer from 'types/cursorContainer';
 import SortOptions from 'types/sortOptions';
 import partsApi from 'requests/partsApi';
@@ -12,20 +14,24 @@ import materialsApi from 'requests/materialsApi';
 
 export interface JobState {
   loading: boolean;
-  jobs: Job[];
+  jobsMap: { [id: string]: Job };
   partsMap: { [id: string]: PartType };
   materialsMap: { [id: string]: IMaterial };
-  userJobs: { [id: string]: Job };
+  currentJobId: string | null;
+  jobHistoryIds: string[],
+  jobFeedIds: string[],
   cursor?: string;
   sortParams?: any;
 }
 
 const initialState: JobState = {
   loading: false,
-  jobs: [],
+  jobsMap: {},
   partsMap: {},
   materialsMap: {},
-  userJobs: {},
+  currentJobId: null, // Can only have one active job at a time
+  jobHistoryIds: [],
+  jobFeedIds: [],
   cursor: undefined,
   sortParams: undefined,
 };
@@ -36,50 +42,21 @@ export const pullJobs = createAsyncThunk(
     dispatch(startJobsLoading());
     try {
       const cursorContainer: CursorContainer = {};
-      const jobs = await jobsApi.getJobs({}, req.fbUserRef, req.sortOptions, cursorContainer);
+      const jobs = await jobsApi.getJobs({ jobStatus: JOB_STATUS_ENUM.UNASSIGNED }, req.fbUserRef, req.sortOptions, cursorContainer);
       if (jobs) {
-        dispatch(setJobs(jobs));
-        dispatch(getPartsAndMaterialsForJobs({ fbUserRef: req.fbUserRef }));
+        dispatch(getPartsAndMaterialsForJobs({ jobs, fbUserRef: req.fbUserRef }));
         dispatch(setCursor(cursorContainer.cursor));
+        dispatch(getAddresses({ fbUserRef: req.fbUserRef, addressIds: jobs.map((job: Job) => job.dropoffAddressId) }));
       }
-      dispatch(stopJobsLoading());
+
+      return jobs;
     } catch (err) {
+      return [];
+    } finally {
       dispatch(stopJobsLoading());
     }
   },
 );
-
-export const getPartsAndMaterialsForJobs = createAsyncThunk(
-  'jobs/getPartsAndMaterialsForJobs',
-  async (req: { fbUserRef: User }, { dispatch, getState }) => {
-    const { jobs, partsMap } = (getState() as RootState).jobs;
-    if (!jobs || jobs.length === 0) return;
-    await Promise.all(
-      jobs.map(async (j) => {
-        if (!j.partTypeId || j.partTypeId in partsMap) return j;
-        else {
-          try {
-            const dbPart = await partsApi.getPart(j.partTypeId, req.fbUserRef);
-            // console.log('dbPart', dbPart);
-            dispatch(addPart({ part: dbPart, id: j.partTypeId }));
-            const materialIds = dbPart.materialIds;
-            // console.log('dbMaterial', materialIds);
-            await Promise.all(
-              materialIds.map(async (mId) => {
-                const dbMaterial = await materialsApi.getMaterial(mId, req.fbUserRef);
-                // console.log('ADDING MATERIAL', dbMaterial);
-                dispatch(addMaterial({ material: dbMaterial, id: mId }));
-              }),
-            ); 
-            
-          } catch (e) {
-            console.log(e);
-          }
-        }
-      }),
-    );
-  });
-
 
 export const pullNextJobsPage = createAsyncThunk(
   'jobs/pullNextPage',
@@ -88,34 +65,147 @@ export const pullNextJobsPage = createAsyncThunk(
     try {
       const { cursor } = (getState() as RootState).jobs;
       const cursorContainer = { cursor };
-      const nextPage = await jobsApi.getJobs({}, req.fbUserRef, undefined, cursorContainer);
-      if (nextPage) {
-        dispatch(addPage(nextPage));
+      const jobs = await jobsApi.getJobs({ jobStatus: JOB_STATUS_ENUM.UNASSIGNED }, req.fbUserRef, undefined, cursorContainer);
+      if (jobs) {
+        dispatch(getPartsAndMaterialsForJobs({ jobs, fbUserRef: req.fbUserRef }));
         dispatch(setCursor(cursorContainer.cursor));
-        dispatch(getPartsAndMaterialsForJobs({ fbUserRef: req.fbUserRef }));
+        dispatch(getAddresses({ fbUserRef: req.fbUserRef, addressIds: jobs.map((job: Job) => job.dropoffAddressId) }));
       }
-      dispatch(stopJobsLoading());
+
+      return jobs;
     } catch (err) {
-      console.log(err);
+      return [];
+    } finally {
       dispatch(stopJobsLoading());
     }
   },
 );
 
+export const getPartsAndMaterialsForJob = createAsyncThunk(
+  'jobs/getPartsAndMaterialsForJob',
+  async (req: { job: Job, fbUserRef: User }, { dispatch, getState }) => {
+    const { partsMap } = (getState() as RootState).jobs;
+
+    if (!req.job.partTypeId || req.job.partTypeId in partsMap) return;
+    else {
+      try {
+        const dbPart = await partsApi.getPart(req.job.partTypeId, req.fbUserRef);
+        dispatch(addPart({ part: dbPart, id: req.job.partTypeId }));
+        dispatch(getPhotos({ photoIds: dbPart.imageIds, fbUserRef: req.fbUserRef }));
+        const materialIds = dbPart.materialIds;
+        await Promise.all(
+          materialIds.map(async (mId) => {
+            const dbMaterial = await materialsApi.getMaterial(mId, req.fbUserRef);
+            dispatch(addMaterial({ material: dbMaterial, id: mId }));
+          }),
+        );
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  });
+
+export const getPartsAndMaterialsForJobs = createAsyncThunk(
+  'jobs/getPartsAndMaterialsForJobs',
+  async (req: { jobs: Job[], fbUserRef: User }, { dispatch, getState }) => {
+    await Promise.all(
+      req.jobs.map(async (j) => {
+        dispatch(getPartsAndMaterialsForJob({ job: j, fbUserRef: req.fbUserRef }));
+      }),
+    );
+  });
+
 export const getUserJobHistory = createAsyncThunk(
-  'jobs/getUserPastJobs',
+  'jobs/getUserJobHistory',
   async (req: { fbUserRef: User }, { dispatch, getState }) => {
     dispatch(startJobsLoading());
     try {
-      const userJobs = await jobsApi.getJobHistory(req.fbUserRef);
-      await Promise.all(
-        userJobs.map(async (userJob) => {
-          dispatch(addUserJob({ job: userJob, id: userJob._id }));
-        }),
-      ); 
-      dispatch(stopJobsLoading());
+      const jobs = await jobsApi.getJobHistory(req.fbUserRef);
+      if (jobs) {
+        dispatch(getPartsAndMaterialsForJobs({ jobs, fbUserRef: req.fbUserRef }));
+        dispatch(getAddresses({ fbUserRef: req.fbUserRef, addressIds: jobs.map((job: Job) => job.dropoffAddressId) }));
+        let photoIds: string[] = [];
+        jobs.forEach((job: Job) => {
+          photoIds = [...photoIds, ...job.imageIds];
+        });
+        dispatch(getPhotos({ fbUserRef: req.fbUserRef, photoIds }));
+      }
+
+      return jobs;
     } catch (err) {
-      console.log(err);
+      return [];
+    } finally {
+      dispatch(stopJobsLoading());
+    }
+  },
+);
+
+export const getUserCurrentJob = createAsyncThunk(
+  'jobs/getUserCurrentJob',
+  async (req: { fbUserRef: User }, { dispatch, getState }) => {
+    dispatch(startJobsLoading());
+    try {
+      const job = await jobsApi.getUserCurrentJob(req.fbUserRef);
+      dispatch(getPartsAndMaterialsForJob({ job, fbUserRef: req.fbUserRef }));
+      dispatch(getAddress({ fbUserRef: req.fbUserRef, addressId: job.dropoffAddressId }));
+      return job;
+    } catch (err) {
+      return null;
+    } finally {
+      dispatch(stopJobsLoading());
+    }
+  },
+);
+
+export const acceptJob = createAsyncThunk(
+  'jobs/acceptJob',
+  async (req: { jobId: string, fbUserRef: User | null }, { dispatch, getState }) => {
+    dispatch(startJobsLoading());
+    try {
+      if (req.fbUserRef) {
+        return await jobsApi.acceptJob(req.jobId, req.fbUserRef);
+      } else {
+        return null;
+      }
+    } catch (err) {
+      return null;
+    } finally {
+      dispatch(stopJobsLoading());
+    }
+  },
+);
+
+export const unacceptJob = createAsyncThunk(
+  'jobs/unacceptJob',
+  async (req: { jobId: string, fbUserRef: User | null }, { dispatch, getState }) => {
+    dispatch(startJobsLoading());
+    try {
+      if (req.fbUserRef) {
+        return await jobsApi.unacceptJob(req.jobId, req.fbUserRef);
+      } else {
+        return null;
+      }
+    } catch (err) {
+      return null;
+    } finally {
+      dispatch(stopJobsLoading());
+    }
+  },
+);
+
+export const completeJob = createAsyncThunk(
+  'jobs/completeJob',
+  async (req: { jobId: string, fbUserRef: User | null, imageId: string }, { dispatch, getState }) => {
+    dispatch(startJobsLoading());
+    try {
+      if (req.fbUserRef) {
+        return await jobsApi.completeJob(req.jobId, req.fbUserRef, [req.imageId]);
+      } else {
+        return null;
+      }
+    } catch (err) {
+      return null;
+    } finally {
       dispatch(stopJobsLoading());
     }
   },
@@ -125,55 +215,13 @@ export const jobsSlice = createSlice({
   name: 'jobs',
   initialState,
   reducers: {
-    setJobs: (state, action: PayloadAction<Job[]>) => ({
+    clearJobFeed: (state) => ({
       ...state,
-      jobs: action.payload,
+      jobHistoryIds: [],
     }),
     setCursor: (state, action: PayloadAction<string | undefined>) => ({
       ...state,
       cursor: action.payload,
-    }),
-    addPage: (state, action: PayloadAction<Job[]>) => ({
-      ...state,
-      jobs: [
-        ...state.jobs,
-        ...action.payload.filter((j) => !state.jobs.find((sj) => sj._id === j._id)),
-      ],
-    }),
-    addJob: (state, action: PayloadAction<Job>) => ({
-      ...state,
-      jobs: [
-        ...state.jobs,
-        action.payload,
-      ],
-    }),
-    addUserJob: (state, action: PayloadAction<{ job: Job, id: string }>) => ({
-      ...state,
-      userJobs: {
-        ...state.userJobs,
-        [action.payload.id]: action.payload.job,
-      },
-    }),
-    editJob: (state, action: PayloadAction<Job>) => ({
-      ...state,
-      jobs: state.jobs.map((j) => {
-        if (j._id === action.payload._id) {
-          return action.payload;
-        }
-        return j;
-      }),
-    }),
-    deleteJob: (state, action: PayloadAction<string>) => ({
-      ...state,
-      jobs: state.jobs.filter((j) => j._id === action.payload),
-    }),
-    startJobsLoading: (state) => ({
-      ...state,
-      loading: true,
-    }),
-    stopJobsLoading: (state) => ({
-      ...state,
-      loading: false,
     }),
     addPart: (state, action: PayloadAction<{ part: PartType, id: string }>) => ({
       ...state,
@@ -189,21 +237,77 @@ export const jobsSlice = createSlice({
         [action.payload.id]: action.payload.material,
       },
     }),
+    startJobsLoading: (state) => ({
+      ...state,
+      loading: true,
+    }),
+    stopJobsLoading: (state) => ({
+      ...state,
+      loading: false,
+    }),
+  },
+  extraReducers: (builder) => {
+    builder.addCase(pullJobs.fulfilled, (state, action) => {
+      const jobs: Job[] = action.payload;
+      jobs.forEach((job: Job) => {
+        state.jobsMap[job._id] = job;
+      });
+      state.jobFeedIds = [...state.jobFeedIds, ...jobs.map((job: Job) => job._id).filter((jobId: string)=> !state.jobFeedIds.includes(jobId))];
+    });
+    builder.addCase(pullNextJobsPage.fulfilled, (state, action) => {
+      const jobs: Job[] = action.payload;
+      jobs.forEach((job: Job) => {
+        state.jobsMap[job._id] = job;
+      });
+      state.jobFeedIds = [...state.jobFeedIds, ...jobs.map((job: Job) => job._id)];
+    });
+    builder.addCase(getUserJobHistory.fulfilled, (state, action) => {
+      const jobs: Job[] = action.payload;
+      jobs.forEach((job: Job) => {
+        state.jobsMap[job._id] = job;
+      });
+      state.jobHistoryIds = [...state.jobHistoryIds, ...jobs.map((job: Job) => job._id).filter((jobId: string) => !state.jobHistoryIds.includes(jobId))];
+    });
+    builder.addCase(getUserCurrentJob.fulfilled, (state, action) => {
+      const job: Job | null = action.payload;
+      if (job) {
+        state.jobsMap[job._id] = job;
+        state.currentJobId = job._id;
+      } else {
+        state.currentJobId = null;
+      }
+    });
+    builder.addCase(acceptJob.fulfilled, (state, action) => {
+      const job: Job | null = action.payload;
+      if (job) {
+        state.jobsMap[job._id] = job;
+        state.currentJobId = job._id;
+      }
+    });
+    builder.addCase(unacceptJob.fulfilled, (state, action) => {
+      const job: Job | null = action.payload;
+      if (job) {
+        state.jobsMap[job._id] = job;
+        state.currentJobId = null;
+      }
+    });
+    builder.addCase(completeJob.fulfilled, (state, action) => {
+      const job: Job | null = action.payload;
+      if (job) {
+        state.jobsMap[job._id] = job;
+        state.currentJobId = null;
+      }
+    });
   },
 });
 
-export const { 
-  setJobs,
+export const {
+  clearJobFeed,
   setCursor,
-  addPage,
-  addJob,
-  editJob,
-  deleteJob,
-  startJobsLoading,
-  stopJobsLoading,
   addPart,
   addMaterial,
-  addUserJob,
+  startJobsLoading,
+  stopJobsLoading,
 } = jobsSlice.actions;
 export const jobsSelector = (state: RootState) => state.jobs;
 

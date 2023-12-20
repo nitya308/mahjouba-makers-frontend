@@ -85,6 +85,46 @@ const deleteJob = async (id: string, fbUserRef: User) => {
     });
 };
 
+const getUserCurrentJob = async (fbUserRef: User) => {
+  const config = await getAxiosConfigForFBUser(fbUserRef);
+  return axios.get<Job>(`${SERVER_URL}jobs/currentJob/`, config)
+    .then((res) => ({ ...res.data }))
+    .catch(err => {
+      console.log(err);
+      throw err;
+    });
+};
+
+const acceptJob = async (id: string, fbUserRef: User) => {
+  const config = await getAxiosConfigForFBUser(fbUserRef);
+  return axios.patch<Job>(`${SERVER_URL}jobs/accept/${id}`, {}, config)
+    .then((res) => ({ ...res.data }))
+    .catch(err => {
+      console.log(err);
+      throw err;
+    });
+};
+
+const unacceptJob = async (id: string, fbUserRef: User) => {
+  const config = await getAxiosConfigForFBUser(fbUserRef);
+  return axios.patch<Job>(`${SERVER_URL}jobs/unaccept/${id}`, {}, config)
+    .then((res) => ({ ...res.data }))
+    .catch(err => {
+      console.log(err);
+      throw err;
+    });
+};
+
+const completeJob = async (id: string, fbUserRef: User, imageIds: string[]) => {
+  const config = await getAxiosConfigForFBUser(fbUserRef);
+  return axios.patch<Job>(`${SERVER_URL}jobs/complete/${id}`, { imageIds }, config)
+    .then((res) => ({ ...res.data }))
+    .catch(err => {
+      console.log(err);
+      throw err;
+    });
+};
+
 const jobsApi = {
   getJob,
   getJobs,
@@ -92,6 +132,10 @@ const jobsApi = {
   updateJob,
   createJob,
   deleteJob,
+  getUserCurrentJob,
+  acceptJob,
+  unacceptJob,
+  completeJob,
 };
 
 export default jobsApi;

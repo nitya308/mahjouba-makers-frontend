@@ -1,30 +1,28 @@
 import ProfileImageSelector from 'components/ProfileImageSelector';
-import { 
-  Box, 
-  Center, 
-  HStack, 
-  Heading, 
-  Icon, 
-  IconButton, 
-  Spacer, 
-  Input, 
+import {
+  Box,
+  Center,
+  HStack,
+  Heading,
+  Icon,
+  IconButton,
+  Spacer,
+  Input,
   View,
   Text,
 } from 'native-base';
-import React, { useState, useCallback, useMemo, useEffect } from 'react';
+import React, { useState, useCallback, useMemo, useEffect, useTransition } from 'react';
 import { Image } from 'react-native-image-crop-picker';
 import { Ionicons } from '@expo/vector-icons';
 import { uploadMedia } from 'utils/mediaUtils';
 import useAppSelector from 'hooks/useAppSelector';
-import { setProfileUri, updateUser, userDataSelector } from 'redux/slices/userDataSlice';
+import { updateUser, userDataSelector } from 'redux/slices/userDataSlice';
 import Photo from 'types/photo';
-import photosApi from 'requests/photosApi';
 import { authSelector } from 'redux/slices/authSlice';
 import { jobsSelector, getUserJobHistory } from 'redux/slices/jobsSlice';
 import useAppDispatch from 'hooks/useAppDispatch';
 import Address from '../../types/address';
 import AddressInput from 'components/AddressInput';
-import addressApi from 'requests/addressApi';
 import { cleanUndefinedFields } from 'utils/requestUtils';
 import MaterialSelector from 'components/MaterialSelector';
 import SharpButton from 'components/SharpButton';
@@ -34,6 +32,11 @@ import BackArrowIcon from '../../assets/back_arrow.svg';
 import Colors from 'utils/Colors';
 import AddIcon from '../../assets/add_icon.svg';
 import { fonts } from 'utils/constants';
+import { useTranslation } from 'react-i18next';
+import SelectLanguage from 'components/SelectLanguage';
+import { createAddress } from 'redux/slices/addressSlice';
+import { createPhoto } from 'redux/slices/photosSlice';
+import { DEFAULT_PROFILE_URI } from 'utils/constants';
 
 export default function ProfileEditor({
   toggleEditing,
@@ -44,28 +47,30 @@ export default function ProfileEditor({
   const { fbUserRef } = useAppSelector(authSelector);
   const { userData } = useAppSelector(userDataSelector);
   const [selectedImage, setSelectedImage] = useState<Image | undefined>();
-  const [currAddressString, setCurrAddressString] = useState<string | undefined>();
   const [newName, setNewName] = useState<string | undefined>();
   const [newAddress, setNewAddress] = useState<Address | undefined>();
   const [selectedMaterialIds, setSelectedMaterialIds] = useState<string[]>([]);
-  const { jobs, cursor, partsMap, materialsMap, userJobs } = useAppSelector(jobsSelector);
+  const { cursor, jobsMap, partsMap, materialsMap } = useAppSelector(jobsSelector);
+  const addressMap = useAppSelector((state) => state.addresses.addressMap);
+  const photoMap = useAppSelector((state) => state.photos.photosMap);
 
   useEffect(() => {
-    if (currAddressString) return;
-    const pullAddress = async () => {
-      if (!fbUserRef || !userData?.shippingAddressId) return;
-      const address = await addressApi.getAddress(userData.shippingAddressId, fbUserRef);
-      setCurrAddressString(address.description);
-    };
-    pullAddress();
-  }, [userData, fbUserRef, currAddressString]);
+    if (userData?.materialIds) {
+      setSelectedMaterialIds(userData?.materialIds);
+      setNewName(userData?.name);
+      setNewAddress(addressMap?.[userData?.homeAddressId ?? ''] ?? undefined);
+      // setSelectedImage(photoMap?.[userData?.profilePicId ?? '']?.fullUrl ?? D)
+    }
+  }, [userData]);
 
   const saveNewAddress = useCallback(async () => {
     if (!newAddress || !fbUserRef) return;
     try {
-      console.log(newAddress);
-      const uploadRes = await addressApi.createAddress(newAddress, fbUserRef);
-      return uploadRes._id;
+      return await dispatch(createAddress({ fbUserRef, newAddress }))
+        .unwrap()
+        .then((res) => {
+          return res?._id;
+        });
     } catch (err) {
       console.log(err);
     }
@@ -80,16 +85,18 @@ export default function ProfileEditor({
         fullUrl: url,
         fileType: 'image/jpeg',
       };
-      const dbPhoto = await photosApi.createPhoto(newPhoto, fbUserRef);
-      dispatch(setProfileUri(url));
-      return dbPhoto._id;
+      return await dispatch(createPhoto({ fbUserRef, newPhoto }))
+        .unwrap()
+        .then((res) => {
+          return res?._id;
+        });
     } catch (err) {
       console.log(err);
     }
   }, [userData, fbUserRef, selectedImage]);
 
   const saveChanges = useCallback(async () => {
-    if (!(selectedImage || newName || newAddress) || !fbUserRef || !userData) return;
+    if (!(selectedImage || newName || newAddress || selectedMaterialIds) || !fbUserRef || !userData) return;
     try {
       let newProfilePicId: string | undefined = undefined;
       let newAddressId: string | undefined = undefined;
@@ -100,27 +107,24 @@ export default function ProfileEditor({
         newProfilePicId = await saveNewProfilePic();
       }
 
-      if (newProfilePicId || newAddressId || newName) {
-        dispatch(updateUser({
-          updates: cleanUndefinedFields({
-            profilePicId: newProfilePicId,
-            shippingAddressId: newAddressId,
-            name: newName,
-          }),
-          fbUserRef,
-        }));
-      }
+      dispatch(updateUser({
+        updates: cleanUndefinedFields({
+          profilePicId: newProfilePicId,
+          homeAddressId: newAddressId,
+          shippingAddressId: newAddressId,
+          name: newName,
+          materialIds: selectedMaterialIds,
+        }),
+        fbUserRef,
+      }));
     } catch (err) {
       console.log(err);
     }
-  }, [selectedImage, saveNewAddress, saveNewProfilePic, selectedImage, newName, newAddress, fbUserRef, userData]);
-
-  const hasChanges = useMemo(() => {
-    if (selectedImage !== undefined || newName !== undefined || newAddress !== undefined) return true;
-    return false;
-  }, [selectedImage, newName, newAddress]);
+  }, [selectedImage, saveNewAddress, saveNewProfilePic, selectedImage, newName, newAddress, fbUserRef, userData, selectedMaterialIds]);
 
   const [showModal, setShowModal] = useState(false);
+
+  const { t } = useTranslation();
 
   return (
     <Box pt='75px' width={'100%'}>
@@ -141,6 +145,7 @@ export default function ProfileEditor({
         <ProfileImageSelector
           selectedProfile={selectedImage}
           setSelectedProfile={setSelectedImage}
+          defaultImageUri={photoMap?.[userData?.profilePicId ?? '']?.fullUrl ?? DEFAULT_PROFILE_URI}
           width={120}
           height={120}
         />
@@ -148,9 +153,9 @@ export default function ProfileEditor({
           placeholder={userData?.name || 'Name'}
           value={newName}
           onChangeText={setNewName}
-          w='60%' 
-          borderRadius='2px'  
-          paddingY='10px' 
+          w='60%'
+          borderRadius='2px'
+          paddingY='10px'
           paddingX='16px'
           borderColor='black'
           borderWidth='1px'
@@ -161,7 +166,8 @@ export default function ProfileEditor({
         />
         <AddressInput
           setAddress={setNewAddress}
-          placeholder={currAddressString || 'Address'}
+          // TODO: Make this defaultValue instead of placeholder (so that the text isn't light grey)
+          placeholder={addressMap?.[userData?.homeAddressId ?? '']?.description ?? 'Address'}
         />
         {
           // TODO: Need to figure out why can't put MaterialSelector in AppModal - Eric
@@ -195,27 +201,37 @@ export default function ProfileEditor({
         {/* </HStack> */}
         <MaterialSelector
           selectedMaterialIds={selectedMaterialIds}
-          setSelectedMaterialIds={setSelectedMaterialIds} 
+          setSelectedMaterialIds={setSelectedMaterialIds}
         />
       </Center>
+      <Center>
+        <SharpButton
+          width={'80px'}
+          backgroundColor={Colors.yellow}
+          my='2px'
+          size='sm'
+          onPress={saveChanges}
+          marginTop={'10px'}
+        >
+          <Text fontFamily={fonts.regular}>
+            Save
+          </Text>
+        </SharpButton>
+      </Center>
       {
-        hasChanges && (
-          <Center>
-            <SharpButton
-              width={'80px'} 
-              backgroundColor={Colors.yellow} 
-              my='2px'
-              size='sm' 
-              onPress={saveChanges}
-              marginTop={'10px'}
-            >
-              <Text fontFamily={fonts.regular}>
-                Save
-              </Text>
-            </SharpButton>
-          </Center>
-        )
+        // demo translation functionality
       }
+      <Center>
+        <Text>
+          {
+            'demo translation functionality: '
+          }
+          {
+            t('Hello world')
+          }
+        </Text>
+        <SelectLanguage />
+      </Center>
     </Box>
   );
 }

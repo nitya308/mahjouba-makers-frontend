@@ -22,6 +22,7 @@ export interface JobUpdateFields {
 }
 
 export interface JobParams {
+  _id?: string;
   price?: number;
   dropoffAddressId?: string;
   imageIds?: string[];
@@ -31,3 +32,10 @@ export interface JobParams {
   qrCode?: string;
   dueDate?: Date;
 }
+
+export const JOB_STATUS_ENUM = {
+  UNASSIGNED: 'Unassigned',
+  INCOMPLETE: 'Incomplete',
+  PENDING_REVIEW: 'Pending Review',
+  COMPLETE: 'Complete',
+};
