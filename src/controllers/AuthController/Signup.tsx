@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useRef, useState, useEffect } from 'react';
 import { Text, Input, VStack, Center, Button, Box } from 'native-base';
 import { phonePassSignup, userPassSignUp } from 'utils/auth';
 import SharpButton from 'components/SharpButton';
@@ -21,6 +21,19 @@ export default function Signup() {
   const [error, setError] = useState<string | undefined>();
   const [phoneVerify, setPhoneVerify] = useState(false);
   const [confirmResult, setConfirmResult] = useState<string | undefined>();
+
+  useEffect(() => {
+    // Fetch country code
+    fetch('https://ipapi.co/country_calling_code/')
+      .then(response => response.text())
+      .then(data => {
+        // Set the fetched country code as the default value for phone state
+        setPhone(data.trim());
+      })
+      .catch(e => {
+        console.error('Error fetching country code:', e);
+      });
+  }, []);
 
   const handleSubmit = useCallback(async () => {
     if (!phone || !name) {
