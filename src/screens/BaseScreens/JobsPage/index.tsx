@@ -25,7 +25,7 @@ const JobsPage = ({
   reloadJobs: () => void;
 }) => {
   const { userData } = useAppSelector(userDataSelector);
-  const { cursor, jobFeedIds, jobsMap, partsMap, materialsMap, loading } = useAppSelector(jobsSelector);
+  const { cursor, jobFeedIds, jobsMap, partsMap, materialsMap, loading, currentJobId } = useAppSelector(jobsSelector);
 
   if (loading) {
     return <Spinner />;
