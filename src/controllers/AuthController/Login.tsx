@@ -9,8 +9,8 @@ import { ConfirmationResult, PhoneAuthProvider, signInWithCredential } from 'fir
 
 export default function Login() {
   const recaptchaVerifier = useRef<any>(null);
-  const [phone, setPhone] = useState<string | undefined>();
-  const [confirmationCode, setConfirmationCode] = useState<string | undefined>();
+  const [phone, setPhone] = useState<string | undefined>('1111111111');
+  const [confirmationCode, setConfirmationCode] = useState<string | undefined>('123456');
   // const [password, setPassword] = useState<string | undefined>();
   const [error, setError] = useState<string | undefined>();
   const [phoneVerify, setPhoneVerify] = useState(false);
@@ -72,19 +72,19 @@ export default function Login() {
             <Text fontSize='md' mx='auto'>
               Phone
             </Text>
-            <Input 
-              w='100%' 
-              borderRadius='2px'  
-              paddingY='10px' 
+            <Input
+              w='100%'
+              borderRadius='2px'
+              paddingY='10px'
               paddingX='16px'
               borderColor='black'
               borderWidth='1px'
-              placeholder='Phone #' 
+              placeholder='Phone #'
               autoCapitalize='none'
               size='sm'
               type='text'
-              value={phone} 
-              onChangeText={setPhone} 
+              value={phone}
+              onChangeText={setPhone}
             />
             {/* <Text fontSize='md' mx='auto'>
               Password
@@ -107,24 +107,24 @@ export default function Login() {
               size='sm' onPress={handleSubmit}>
               <Text color='black' fontWeight='medium'>Submit</Text>
             </SharpButton>
-          </VStack> : 
+          </VStack> :
           <Box>
             <Text fontSize='lg' mx='auto'>
               Enter Verification code
             </Text>
-            <Input 
-              w='100%' 
-              borderRadius='2px'  
-              paddingY='10px' 
+            <Input
+              w='100%'
+              borderRadius='2px'
+              paddingY='10px'
               paddingX='16px'
               borderColor='black'
               borderWidth='1px'
-              placeholder='Ex 12346' 
+              placeholder='Ex 12346'
               autoCapitalize='none'
               size='sm'
               type='text'
-              value={confirmationCode} 
-              onChangeText={setConfirmationCode} 
+              value={confirmationCode}
+              onChangeText={setConfirmationCode}
             />
             <SharpButton w='100%' my='10px'
               size='sm' onPress={handlePhoneConfirm}>
@@ -134,9 +134,9 @@ export default function Login() {
       }
       {
         error &&
-          <Center>
-            <Text color='red.500' textAlign='center' fontSize='xs'>{error}</Text>
-          </Center>
+        <Center>
+          <Text color='red.500' textAlign='center' fontSize='xs'>{error}</Text>
+        </Center>
       }
     </VStack>
   );

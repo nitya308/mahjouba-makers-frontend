@@ -98,8 +98,8 @@ export default function CurrentJobPage(): JSX.Element {
     <ScrollView>
       {currentJob ? (
         <BaseView>
-          {currentPart?.imageIds.length 
-            ? <Image alt='part' source={{ uri: photoMap?.[currentPart?.imageIds[0]]?.fullUrl ?? '' }} style={styles.image} /> 
+          {currentPart?.imageIds.length
+            ? <Image alt='part' source={{ uri: photoMap?.[currentPart?.imageIds[0]]?.fullUrl ?? '' }} style={styles.image} />
             : <Image alt='placeholder' source={Placeholder} style={styles.image} />}
           <View style={styles.infoContainer}>
             <View style={styles.infoHeader}>
@@ -119,6 +119,17 @@ export default function CurrentJobPage(): JSX.Element {
                 <Text style={styles.text}>{`${currentJob?.price} MAD`}</Text>
               </View>
             </View>
+            <IconButton
+              style={styles.audioIcon}
+              icon={<AudioIcon />}
+              onPress={() => {
+                Speech.speak(
+                  currentPart?.name +
+                  `, has ${currentPart?.completionTime} hours remaining,`
+                  + 'ship to address' + currentAddress?.description
+                  + ', for price' + `${currentJob?.price} MAD`);
+              }}
+            />
           </View>
           <View style={styles.materialContainer}>
             {currentPart?.materialIds?.map((materialId, index) => (
@@ -126,6 +137,17 @@ export default function CurrentJobPage(): JSX.Element {
                 <Text style={styles.text}>{materialsMap?.[materialId]?.name ?? ''}</Text>
               </View>
             ))}
+            <IconButton
+              style={styles.audioIcon}
+              icon={<AudioIcon />}
+              onPress={() => {
+                const materialsString = currentPart?.materialIds
+                  .map((materialId) => materialsMap?.[materialId]?.name ?? '')
+                  .join(', ');
+
+                Speech.speak(materialsString);
+              }}
+            />
           </View>
           <Center marginTop={'10px'}>
             <SharpButton
@@ -142,8 +164,15 @@ export default function CurrentJobPage(): JSX.Element {
                 Unaccept Job
               </Text>
             </SharpButton>
+            <IconButton
+              style={styles.buttonAudioIcon}
+              icon={<AudioIcon />}
+              onPress={() => {
+                Speech.speak('Unaccept Job');
+              }}
+            />
           </Center>
-          <Center>
+          <Center marginTop={'10px'}>
             <AppModal
               showModal={showModal}
               setShowModal={setShowModal}
@@ -197,6 +226,13 @@ export default function CurrentJobPage(): JSX.Element {
                 </SharpButton>
               </Center>
             </AppModal>
+            <IconButton
+              style={styles.buttonAudioIcon}
+              icon={<AudioIcon />}
+              onPress={() => {
+                Speech.speak('Complete Job');
+              }}
+            />
           </Center>
         </BaseView>
       )
@@ -280,5 +316,14 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 10,
+  },
+  audioIcon: {
+    position: 'absolute',
+    right: 5,
+    bottom: 5,
+  },
+  buttonAudioIcon: {
+    position: 'absolute',
+    right: -50,
   },
 });
