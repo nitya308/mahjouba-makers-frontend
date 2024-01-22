@@ -168,7 +168,11 @@ export default function CurrentJobPage(): JSX.Element {
               style={styles.buttonAudioIcon}
               icon={<AudioIcon />}
               onPress={() => {
-                Speech.speak('Unaccept Job');
+                if (true) { // TODO: toggle language using ii8n strings
+                  Speech.speak('Unaccept Job');
+                } else {
+                  Speech.speak('عدم قبول الوظيفة', { language: 'ar' });
+                }
               }}
             />
           </Center>
