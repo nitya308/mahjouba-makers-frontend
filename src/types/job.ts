@@ -8,6 +8,7 @@ export interface Job {
   jobStatus: string,
   qrCode: string;
   dueDate: Date,
+  completionDate: Date,
 }
 
 export interface JobUpdateFields {

@@ -44,6 +44,11 @@ const JobCard = ({ job, part, materials }: { job: Job, part: PartType, materials
           </View>
         )
         }
+        {job?.completionDate && (
+          <Text style={styles.completionDate}>
+            Completed {new Date(job.completionDate).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' })}
+          </Text>
+        )}
       </View>
     </View>
   );
@@ -60,6 +65,11 @@ const styles = StyleSheet.create({
     shadowOpacity: 1,
     shadowOffset: { width: -3, height: 3 }, 
     shadowRadius: 0,
+  },
+  completionDate: {
+    fontSize: 18,
+    color: '#00FF00',
+    textAlign: 'right',
   },
   image: {
     width: '100%',
