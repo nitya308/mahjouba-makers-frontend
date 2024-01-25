@@ -117,7 +117,8 @@ const unacceptJob = async (id: string, fbUserRef: User) => {
 
 const completeJob = async (id: string, fbUserRef: User, imageIds: string[]) => {
   const config = await getAxiosConfigForFBUser(fbUserRef);
-  return axios.patch<Job>(`${SERVER_URL}jobs/complete/${id}`, { imageIds }, config)
+  const completionDate = new Date().toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' });
+  return axios.patch<Job>(`${SERVER_URL}jobs/complete/${id}`, { imageIds, completionDate }, config)
     .then((res) => ({ ...res.data }))
     .catch(err => {
       console.log(err);
