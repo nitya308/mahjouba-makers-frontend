@@ -75,6 +75,39 @@ export default function CurrentJobPage(): JSX.Element {
 
   
   const { t } = useTranslation();
+  const currentDate = new Date();
+
+  // const dueDate = new Date('2024-12-31T23:59:59'); //example date to test out countdown
+  const dueDate = new Date(currentJob?.dueDate);
+  const [timeRemaining, setTimeRemaining] = useState(calculateTimeRemaining());
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setTimeRemaining(calculateTimeRemaining());
+    }, 1000);
+
+    // Cleanup function to clear the interval when the component unmounts
+    return () => clearInterval(intervalId);
+  }, []);
+
+  function calculateTimeRemaining() {
+    const now = new Date();
+    const difference = dueDate.getTime() - now.getTime();
+
+    if (difference <= 0) {
+      // Due date has passed
+      return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+    }
+
+    const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+    return { days, hours, minutes, seconds };
+  }
+
+
 
   const [completeJobPhoto, setCompleteJobPhoto] = useState<Asset | undefined>();
   const [showModal, setShowModal] = useState(false);
@@ -157,18 +190,33 @@ export default function CurrentJobPage(): JSX.Element {
                 <Image alt='MAD icon' source={MADIcon} />
                 <Text style={styles.text}>{`${currentJob?.price} MAD`}</Text>
               </View>
+              <IconButton
+                style={styles.audioIcon}
+                icon={<AudioIcon />}
+                onPress={() => {
+                  const toSpeak = t(currentPart?.name + ',') +
+                    t('has') + `${currentPart?.completionTime}` + t('hours remaining')
+                    + t('ship to address') + currentAddress?.description
+                    + ',' + t('for price') + `${currentJob?.price}` + t('MAD');
+                  Speech.speak(t(toSpeak), { language: i18next.language });
+                }}
+              />
             </View>
-            <IconButton
-              style={styles.audioIcon}
-              icon={<AudioIcon />}
-              onPress={() => {
-                const toSpeak = t(currentPart?.name + ',') +
-                t('has') + `${currentPart?.completionTime}` + t('hours remaining')
-                + t('ship to address') + currentAddress?.description
-                + ',' +  t('for price') + `${currentJob?.price}` + t('MAD');
-                Speech.speak(t(toSpeak), { language: i18next.language });
-              }}
-            />
+          </View>
+          <View>
+            <Text>
+              {`${currentJob?.price} MAD`}
+            </Text>
+          </View>
+          <View>
+            <Text>
+              {`${currentJob?.price} MAD`}
+            </Text>
+          </View>
+          <View>
+            <Text>
+              {`${currentJob?.price} MAD`}
+            </Text>
           </View>
           <View>
             <Text>
@@ -188,7 +236,7 @@ export default function CurrentJobPage(): JSX.Element {
                 const materialsString = currentPart?.materialIds
                   .map((materialId) => t(materialsMap?.[materialId]?.name) ?? '')
                   .join(', ');
-                Speech.speak(materialsString, { language: i18next.language });        
+                Speech.speak(materialsString, { language: i18next.language });
               }}
             />
           </View>
@@ -211,7 +259,7 @@ export default function CurrentJobPage(): JSX.Element {
               style={styles.buttonAudioIcon}
               icon={<AudioIcon />}
               onPress={() => {
-                Speech.speak(t('Unaccept Job'), { language: i18next.language }); 
+                Speech.speak(t('Unaccept Job'), { language: i18next.language });
               }}
             />
           </Center>
@@ -244,7 +292,7 @@ export default function CurrentJobPage(): JSX.Element {
                 <IconButton
                   icon={<AudioIcon />}
                   onPress={() => {
-                    Speech.speak(t('My Profile'), { language: i18next.language });   
+                    Speech.speak(t('My Profile'), { language: i18next.language });
                   }}
                 />
               </HStack>
@@ -273,7 +321,7 @@ export default function CurrentJobPage(): JSX.Element {
               style={styles.buttonAudioIcon}
               icon={<AudioIcon />}
               onPress={() => {
-                Speech.speak(t('Complete Job'), { language: i18next.language }); 
+                Speech.speak(t('Complete Job'), { language: i18next.language });
               }}
             />
           </Center>
