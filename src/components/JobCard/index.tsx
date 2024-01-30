@@ -18,8 +18,8 @@ const JobCard = ({ job, part, materials }: { job: Job, part: PartType, materials
     <View style={styles.jobCardContainer}>
       <View style={styles.imageWrapper}>
         { part?.imageIds?.length 
-          ? <Image source={{ uri: imageUrl }} style={styles.image} />
-          : <Image source={Placeholder} style={styles.image} /> 
+          ? <Image source={{ uri: imageUrl }} style={styles.image} alt="part image"/>
+          : <Image source={Placeholder} style={styles.image} alt="image not found"/> 
         }
       </View>
       <View style={styles.cardContent}>

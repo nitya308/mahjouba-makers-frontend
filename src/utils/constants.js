@@ -1,7 +1,6 @@
 // With Expo Go, SERVER_URL needs to be exact IPv4 Address
-export const SERVER_URL = 'http://192.168.1.187:9090/';
-
-// export const SERVER_URL = 'https://mahjouba-backend.onrender.com/';
+// export const SERVER_URL = 'http://localhost:9090/';
+export const SERVER_URL = 'https://mahjouba-backend.onrender.com/';
 
 export const fonts = {
   italic: 'UniversCondensedItalic',
