@@ -10,6 +10,8 @@ import { jobsSelector, pullNextJobsPage } from 'redux/slices/jobsSlice';
 import { Pressable } from 'react-native';
 import { Job } from 'types/job';
 import { ScrollView } from 'react-native-gesture-handler';
+import AudioIcon from '../../../assets/audio_icon.svg';
+import * as Speech from 'expo-speech';
 
 const JobsPage = ({
   setSortField,
@@ -35,7 +37,14 @@ const JobsPage = ({
     <ScrollView>
       <BaseView smallLogo showTopRightIcon>
         <VStack height="100%" width="90%" marginTop={'150px'} paddingBottom={100}>
-          <Text fontSize={24} fontFamily={fonts.regular}>Job Search</Text>
+          <Text fontSize={24} fontFamily={fonts.regular}>Job Search
+            <IconButton
+              icon={<AudioIcon />}
+              onPress={() => {
+                Speech.speak('Job Search');
+              }}
+            />
+          </Text>
           {jobFeedIds.map((jobId: string) => {
             const job = jobsMap[jobId];
             const part = partsMap[job.partTypeId];
