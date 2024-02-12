@@ -7,8 +7,13 @@ import { PartType } from 'types/part_type';
 import Placeholder from 'assets/no_image_placeholder.png';
 import AudioIcon from '../../assets/audio_icon.svg';
 import * as Speech from 'expo-speech';
+import i18next from 'i18next';
+import { useTranslation } from 'react-i18next';
 
 const JobCard = ({ job, part, materials }: { job: Job, part: PartType, materials: string[] }) => {
+
+  const { t } = useTranslation();
+
   const photoMap = useAppSelector((state) => state.photos.photosMap);
 
   // Display different image depending on current jobStatus
@@ -27,7 +32,8 @@ const JobCard = ({ job, part, materials }: { job: Job, part: PartType, materials
           style={styles.audioIcon}
           icon={<AudioIcon />}
           onPress={() => {
-            Speech.speak(part?.name);
+            const toSpeak = t(part?.name) + t('for price') + job?.price + 'MAD';
+            Speech.speak(toSpeak, { language: i18next.language });
           }}
         />
       </View>

@@ -7,11 +7,13 @@ import useAppSelector from 'hooks/useAppSelector';
 import { fonts } from 'utils/constants';
 import { userDataSelector } from 'redux/slices/userDataSlice';
 import { jobsSelector, pullNextJobsPage } from 'redux/slices/jobsSlice';
+import { useTranslation } from 'react-i18next';
 import { Pressable } from 'react-native';
 import { Job } from 'types/job';
 import { ScrollView } from 'react-native-gesture-handler';
 import AudioIcon from '../../../assets/audio_icon.svg';
 import * as Speech from 'expo-speech';
+import i18next from 'i18next';
 
 const JobsPage = ({
   setSortField,
@@ -28,6 +30,7 @@ const JobsPage = ({
 }) => {
   const { userData } = useAppSelector(userDataSelector);
   const { cursor, jobFeedIds, jobsMap, partsMap, materialsMap, loading, currentJobId } = useAppSelector(jobsSelector);
+  const { t } = useTranslation();
 
   if (loading) {
     return <Spinner />;
@@ -37,11 +40,11 @@ const JobsPage = ({
     <ScrollView>
       <BaseView smallLogo showTopRightIcon>
         <VStack height="100%" width="90%" marginTop={'150px'} paddingBottom={100}>
-          <Text fontSize={24} fontFamily={fonts.regular}>Job Search
+          <Text fontSize={24} fontFamily={fonts.regular}>{t('Job Search')}
             <IconButton
               icon={<AudioIcon />}
               onPress={() => {
-                Speech.speak('Job Search');
+                Speech.speak(t('Job Search'), { language: i18next.language });
               }}
             />
           </Text>
