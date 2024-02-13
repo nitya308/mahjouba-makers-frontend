@@ -21,12 +21,15 @@ import CameraButton from 'components/CameraButton';
 import MapPinIcon from '../../../assets/map_pin.svg';
 import MADIcon from '../../../assets/MADIcon.png';
 import * as Speech from 'expo-speech';
+import { useTranslation } from 'react-i18next';
 import { Asset } from 'react-native-image-picker';
 import useAppDispatch from 'hooks/useAppDispatch';
 import { uploadMedia } from 'utils/mediaUtils';
 import Photo from 'types/photo';
 import { createPhoto } from 'redux/slices/photosSlice';
 import { completeJob } from 'redux/slices/jobsSlice';
+import i18next from 'i18next';
+
 
 export default function CurrentJobPage(): JSX.Element {
   const { userData } = useAppSelector(userDataSelector);
@@ -38,11 +41,13 @@ export default function CurrentJobPage(): JSX.Element {
   const currentJob = jobsMap?.[currentJobId ?? ''];
   const currentPart = partsMap?.[currentJob?.partTypeId];
   const currentAddress = addressMap?.[currentJob?.dropoffAddressId];
+  const { t } = useTranslation();
 
   const [completeJobPhoto, setCompleteJobPhoto] = useState<Asset | undefined>();
   const [showModal, setShowModal] = useState(false);
 
   const dispatch = useAppDispatch();
+
 
   const saveNewJobPhoto = useCallback(async () => {
     if (!completeJobPhoto || !fbUserRef || !userData) return;
@@ -123,11 +128,11 @@ export default function CurrentJobPage(): JSX.Element {
               style={styles.audioIcon}
               icon={<AudioIcon />}
               onPress={() => {
-                Speech.speak(
-                  currentPart?.name +
-                  `, has ${currentPart?.completionTime} hours remaining,`
-                  + 'ship to address' + currentAddress?.description
-                  + ', for price' + `${currentJob?.price} MAD`);
+                const toSpeak = t(currentPart?.name + ',') +
+                t('has') + `${currentPart?.completionTime}` + t('hours remaining')
+                + t('ship to address') + currentAddress?.description
+                + ',' +  t('for price') + `${currentJob?.price}` + t('MAD');
+                Speech.speak(t(toSpeak), { language: i18next.language });
               }}
             />
           </View>
@@ -142,10 +147,9 @@ export default function CurrentJobPage(): JSX.Element {
               icon={<AudioIcon />}
               onPress={() => {
                 const materialsString = currentPart?.materialIds
-                  .map((materialId) => materialsMap?.[materialId]?.name ?? '')
+                  .map((materialId) => t(materialsMap?.[materialId]?.name) ?? '')
                   .join(', ');
-
-                Speech.speak(materialsString);
+                Speech.speak(materialsString, { language: i18next.language });        
               }}
             />
           </View>
@@ -168,11 +172,7 @@ export default function CurrentJobPage(): JSX.Element {
               style={styles.buttonAudioIcon}
               icon={<AudioIcon />}
               onPress={() => {
-                if (true) { // TODO: toggle language using ii8n strings
-                  Speech.speak('Unaccept Job');
-                } else {
-                  Speech.speak('عدم قبول الوظيفة', { language: 'ar' });
-                }
+                Speech.speak(t('Unaccept Job'), { language: i18next.language }); 
               }}
             />
           </Center>
@@ -205,7 +205,7 @@ export default function CurrentJobPage(): JSX.Element {
                 <IconButton
                   icon={<AudioIcon />}
                   onPress={() => {
-                    Speech.speak('My Profile');
+                    Speech.speak(t('My Profile'), { language: i18next.language });   
                   }}
                 />
               </HStack>
@@ -234,7 +234,7 @@ export default function CurrentJobPage(): JSX.Element {
               style={styles.buttonAudioIcon}
               icon={<AudioIcon />}
               onPress={() => {
-                Speech.speak('Complete Job');
+                Speech.speak(t('Complete Job'), { language: i18next.language }); 
               }}
             />
           </Center>

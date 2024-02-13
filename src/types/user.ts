@@ -8,11 +8,18 @@ export enum UserScopes {
   Admin = 'ADMIN',
 }
 
+export enum Languages {
+  EN = 'en',
+  FR = 'fr',
+  AR = 'ar',
+}
+
 export interface IUser {
   _id: string;
   authId: string;
   email: string;
   name: string;
+  language?: Languages;
   role: UserScopes;
   homeAddressId: string | null;
   shippingAddressId: string | null;
@@ -31,6 +38,7 @@ export interface IUser {
 export interface CreateUserModel {
   name: string;
   email: string | null;
+  language?: Languages;
   homeAddress?: Address;
   shippingAddress?: Address;
   profilePic?: Photo;
