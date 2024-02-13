@@ -23,7 +23,7 @@ export const languages = [
   },
 ];
 
-const fallbackLng = ['fr'];
+const fallbackLng = ['en'];
 const resources = {
   en: {
     translation: translationEN,

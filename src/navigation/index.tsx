@@ -14,6 +14,7 @@ import { getUser, userDataSelector } from 'redux/slices/userDataSlice';
 import { Center, Spinner, View } from 'native-base';
 import ProfileImageSelector from 'components/ProfileImageSelector';
 import { SetupController } from 'controllers';
+import i18next from 'i18next';
 
 const RootNavigation = () => {
   const { isConnected } = useAppSelector((state) => state.connection);
@@ -29,6 +30,9 @@ const RootNavigation = () => {
   }, []);
 
   const initialized = useMemo(() => {
+    if (userData?.language) {
+      i18next.changeLanguage(userData?.language);
+    }
     return userData !== undefined;
   }, [userData, loading]);
   // When the app loads, try to log in with token stored in async storage
