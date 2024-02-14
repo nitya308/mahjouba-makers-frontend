@@ -27,7 +27,7 @@ import { uploadMedia } from 'utils/mediaUtils';
 import Photo from 'types/photo';
 import { createPhoto } from 'redux/slices/photosSlice';
 import { completeJob } from 'redux/slices/jobsSlice';
-
+import MaterialSelector from 'components/MaterialSelector';
 export default function CurrentJobPage(): JSX.Element {
   const { userData } = useAppSelector(userDataSelector);
   const fbUserRef = useAppSelector(authSelector).fbUserRef;

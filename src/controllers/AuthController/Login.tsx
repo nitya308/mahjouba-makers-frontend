@@ -9,8 +9,8 @@ import { ConfirmationResult, PhoneAuthProvider, signInWithCredential } from 'fir
 
 export default function Login() {
   const recaptchaVerifier = useRef<any>(null);
-  const [phone, setPhone] = useState<string | undefined>();
-  const [confirmationCode, setConfirmationCode] = useState<string | undefined>();
+  const [phone, setPhone] = useState<string | undefined>('1111111111');
+  const [confirmationCode, setConfirmationCode] = useState<string | undefined>('123456');
   // const [password, setPassword] = useState<string | undefined>();
   const [error, setError] = useState<string | undefined>();
   const [phoneVerify, setPhoneVerify] = useState(false);
