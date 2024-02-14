@@ -42,40 +42,7 @@ export default function CurrentJobPage(): JSX.Element {
   const currentPart = partsMap?.[currentJob?.partTypeId];
   const currentAddress = addressMap?.[currentJob?.dropoffAddressId];
   const currentDate = new Date();
-
-  // const dueDate = new Date('2024-12-31T23:59:59'); //example date to test out countdown
-  const dueDate = new Date(currentJob?.dueDate); 
-  const [timeRemaining, setTimeRemaining] = useState(calculateTimeRemaining());
-
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      setTimeRemaining(calculateTimeRemaining());
-    }, 1000);
-
-    // Cleanup function to clear the interval when the component unmounts
-    return () => clearInterval(intervalId);
-  }, []);
-
-  function calculateTimeRemaining() {
-    const now = new Date();
-    const difference = dueDate.getTime() - now.getTime();
-
-    if (difference <= 0) {
-      // Due date has passed
-      return { days: 0, hours: 0, minutes: 0, seconds: 0 };
-    }
-
-    const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((difference % (1000 * 60)) / 1000);
-
-    return { days, hours, minutes, seconds };
-  }
-
-  
   const { t } = useTranslation();
-  const currentDate = new Date();
 
   // const dueDate = new Date('2024-12-31T23:59:59'); //example date to test out countdown
   const dueDate = new Date(currentJob?.dueDate);
@@ -107,7 +74,7 @@ export default function CurrentJobPage(): JSX.Element {
     return { days, hours, minutes, seconds };
   }
 
-
+  
 
   const [completeJobPhoto, setCompleteJobPhoto] = useState<Asset | undefined>();
   const [showModal, setShowModal] = useState(false);
