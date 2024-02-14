@@ -17,6 +17,11 @@ import { Box, HStack } from 'native-base';
 import MaterialChip from '../../../components/MaterialChip';
 import { IMaterial } from 'types/material';
 import MaterialSelector from 'components/MaterialSelector';
+import { useTranslation } from 'react-i18next';
+import { ScrollView } from 'react-native-gesture-handler';
+import AudioIcon from '../../../assets/audio_icon.svg';
+import * as Speech from 'expo-speech';
+import i18next from 'i18next';
 
 const JobsPage = ({
   setSortField,
@@ -33,21 +38,12 @@ const JobsPage = ({
 }) => {
   const { userData } = useAppSelector(userDataSelector);
   const { cursor, jobFeedIds, jobsMap, partsMap, materialsMap, loading, currentJobId } = useAppSelector(jobsSelector);
+  const { t } = useTranslation();
 
   const [isModalVisible, setModalVisible] = useState(false);
   const [jobsAvailable, setJobsAvailable] = useState(false);
   const materialNames = Object.values(materialsMap).map(material => material.name);
   const [selectedMaterialIds, setSelectedMaterialIds] = useState<string[]>(userData?.materialIds ? userData?.materialIds : []);
-
-  // useEffect(() => {
-  //   console.log('starting use effect', selectedMaterialIds);
-  //   if (userData?.materialIds && selectedMaterialIds.length == 0) {
-  //     console.log('in if, setting backl to []');
-  //     setSelectedMaterialIds(userData?.materialIds);
-  //   }
-  //   console.log('in use effect after end', selectedMaterialIds);
-  // }, [userData]);
-
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
@@ -75,17 +71,6 @@ const JobsPage = ({
       <BaseView smallLogo showTopRightIcon>
         <VStack height="100%" width="90%" marginTop={'150px'} paddingBottom={100}>
           <Text fontSize={24} fontFamily={fonts.regular}>Job Search</Text>
-          {/* {
-            userData?.materialIds?.map((materialId: string) => {
-              const material = materialsMap[materialId];
-              // if (material) {
-              //   console.log(material.name);
-              //   // return <MaterialChip materialName={material?.name} />;
-              // }
-              
-              return <></>;
-            })
-          } */}
           <View>
             <TouchableOpacity onPress={toggleModal} style={styles.button}>
               {
@@ -108,7 +93,6 @@ const JobsPage = ({
                     setSelectedMaterialIds={setSelectedMaterialIds}
                     
                   />
-                  {/* Your popup content goes here */}
                   <TouchableOpacity onPress={toggleModal}>
                     <Text>Close</Text>
                   </TouchableOpacity>
@@ -116,6 +100,14 @@ const JobsPage = ({
               </View>
             </Modal>
           </View>
+          <Text fontSize={24} fontFamily={fonts.regular}>{t('Job Search')}
+            <IconButton
+              icon={<AudioIcon />}
+              onPress={() => {
+                Speech.speak(t('Job Search'), { language: i18next.language });
+              }}
+            />
+          </Text>
           {jobFeedIds.map((jobId: string) => {
             const job = jobsMap[jobId];
             const part = partsMap[job.partTypeId];

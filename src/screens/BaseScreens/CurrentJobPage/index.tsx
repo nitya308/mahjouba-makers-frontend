@@ -21,6 +21,7 @@ import CameraButton from 'components/CameraButton';
 import MapPinIcon from '../../../assets/map_pin.svg';
 import MADIcon from '../../../assets/MADIcon.png';
 import * as Speech from 'expo-speech';
+import { useTranslation } from 'react-i18next';
 import { Asset } from 'react-native-image-picker';
 import useAppDispatch from 'hooks/useAppDispatch';
 import { uploadMedia } from 'utils/mediaUtils';
@@ -28,6 +29,7 @@ import Photo from 'types/photo';
 import { createPhoto } from 'redux/slices/photosSlice';
 import { completeJob } from 'redux/slices/jobsSlice';
 import MaterialSelector from 'components/MaterialSelector';
+import i18next from 'i18next';
 export default function CurrentJobPage(): JSX.Element {
   const { userData } = useAppSelector(userDataSelector);
   const fbUserRef = useAppSelector(authSelector).fbUserRef;
@@ -38,11 +40,13 @@ export default function CurrentJobPage(): JSX.Element {
   const currentJob = jobsMap?.[currentJobId ?? ''];
   const currentPart = partsMap?.[currentJob?.partTypeId];
   const currentAddress = addressMap?.[currentJob?.dropoffAddressId];
+  const { t } = useTranslation();
 
   const [completeJobPhoto, setCompleteJobPhoto] = useState<Asset | undefined>();
   const [showModal, setShowModal] = useState(false);
 
   const dispatch = useAppDispatch();
+
 
   const saveNewJobPhoto = useCallback(async () => {
     if (!completeJobPhoto || !fbUserRef || !userData) return;
@@ -98,8 +102,8 @@ export default function CurrentJobPage(): JSX.Element {
     <ScrollView>
       {currentJob ? (
         <BaseView>
-          {currentPart?.imageIds.length 
-            ? <Image alt='part' source={{ uri: photoMap?.[currentPart?.imageIds[0]]?.fullUrl ?? '' }} style={styles.image} /> 
+          {currentPart?.imageIds.length
+            ? <Image alt='part' source={{ uri: photoMap?.[currentPart?.imageIds[0]]?.fullUrl ?? '' }} style={styles.image} />
             : <Image alt='placeholder' source={Placeholder} style={styles.image} />}
           <View style={styles.infoContainer}>
             <View style={styles.infoHeader}>
@@ -119,6 +123,17 @@ export default function CurrentJobPage(): JSX.Element {
                 <Text style={styles.text}>{`${currentJob?.price} MAD`}</Text>
               </View>
             </View>
+            <IconButton
+              style={styles.audioIcon}
+              icon={<AudioIcon />}
+              onPress={() => {
+                const toSpeak = t(currentPart?.name + ',') +
+                t('has') + `${currentPart?.completionTime}` + t('hours remaining')
+                + t('ship to address') + currentAddress?.description
+                + ',' +  t('for price') + `${currentJob?.price}` + t('MAD');
+                Speech.speak(t(toSpeak), { language: i18next.language });
+              }}
+            />
           </View>
           <View style={styles.materialContainer}>
             {currentPart?.materialIds?.map((materialId, index) => (
@@ -126,6 +141,16 @@ export default function CurrentJobPage(): JSX.Element {
                 <Text style={styles.text}>{materialsMap?.[materialId]?.name ?? ''}</Text>
               </View>
             ))}
+            <IconButton
+              style={styles.audioIcon}
+              icon={<AudioIcon />}
+              onPress={() => {
+                const materialsString = currentPart?.materialIds
+                  .map((materialId) => t(materialsMap?.[materialId]?.name) ?? '')
+                  .join(', ');
+                Speech.speak(materialsString, { language: i18next.language });        
+              }}
+            />
           </View>
           <Center marginTop={'10px'}>
             <SharpButton
@@ -142,8 +167,15 @@ export default function CurrentJobPage(): JSX.Element {
                 Unaccept Job
               </Text>
             </SharpButton>
+            <IconButton
+              style={styles.buttonAudioIcon}
+              icon={<AudioIcon />}
+              onPress={() => {
+                Speech.speak(t('Unaccept Job'), { language: i18next.language }); 
+              }}
+            />
           </Center>
-          <Center>
+          <Center marginTop={'10px'}>
             <AppModal
               showModal={showModal}
               setShowModal={setShowModal}
@@ -172,7 +204,7 @@ export default function CurrentJobPage(): JSX.Element {
                 <IconButton
                   icon={<AudioIcon />}
                   onPress={() => {
-                    Speech.speak('My Profile');
+                    Speech.speak(t('My Profile'), { language: i18next.language });   
                   }}
                 />
               </HStack>
@@ -197,6 +229,13 @@ export default function CurrentJobPage(): JSX.Element {
                 </SharpButton>
               </Center>
             </AppModal>
+            <IconButton
+              style={styles.buttonAudioIcon}
+              icon={<AudioIcon />}
+              onPress={() => {
+                Speech.speak(t('Complete Job'), { language: i18next.language }); 
+              }}
+            />
           </Center>
         </BaseView>
       )
@@ -280,5 +319,14 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 10,
+  },
+  audioIcon: {
+    position: 'absolute',
+    right: 5,
+    bottom: 5,
+  },
+  buttonAudioIcon: {
+    position: 'absolute',
+    right: -50,
   },
 });

@@ -3,6 +3,7 @@ import { initReactI18next } from 'react-i18next';
 
 import translationEN from './locales/en/translation.json';
 import translationFR from './locales/fr/translation.json';
+import translationsAR from './locales/ar/translation.json';
 
 export const languages = [
   {
@@ -15,6 +16,11 @@ export const languages = [
     label: 'French',
     nativeLabel: 'Française',
   },
+  {
+    value: 'AR',
+    label: 'Arabic',
+    nativeLabel: 'عربي',
+  },
 ];
 
 const fallbackLng = ['en'];
@@ -24,6 +30,9 @@ const resources = {
   },
   fr: {
     translation: translationFR,
+  },
+  ar:{
+    translation: translationsAR,
   },
 };
 

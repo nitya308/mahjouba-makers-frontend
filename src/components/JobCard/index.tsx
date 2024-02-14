@@ -1,26 +1,41 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Text, View, Image } from 'native-base';
+import { Text, View, Image, IconButton } from 'native-base';
 import { StyleSheet } from 'react-native';
 import useAppSelector from 'hooks/useAppSelector';
 import { JOB_STATUS_ENUM, Job } from 'types/job';
 import { PartType } from 'types/part_type';
 import Placeholder from 'assets/no_image_placeholder.png';
+import AudioIcon from '../../assets/audio_icon.svg';
+import * as Speech from 'expo-speech';
+import i18next from 'i18next';
+import { useTranslation } from 'react-i18next';
 
 const JobCard = ({ job, part, materials }: { job: Job, part: PartType, materials: string[] }) => {
+
+  const { t } = useTranslation();
+
   const photoMap = useAppSelector((state) => state.photos.photosMap);
 
   // Display different image depending on current jobStatus
-  const imageUrl = (job?.jobStatus === JOB_STATUS_ENUM.COMPLETE || job?.jobStatus === JOB_STATUS_ENUM.PENDING_REVIEW) 
-    ? (photoMap?.[job?.imageIds[0]]?.fullUrl) 
+  const imageUrl = (job?.jobStatus === JOB_STATUS_ENUM.COMPLETE || job?.jobStatus === JOB_STATUS_ENUM.PENDING_REVIEW)
+    ? (photoMap?.[job?.imageIds[0]]?.fullUrl)
     : (photoMap?.[part?.imageIds[0]]?.fullUrl);
 
   return (
     <View style={styles.jobCardContainer}>
       <View style={styles.imageWrapper}>
-        { part?.imageIds?.length 
-          ? <Image source={{ uri: imageUrl }} style={styles.image} alt="part image"/>
-          : <Image source={Placeholder} style={styles.image} alt="image not found"/> 
+        {part?.imageIds?.length
+          ? <Image source={{ uri: imageUrl }} style={styles.image} alt="part image" />
+          : <Image source={Placeholder} style={styles.image} alt="image not found" />
         }
+        <IconButton
+          style={styles.audioIcon}
+          icon={<AudioIcon />}
+          onPress={() => {
+            const toSpeak = t(part?.name) + t('for price') + job?.price + 'MAD';
+            Speech.speak(toSpeak, { language: i18next.language });
+          }}
+        />
       </View>
       <View style={styles.cardContent}>
         <View style={styles.namePriceContainer}>
@@ -34,7 +49,7 @@ const JobCard = ({ job, part, materials }: { job: Job, part: PartType, materials
           }
           <Text>{job._id}</Text>
         </View>
-        { materials && materials?.length > 0 && (
+        {materials && materials?.length > 0 && (
           <View style={styles.materialContainer}>
             {materials.map((material) => (
               <View key={material} style={styles.materialChip}>
@@ -44,6 +59,11 @@ const JobCard = ({ job, part, materials }: { job: Job, part: PartType, materials
           </View>
         )
         }
+        {job?.completionDate && (
+          <Text style={styles.completionDate}>
+            Completed {new Date(job.completionDate).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' })}
+          </Text>
+        )}
       </View>
     </View>
   );
@@ -58,8 +78,13 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     shadowColor: '#000000',
     shadowOpacity: 1,
-    shadowOffset: { width: -3, height: 3 }, 
+    shadowOffset: { width: -3, height: 3 },
     shadowRadius: 0,
+  },
+  completionDate: {
+    fontSize: 18,
+    color: '#00FF00',
+    textAlign: 'right',
   },
   image: {
     width: '100%',
@@ -97,6 +122,11 @@ const styles = StyleSheet.create({
   price: {
     fontSize: 18,
     color: '#000000',
+  },
+  audioIcon: {
+    position: 'absolute',
+    right: 5,
+    top: 5,
   },
 });
 

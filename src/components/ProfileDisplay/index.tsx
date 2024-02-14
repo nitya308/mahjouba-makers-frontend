@@ -9,6 +9,7 @@ import { DEFAULT_PROFILE_URI } from 'utils/constants';
 import { authSelector } from 'redux/slices/authSlice';
 import { fonts } from 'utils/constants';
 import AudioIcon from '../../assets/audio_icon.svg';
+import { useTranslation } from 'react-i18next';
 import EditIcon from '../../assets/edit_icon.svg';
 import MapPinIcon from '../../assets/map_pin.svg';
 import addressApi from 'requests/addressApi';
@@ -19,6 +20,7 @@ import { Job } from 'types/job';
 import JobCard from 'components/JobCard';
 import * as Speech from 'expo-speech';
 import { getAddress } from 'redux/slices/addressSlice';
+import i18next from 'i18next';
 
 export default function ProfileDisplay({
   toggleEditing,
@@ -28,12 +30,13 @@ export default function ProfileDisplay({
   toggleSettingsOpen: () => void;
 }): JSX.Element {
   const dispatch = useAppDispatch();
-  
+
   const { fbUserRef } = useAppSelector(authSelector);
   const { userData } = useAppSelector(userDataSelector);
   const { jobsMap, partsMap, materialsMap, jobHistoryIds } = useAppSelector(jobsSelector);
   const addressMap = useAppSelector((state) => state.addresses.addressMap);
   const photoMap = useAppSelector((state) => state.photos.photosMap);
+  const { t } = useTranslation();
 
   const addressString = addressMap?.[userData?.homeAddressId ?? '']?.description ?? '';
 
@@ -59,7 +62,7 @@ export default function ProfileDisplay({
           <IconButton
             icon={<AudioIcon />}
             onPress={() => {
-              Speech.speak('My Profile');
+              Speech.speak(t('My Profile'), { language: i18next.language });
             }}
           />
         </HStack>
@@ -126,7 +129,7 @@ export default function ProfileDisplay({
               <IconButton
                 icon={<AudioIcon />}
                 onPress={() => {
-                  Speech.speak('Past Projects');
+                  Speech.speak(t('Past Projects'), { language: i18next.language });
                 }}
               />
             </HStack>
@@ -141,11 +144,11 @@ export default function ProfileDisplay({
           });
 
           return (
-            <Pressable 
-              marginBottom={'15px'} 
+            <Pressable
+              marginBottom={'15px'}
               marginLeft={'15px'}
               marginRight={'15px'}
-              key={job._id} 
+              key={job._id}
               onPress={() => console.log('TODO')}
             >
               <JobCard job={job} part={part} materials={materials} />

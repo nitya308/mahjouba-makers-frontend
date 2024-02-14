@@ -4,12 +4,13 @@ import useAppDispatch from 'hooks/useAppDispatch';
 import useAppSelector from 'hooks/useAppSelector';
 import { authSelector, setUserInitialized } from 'redux/slices/authSlice';
 import { initUser, userDataSelector } from 'redux/slices/userDataSlice';
-import { UserScopes } from 'types/user';
+import { Languages, UserScopes } from 'types/user';
 import AddressInput from 'components/AddressInput';
 import { Image } from 'react-native-image-crop-picker';
 import ProfileImageSelector from 'components/ProfileImageSelector';
 import Address from 'types/address';
 import { uploadMedia } from 'utils/mediaUtils';
+import i18next from 'i18next';
 
 export default function UserSetup() {
   const [name, setName] = useState<string | undefined>();
@@ -30,6 +31,7 @@ export default function UserSetup() {
       userData: {
         name,
         email: fbUserRef.email !== null ? fbUserRef.email : fbUserRef.phoneNumber,
+        language: i18next.language as Languages,
         homeAddress: selectedHomeAddr,
         shippingAddress: selectedShippingAddr,
         profilePic: uploadRes ? {
