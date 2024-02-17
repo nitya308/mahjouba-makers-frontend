@@ -145,7 +145,6 @@ export default function CurrentJobPage(): JSX.Element {
             <View style={styles.timeRemaining}>
               <TimeRemainingIcon />
               <Text style={styles.timeRemainingText}>{`${timeRemaining.days} days ${timeRemaining.hours} hours remaining`}</Text>
-              <Text style={styles.timeRemainingText}>{`${currentPart?.completionTime} hours remaining`}</Text>
             </View>
             <View style={styles.infoBody}>
               <View style={styles.textAndIcon}>
