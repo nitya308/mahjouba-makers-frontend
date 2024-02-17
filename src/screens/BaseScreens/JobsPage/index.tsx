@@ -9,7 +9,6 @@ import { userDataSelector } from 'redux/slices/userDataSlice';
 import { jobsSelector, pullNextJobsPage } from 'redux/slices/jobsSlice';
 import { Pressable, View } from 'react-native';
 import { Job } from 'types/job';
-import { ScrollView } from 'react-native-gesture-handler';
 import { CheckBox } from 'react-native-elements';
 import { TouchableOpacity } from 'react-native';
 import { Modal } from 'react-native';
@@ -43,7 +42,7 @@ const JobsPage = ({
   const [isModalVisible, setModalVisible] = useState(false);
   const [jobsAvailable, setJobsAvailable] = useState(false);
   const materialNames = Object.values(materialsMap).map(material => material.name);
-  const [selectedMaterialIds, setSelectedMaterialIds] = useState<string[]>(userData?.materialIds ? userData?.materialIds : []);
+  const [selectedMaterialIds, setSelectedMaterialIds] = useState<string[]>([]);
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
@@ -51,6 +50,13 @@ const JobsPage = ({
   useEffect(() => {
     setJobsAvailable(false);
   }, [selectedMaterialIds]);
+
+  useEffect(() => {
+    if (selectedMaterialIds.length == 0) {
+      setSelectedMaterialIds(userData?.materialIds ? userData?.materialIds : []);
+
+    }
+  }, []);
 
   const customCheckedIcon = (
     <View
@@ -78,7 +84,7 @@ const JobsPage = ({
                   if (material) {
                     <Text>{material.name}</Text>;
                   }
-              
+
                   return <></>;
                 })
               }
@@ -91,7 +97,7 @@ const JobsPage = ({
                   <MaterialSelector
                     selectedMaterialIds={selectedMaterialIds}
                     setSelectedMaterialIds={setSelectedMaterialIds}
-                    
+
                   />
                   <TouchableOpacity onPress={toggleModal}>
                     <Text>Close</Text>
@@ -185,7 +191,7 @@ const styles = StyleSheet.create({
     width: 370,
     alignItems: 'center',
   },
-  
+
 });
 
 export default JobsPage;

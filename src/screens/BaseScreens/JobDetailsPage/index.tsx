@@ -33,6 +33,7 @@ const JobDetailsPage = ({
   const { userData } = useAppSelector(userDataSelector);
   const { jobsMap, partsMap, materialsMap, loading, currentJobId } = useAppSelector(jobsSelector);
   const addressMap = useAppSelector((state) => state.addresses.addressMap);
+  const photoMap = useAppSelector((state) => state.photos.photosMap);
 
   if (loading) {
     return <Spinner />;
@@ -45,7 +46,7 @@ const JobDetailsPage = ({
     return material ? material.name : ''; // Return the name if available, otherwise an empty string
   });
   const address = addressMap?.[job?.dropoffAddressId];
-  const photoMap = useAppSelector((state) => state.photos.photosMap);
+  
   // Display different image depending on current jobStatus
   const imageUrl = (job?.jobStatus === JOB_STATUS_ENUM.COMPLETE || job?.jobStatus === JOB_STATUS_ENUM.PENDING_REVIEW)
     ? (photoMap?.[job?.imageIds[0]]?.fullUrl)
