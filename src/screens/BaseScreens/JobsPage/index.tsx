@@ -9,7 +9,6 @@ import { userDataSelector } from 'redux/slices/userDataSlice';
 import { jobsSelector, pullNextJobsPage } from 'redux/slices/jobsSlice';
 import { Pressable, View } from 'react-native';
 import { Job } from 'types/job';
-import { ScrollView } from 'react-native-gesture-handler';
 import { CheckBox } from 'react-native-elements';
 import { TouchableOpacity } from 'react-native';
 import { Modal } from 'react-native';
