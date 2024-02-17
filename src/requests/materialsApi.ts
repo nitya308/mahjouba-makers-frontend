@@ -16,15 +16,30 @@ const getMaterial = async (_id : string, fbUserRef: User) => {
     });
 };
 
+// const getMaterials = async (fbUserRef: User) => {
+//   const config = await getAxiosConfigForFBUser(fbUserRef);
+//   if (!config) throw new Error('Unable to create auth config');
+//   return axios.get<IMaterial[]>(`${SERVER_URL}materials/`, config);    
+//     .then((res) => ([ ...res.data ]))
+//     .catch((err) => {
+//       console.log(err);
+//       throw err;
+//     });
+// };
 const getMaterials = async (fbUserRef: User) => {
-  const config = await getAxiosConfigForFBUser(fbUserRef);
-  if (!config) throw new Error('Unable to create auth config');
-  return axios.get<IMaterial[]>(`${SERVER_URL}materials/`, config)
-    .then((res) => ([ ...res.data ]))
-    .catch((err) => {
-      console.log(err);
-      throw err;
-    });
+  try {
+    const config = await getAxiosConfigForFBUser(fbUserRef);
+    
+    if (!config) {
+      throw new Error('Unable to create auth config');
+    }
+
+    const response = await axios.get<IMaterial[]>(`${SERVER_URL}materials/`, config);
+    return [ ...response.data ];
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
 };
 
 const searchMaterials = async (idList: string[], fbUserRef: User) => {

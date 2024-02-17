@@ -81,6 +81,26 @@ export const pullNextJobsPage = createAsyncThunk(
   },
 );
 
+export const getAllMaterials = createAsyncThunk(
+  'jobs/getAllMaterials',
+  async (req: { fbUserRef: User }, { dispatch, getState }) => {
+    try {
+      const dbMaterialsArray = await materialsApi.getMaterials(req.fbUserRef);
+      console.log('MATERIALS START');
+      console.log(dbMaterialsArray);
+      console.log('MATERIALS END');
+      await Promise.all(
+        dbMaterialsArray.map(async (material) => {
+          // const dbMaterial = await materialsApi.getMaterial(mId, req.fbUserRef);
+          dispatch(addMaterial({ material: material, id: material._id }));
+        }), 
+      );
+    } catch (e) {
+      console.log(e);
+    }
+
+  });
+
 export const getPartsAndMaterialsForJob = createAsyncThunk(
   'jobs/getPartsAndMaterialsForJob',
   async (req: { job: Job, fbUserRef: User }, { dispatch, getState }) => {
@@ -252,7 +272,7 @@ export const jobsSlice = createSlice({
       jobs.forEach((job: Job) => {
         state.jobsMap[job._id] = job;
       });
-      state.jobFeedIds = [...state.jobFeedIds, ...jobs.map((job: Job) => job._id).filter((jobId: string)=> !state.jobFeedIds.includes(jobId))];
+      state.jobFeedIds = [...state.jobFeedIds, ...jobs.map((job: Job) => job._id).filter((jobId: string) => !state.jobFeedIds.includes(jobId))];
     });
     builder.addCase(pullNextJobsPage.fulfilled, (state, action) => {
       const jobs: Job[] = action.payload;
