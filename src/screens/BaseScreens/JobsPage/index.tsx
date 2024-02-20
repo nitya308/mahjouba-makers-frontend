@@ -76,7 +76,14 @@ const JobsPage = ({
     <ScrollView>
       <BaseView smallLogo showTopRightIcon>
         <VStack height="100%" width="90%" marginTop={'150px'} paddingBottom={100}>
-          <Text fontSize={24} fontFamily={fonts.regular}>Job Search</Text>
+          <Text fontSize={24} fontFamily={fonts.regular}>{t('Job Search')}
+            <IconButton
+              icon={<AudioIcon />}
+              onPress={() => {
+                Speech.speak(t('Job Search'), { language: i18next.language });
+              }}
+            />
+          </Text>
           <View>
             <TouchableOpacity onPress={toggleModal} style={styles.button}>
               {
@@ -106,14 +113,6 @@ const JobsPage = ({
               </View>
             </Modal>
           </View>
-          <Text fontSize={24} fontFamily={fonts.regular}>{t('Job Search')}
-            <IconButton
-              icon={<AudioIcon />}
-              onPress={() => {
-                Speech.speak(t('Job Search'), { language: i18next.language });
-              }}
-            />
-          </Text>
           {jobFeedIds.map((jobId: string) => {
             const job = jobsMap[jobId];
             const part = partsMap[job.partTypeId];
@@ -133,7 +132,6 @@ const JobsPage = ({
                 </Pressable>
               );
             }
-            console.log('jobs available is ', jobsAvailable);
           })}
           {
             !jobsAvailable && (<View><Text>No Jobs Available with your Selected Materials</Text></View>)
