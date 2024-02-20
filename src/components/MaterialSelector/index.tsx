@@ -16,7 +16,7 @@ export default function MaterialSelector({
   const { fbUserRef } = useAppSelector(authSelector);
 
   const [materialList, setMaterialList] = useState<IMaterial[]>([]);
-  
+
   useEffect(() => {
     if (materialList.length > 0) return;
     const fetchMaterials = async () => {
@@ -36,21 +36,16 @@ export default function MaterialSelector({
   }, [materialList, fbUserRef]);
 
   const onSelect = useCallback((_id: string) => {
-    // console.log('new id', _id);
-    // console.log(selectedMaterialIds);
     if (selectedMaterialIds.includes(_id)) {
-      // console.log('in if');
       setSelectedMaterialIds(
         selectedMaterialIds.filter((mid) => mid !== _id),
       );
     } else {
-      // console.log('in else');
       setSelectedMaterialIds([
         ...selectedMaterialIds,
         _id,
       ]);
     }
-    // console.log('new materials', selectedMaterialIds);
   }, [selectedMaterialIds]);
 
   const renderItem = useCallback(({ item, index }: { item: IMaterial, index: number }) => {

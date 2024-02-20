@@ -7,17 +7,17 @@ import translationsAR from './locales/ar/translation.json';
 
 export const languages = [
   {
-    value: 'EN',
+    value: 'en',
     label: 'English',
     nativeLabel: 'English',
   },
   {
-    value: 'FR',
+    value: 'fr',
     label: 'French',
     nativeLabel: 'Française',
   },
   {
-    value: 'AR',
+    value: 'ar',
     label: 'Arabic',
     nativeLabel: 'عربي',
   },

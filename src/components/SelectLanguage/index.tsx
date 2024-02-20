@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import i18next from 'i18next';
 import { Button } from 'react-native';
 import { Languages } from 'types/user';
@@ -6,6 +6,7 @@ import { updateUser } from 'redux/slices/userDataSlice';
 import useAppDispatch from 'hooks/useAppDispatch';
 import useAppSelector from 'hooks/useAppSelector';
 import { authSelector } from 'redux/slices/authSlice';
+
 
 export const languageMap = {
   EN: { label: 'English', active: true, abb: 'EN' },
@@ -15,10 +16,17 @@ export const languageMap = {
 
 const SelectLanguage = () => {
   const dispatch = useAppDispatch();
-  const [language, setLanguage] = useState('EN');
+  const [language, setLanguage] = useState(i18next.language);
   const { fbUserRef } = useAppSelector(authSelector);
 
+
+  // useEffect(() => {
+  //   // update selected location for component usage
+  //   console.log(language);
+  // }, []);
+
   const updateLang = (lang: string) => {
+
     if (!fbUserRef) return;
     try {
       dispatch(updateUser({
@@ -36,18 +44,18 @@ const SelectLanguage = () => {
     <Button
       onPress={() => {
         try {
-          if (language === 'EN') {
-            setLanguage('FR');
-            i18next.changeLanguage('fr');
-            updateLang('fr');
-          } else if (language === 'FR') {
-            setLanguage('AR');
-            i18next.changeLanguage('ar');
-            updateLang('ar');
+          if (language === Languages.EN) {
+            setLanguage(Languages.FR);
+            i18next.changeLanguage(Languages.FR);
+            updateLang(Languages.FR);
+          } else if (language === Languages.FR) {
+            setLanguage(Languages.AR);
+            i18next.changeLanguage(Languages.AR);
+            updateLang(Languages.AR);
           } else {
-            setLanguage('EN');
-            i18next.changeLanguage('en');
-            updateLang('en');
+            setLanguage(Languages.EN);
+            i18next.changeLanguage(Languages.EN);
+            updateLang(Languages.EN);
           }
         } catch (e) {
           console.log(e);

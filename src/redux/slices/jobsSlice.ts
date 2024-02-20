@@ -86,9 +86,6 @@ export const getAllMaterials = createAsyncThunk(
   async (req: { fbUserRef: User }, { dispatch, getState }) => {
     try {
       const dbMaterialsArray = await materialsApi.getMaterials(req.fbUserRef);
-      console.log('MATERIALS START');
-      console.log(dbMaterialsArray);
-      console.log('MATERIALS END');
       await Promise.all(
         dbMaterialsArray.map(async (material) => {
           // const dbMaterial = await materialsApi.getMaterial(mId, req.fbUserRef);
