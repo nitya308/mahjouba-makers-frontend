@@ -94,7 +94,7 @@ const BaseNavigation = () => {
             ),
           }}
         />
-        <BaseTab.Screen
+        {/* <BaseTab.Screen
           name={BaseTabRoutes.CURRJOB}
           component={CurrentJobController}
           options={{ 
@@ -105,7 +105,7 @@ const BaseNavigation = () => {
               </Text>
             ),
           }}
-        />
+        /> */}
         <BaseTab.Screen
           name={BaseTabRoutes.PROFILE}
           component={ProfileController}

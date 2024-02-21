@@ -8,12 +8,13 @@ import { authSelector } from 'redux/slices/authSlice';
 import SortOptions from 'types/sortOptions';
 import { Job } from 'types/job';
 import JobDetailsPage from 'screens/BaseScreens/JobDetailsPage';
+import CurrentJobPage from 'screens/BaseScreens/CurrentJobPage';
 
 export default function JobsController(): JSX.Element {
   const dispatch = useAppDispatch();
   const { fbUserRef } = useAppSelector(authSelector);
-  const { cursor } = useAppSelector(jobsSelector);
-  
+  const { cursor, currentJobId } = useAppSelector(jobsSelector);
+
   const [sortField, setSortField] = useState<string | undefined>();
   const [sortOrder, setSortOrder] = useState(1);
   const [detailsPageOpen, setDetailsPageOpen] = useState(false);
@@ -39,11 +40,11 @@ export default function JobsController(): JSX.Element {
     dispatch(getUserJobHistory({ fbUserRef }));
     dispatch(getUserCurrentJob({ fbUserRef }));
   }, [fbUserRef, sortField, sortOrder]);
-  
+
   useEffect(() => {
     reloadJobs();
     // put materials loading here
-    
+
   }, [fbUserRef, sortField, sortOrder, reloadJobs]);
 
   const handleJobSelect = useCallback((job?: Job) => {
@@ -57,16 +58,18 @@ export default function JobsController(): JSX.Element {
   }, [detailsPageOpen, selectedJob]);
 
   return <View flex={1}>
-    {detailsPageOpen && selectedJob ?
-      <JobDetailsPage
-        jobId={selectedJob._id}
-        exit={handleJobSelect} /> : 
-      <JobsPage 
-        handleSelect={handleJobSelect}
-        pullNextPage={pullNextPage}
-        setSortField={setSortField} 
-        setSortOrder={setSortOrder}
-        reloadJobs={reloadJobs} />
+    {currentJobId ?
+      <CurrentJobPage setDetailsPageOpen={setDetailsPageOpen}></CurrentJobPage> :
+      detailsPageOpen && selectedJob ?
+        <JobDetailsPage
+          jobId={selectedJob._id}
+          exit={handleJobSelect} /> :
+        <JobsPage
+          handleSelect={handleJobSelect}
+          pullNextPage={pullNextPage}
+          setSortField={setSortField}
+          setSortOrder={setSortOrder}
+          reloadJobs={reloadJobs} />
     }
   </View>;
 }
