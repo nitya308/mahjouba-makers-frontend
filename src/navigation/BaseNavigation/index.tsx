@@ -1,19 +1,25 @@
-import React from 'react';
+import { AntDesign, Entypo, FontAwesome5, Ionicons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
-import { AntDesign, Entypo, FontAwesome5 } from '@expo/vector-icons';
-import { BaseTabRoutes, BaseNavigationList } from '../routeTypes';
-import { Icon, View, Text } from 'native-base';
-import { JobsController, ProfileController, CurrentJobController } from 'controllers';
+import { createStackNavigator } from '@react-navigation/stack';
+import {
+  BulletinController,
+  CurrentJobController,
+  JobsController,
+  PaymentController,
+  ProfileController,
+} from 'controllers';
+import { Icon, Text, View } from 'native-base';
+import React from 'react';
+import Colors from 'utils/Colors';
 import { fonts } from 'utils/constants';
-import SearchIcon from '../../assets/search_icon.svg';
-import SearchIconFilled from '../../assets/search_icon_filled.svg';
-import PersonIcon from '../../assets/person_icon.svg';
-import PersonIconFilled from '../../assets/person_icon_filled.svg';
 import HammerIcon from '../../assets/hammer.svg';
 import HammerIconFilled from '../../assets/hammer_filled.svg';
-import Colors from 'utils/Colors';
+import PersonIcon from '../../assets/person_icon.svg';
+import PersonIconFilled from '../../assets/person_icon_filled.svg';
+import SearchIcon from '../../assets/search_icon.svg';
+import SearchIconFilled from '../../assets/search_icon_filled.svg';
+import { BaseNavigationList, BaseTabRoutes } from '../routeTypes';
 
 const BaseTab = createBottomTabNavigator<BaseNavigationList>();
 const BaseStack = createStackNavigator<BaseNavigationList>();
@@ -85,8 +91,13 @@ const BaseNavigation = () => {
         <BaseTab.Screen
           name={BaseTabRoutes.JOBS}
           component={JobsController}
-          options={{ 
-            tabBarIcon: (props) => ((props.focused) ? <SearchIconFilled /> : <SearchIcon />),
+          options={{
+            tabBarIcon: ({ color, focused }) =>
+              focused ? (
+                <Ionicons name='home-outline' size={32} color={color} />
+              ) : (
+                <Ionicons name='home-outline' size={32} />
+              ),
             tabBarLabel: (props) => (
               <Text fontFamily={props.focused ? fonts.bold : fonts.regular}>
                 {BaseTabRoutes.JOBS}
@@ -94,6 +105,41 @@ const BaseNavigation = () => {
             ),
           }}
         />
+        <BaseTab.Screen
+          name={BaseTabRoutes.BULLETIN}
+          component={BulletinController}
+          options={{
+            tabBarIcon: ({ color, focused }) =>
+              focused ? (
+                <Ionicons name='laptop-outline' size={32} color={color} />
+              ) : (
+                <Ionicons name='laptop-outline' size={32} />
+              ),
+            tabBarLabel: (props) => (
+              <Text fontFamily={props.focused ? fonts.bold : fonts.regular}>
+                {BaseTabRoutes.BULLETIN}
+              </Text>
+            ),
+          }}
+        />
+        <BaseTab.Screen
+          name={BaseTabRoutes.PAYMENT}
+          component={PaymentController}
+          options={{
+            tabBarIcon: ({ color, focused }) =>
+              focused ? (
+                <Ionicons name='earth-sharp' size={32} color={color} />
+              ) : (
+                <Ionicons name='earth-sharp' size={32} />
+              ),
+            tabBarLabel: (props) => (
+              <Text fontFamily={props.focused ? fonts.bold : fonts.regular}>
+                {BaseTabRoutes.PAYMENT}
+              </Text>
+            ),
+          }}
+        />
+
         {/* <BaseTab.Screen
           name={BaseTabRoutes.CURRJOB}
           component={CurrentJobController}
@@ -109,8 +155,13 @@ const BaseNavigation = () => {
         <BaseTab.Screen
           name={BaseTabRoutes.PROFILE}
           component={ProfileController}
-          options={{ 
-            tabBarIcon: (props) => ((props.focused) ? <PersonIconFilled /> : <PersonIcon />),
+          options={{
+            tabBarIcon: ({ focused, color }) =>
+              focused ? (
+                <Ionicons name='person-outline' size={32} color={color} />
+              ) : (
+                <Ionicons name='person-outline' size={32} />
+              ),
             tabBarLabel: (props) => (
               <Text fontFamily={props.focused ? fonts.bold : fonts.regular}>
                 {BaseTabRoutes.PROFILE}
