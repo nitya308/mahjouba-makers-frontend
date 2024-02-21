@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import BaseView from 'components/BaseView';
 import JobCard from 'components/JobCard';
-import { StyleSheet } from 'react-native';
+import { Animated, StyleSheet, FlatList, ScrollView } from 'react-native';
 import { Text, VStack, Button, IconButton, Spinner } from 'native-base';
 import useAppSelector from 'hooks/useAppSelector';
 import { fonts } from 'utils/constants';
@@ -17,10 +17,10 @@ import MaterialChip from '../../../components/MaterialChip';
 import { IMaterial } from 'types/material';
 import MaterialSelector from 'components/MaterialSelector';
 import { useTranslation } from 'react-i18next';
-import { ScrollView } from 'react-native-gesture-handler';
 import AudioIcon from '../../../assets/audio_icon.svg';
 import * as Speech from 'expo-speech';
 import i18next from 'i18next';
+import { integer } from 'aws-sdk/clients/cloudfront';
 
 const JobsPage = ({
   setSortField,
@@ -43,6 +43,11 @@ const JobsPage = ({
   const [jobsAvailable, setJobsAvailable] = useState(false);
   const materialNames = Object.values(materialsMap).map(material => material.name);
   const [selectedMaterialIds, setSelectedMaterialIds] = useState<string[]>([]);
+  const [scrollViewWidth, setScrollViewWidth] = React.useState(0);
+  const boxWidth = scrollViewWidth * 0.8;
+  const boxDistance = scrollViewWidth - boxWidth;
+  const halfBoxDistance = boxDistance / 2;
+  const pan = React.useRef(new Animated.ValueXY()).current;
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
@@ -68,91 +73,155 @@ const JobsPage = ({
       }}
     />
   );
+  const renderItem = ({ item, index }: { item: string, index: integer }) => (
+    <Animated.View
+      style={{
+        transform: [
+          {
+            scale: pan.x.interpolate({
+              inputRange: [
+                (index - 1) * boxWidth - halfBoxDistance,
+                index * boxWidth - halfBoxDistance,
+                (index + 1) * boxWidth - halfBoxDistance, // adjust positioning
+              ],
+              outputRange: [0.8, 1, 0.8], // scale down when out of scope
+              extrapolate: 'clamp',
+            }),
+          },
+        ],
+      }}>
+      <View style={{
+        height: '100%',
+        width: boxWidth,
+        borderRadius: 24,
+        backgroundColor: `rgba(${(index * 13) % 255}, ${(index * 35) % 255
+        }, ${(index * 4) % 255}, .5)`,
+      }}>
+        <Text>{item}</Text>
+      </View>
+    </Animated.View>
+  );
   if (loading) {
     return <Spinner />;
   }
 
   return (
-    <ScrollView>
-      <BaseView smallLogo showTopRightIcon>
-        <VStack height="100%" width="90%" marginTop={'150px'} paddingBottom={100}>
-          <Text fontSize={24} fontFamily={fonts.regular}>{t('Job Search')}
-            <IconButton
-              icon={<AudioIcon />}
-              onPress={() => {
-                Speech.speak(t('Job Search'), { language: i18next.language });
-              }}
-            />
-          </Text>
-          <View>
-            <TouchableOpacity onPress={toggleModal} style={styles.button}>
-              {
-                Object.values(materialsMap)?.map((material: IMaterial) => {
-                  if (material) {
-                    <Text>{material.name}</Text>;
-                  }
-
-                  return <></>;
-                })
-              }
-              <Text style={styles.plusSign}>+</Text>
-            </TouchableOpacity>
-            <Modal visible={isModalVisible} animationType="fade" transparent={true}  >
-              <View style={styles.modalContainer}>
-                <View style={styles.modalContent}>
-                  <Text>Select Materials</Text>
-                  <MaterialSelector
-                    selectedMaterialIds={selectedMaterialIds}
-                    setSelectedMaterialIds={setSelectedMaterialIds}
-
-                  />
-                  <TouchableOpacity onPress={toggleModal}>
-                    <Text>Close</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </Modal>
-          </View>
-          {jobFeedIds.map((jobId: string) => {
-            const job = jobsMap[jobId];
-            const part = partsMap[job.partTypeId];
-            const materials = part?.materialIds?.map((materialId: string) => {
-              const material = materialsMap[materialId];
-              return material ? material.name : ''; // Return the name if available, otherwise an empty string
-            });
-
-            //check to see if no jobs are available with given materials
-            if (part?.materialIds && part?.materialIds.some(materialId => selectedMaterialIds.includes(materialId))) {
-              if (!jobsAvailable) {
-                setJobsAvailable(true);
-              }
-              return (
-                <Pressable style={styles.jobCard} key={job._id} onPress={() => handleSelect(job)}>
-                  <JobCard job={job} part={part} materials={materials} />
-                </Pressable>
-              );
-            }
-          })}
+    <View style={{ width:'100%' } }>
+      <FlatList horizontal
+        data={['hello', 'dara', 'is', 'here']}
+        style={{ backgroundColor: '#6b6b6b', height: 250 }}
+        contentContainerStyle={{ paddingVertical: 16 }}
+        contentInsetAdjustmentBehavior="never"
+        snapToAlignment="center"
+        decelerationRate="fast"
+        automaticallyAdjustContentInsets={false}
+        showsHorizontalScrollIndicator={false}
+        showsVerticalScrollIndicator={false}
+        scrollEventThrottle={1}
+        snapToInterval={boxWidth}
+        contentInset={{
+          left: halfBoxDistance,
+          right: halfBoxDistance,
+        }}
+        contentOffset={{ x: halfBoxDistance * -1, y: 0 }}
+        onLayout={(e) => {
+          setScrollViewWidth(e.nativeEvent.layout.width);
+          console.log(scrollViewWidth);
+        }}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { x: pan.x } } }],
           {
-            !jobsAvailable && (<View><Text>No Jobs Available with your Selected Materials</Text></View>)
-          }
-          {cursor && (
-            <Button onPress={pullNextPage} m='5px'>
-              pull next page
-            </Button>
-          )}
-          <Button onPress={reloadJobs} m='5px'>
-            reload
-          </Button>
-          <Button onPress={() => setSortField('price')} m='5px'>
-            sort by price
-          </Button>
-          <Button onPress={() => setSortField(undefined)} m='5px'>
-            unsort
-          </Button>
-        </VStack>
-      </BaseView>
-    </ScrollView>
+            useNativeDriver: false,
+          },
+        )}
+        keyExtractor={(item, index) => `${index}-${item}`}
+        renderItem={renderItem}
+      >
+
+
+      </FlatList>
+    </View>
+    // <ScrollView>
+    //   <BaseView smallLogo showTopRightIcon>
+    //     <VStack height="100%" width="90%" marginTop={'150px'} paddingBottom={100}>
+    //       <Text fontSize={24} fontFamily={fonts.regular}>{t('Job Search')}
+    //         <IconButton
+    //           icon={<AudioIcon />}
+    //           onPress={() => {
+    //             Speech.speak(t('Job Search'), { language: i18next.language });
+    //           }}
+    //         />
+    //       </Text>
+    //       <View>
+    //         <TouchableOpacity onPress={toggleModal} style={styles.button}>
+    //           {
+    //             Object.values(materialsMap)?.map((material: IMaterial) => {
+    //               if (material) {
+    //                 <Text>{material.name}</Text>;
+    //               }
+
+  //               return <></>;
+  //             })
+  //           }
+
+  //           <Text style={styles.plusSign}>+</Text>
+  //         </TouchableOpacity>
+  //         <Modal visible={isModalVisible} animationType="fade" transparent={true}  >
+  //           <View style={styles.modalContainer}>
+  //             <View style={styles.modalContent}>
+  //               <Text>Select Materials</Text>
+  //               <MaterialSelector
+  //                 selectedMaterialIds={selectedMaterialIds}
+  //                 setSelectedMaterialIds={setSelectedMaterialIds}
+
+  //               />
+  //               <TouchableOpacity onPress={toggleModal}>
+  //                 <Text>Close</Text>
+  //               </TouchableOpacity>
+  //             </View>
+  //           </View>
+  //         </Modal>
+  //       </View>
+  //       {jobFeedIds.map((jobId: string) => {
+  //         const job = jobsMap[jobId];
+  //         const part = partsMap[job.partTypeId];
+  //         const materials = part?.materialIds?.map((materialId: string) => {
+  //           const material = materialsMap[materialId];
+  //           return material ? material.name : ''; // Return the name if available, otherwise an empty string
+  //         });
+
+  //         //check to see if no jobs are available with given materials
+  //         if (part?.materialIds && part?.materialIds.some(materialId => selectedMaterialIds.includes(materialId))) {
+  //           if (!jobsAvailable) {
+  //             setJobsAvailable(true);
+  //           }
+  //           return (
+  //             <Pressable style={styles.jobCard} key={job._id} onPress={() => handleSelect(job)}>
+  //               <JobCard job={job} part={part} materials={materials} />
+  //             </Pressable>
+  //           );
+  //         }
+  //       })}
+  //       {
+  //         !jobsAvailable && (<View><Text>No Jobs Available with your Selected Materials</Text></View>)
+  //       }
+  //       {cursor && (
+  //         <Button onPress={pullNextPage} m='5px'>
+  //           pull next page
+  //         </Button>
+  //       )}
+  //       <Button onPress={reloadJobs} m='5px'>
+  //         reload
+  //       </Button>
+  //       <Button onPress={() => setSortField('price')} m='5px'>
+  //         sort by price
+  //       </Button>
+  //       <Button onPress={() => setSortField(undefined)} m='5px'>
+  //         unsort
+  //       </Button>
+  //     </VStack>
+  //   </BaseView>
+  // </ScrollView>
   );
 };
 
