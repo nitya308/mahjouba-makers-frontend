@@ -576,7 +576,8 @@ PODS:
     - React-Core
   - RNDateTimePicker (7.6.2):
     - React-Core
-  - RNGestureHandler (2.9.0):
+  - RNGestureHandler (2.15.0):
+    - RCT-Folly (= 2021.07.22.00)
     - React-Core
   - RNGoogleSignin (10.1.0):
     - GoogleSignIn (~> 7.0)
@@ -917,7 +918,7 @@ SPEC CHECKSUMS:
   ReactCommon: e2d70ebcd90a2eaab343fb0cc23bbdb5ac321f5c
   RNCAsyncStorage: 8616bd5a58af409453ea4e1b246521bb76578d60
   RNDateTimePicker: fc2e4f2795877d45e84d85659bebe627eba5c931
-  RNGestureHandler: 071d7a9ad81e8b83fe7663b303d132406a7d8f39
+  RNGestureHandler: 7909c50383a18f0cb10ce1db7262b9a6da504c03
   RNGoogleSignin: a6a612cce56a45ab701c5c5c6e36f5390522d100
   RNImageCropPicker: 521d8ef2dcf0549f141dbf82d086c75e3a9fbe65
   RNSVG: 07dbd870b0dcdecc99b3a202fa37c8ca163caec2
