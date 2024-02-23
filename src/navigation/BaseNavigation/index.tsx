@@ -1,4 +1,3 @@
-import { Ionicons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -92,12 +91,7 @@ const BaseNavigation = () => {
           name={BaseTabRoutes.JOBS}
           component={JobsController}
           options={{
-            tabBarIcon: ({ color, focused }) =>
-              focused ? (
-                <Ionicons name='home-outline' size={32} color={color} />
-              ) : (
-                <Ionicons name='home-outline' size={32} />
-              ),
+            tabBarIcon: (props) => ((props.focused) ? <SearchIconFilled /> : <SearchIcon />),
             tabBarLabel: (props) => (
               <Text fontFamily={props.focused ? fonts.bold : fonts.regular}>
                 {BaseTabRoutes.JOBS}
@@ -109,12 +103,7 @@ const BaseNavigation = () => {
           name={BaseTabRoutes.BULLETIN}
           component={BulletinController}
           options={{
-            tabBarIcon: ({ color, focused }) =>
-              focused ? (
-                <Ionicons name='laptop-outline' size={32} color={color} />
-              ) : (
-                <Ionicons name='laptop-outline' size={32} />
-              ),
+            tabBarIcon: (props) => ((props.focused) ? <SearchIconFilled /> : <SearchIcon />),
             tabBarLabel: (props) => (
               <Text fontFamily={props.focused ? fonts.bold : fonts.regular}>
                 {BaseTabRoutes.BULLETIN}
@@ -126,12 +115,7 @@ const BaseNavigation = () => {
           name={BaseTabRoutes.PAYMENT}
           component={PaymentController}
           options={{
-            tabBarIcon: ({ color, focused }) =>
-              focused ? (
-                <Ionicons name='earth-sharp' size={32} color={color} />
-              ) : (
-                <Ionicons name='earth-sharp' size={32} />
-              ),
+            tabBarIcon: (props) => ((props.focused) ? <HammerIconFilled /> : <HammerIcon />),
             tabBarLabel: (props) => (
               <Text fontFamily={props.focused ? fonts.bold : fonts.regular}>
                 {BaseTabRoutes.PAYMENT}
@@ -156,12 +140,7 @@ const BaseNavigation = () => {
           name={BaseTabRoutes.PROFILE}
           component={ProfileController}
           options={{
-            tabBarIcon: ({ focused, color }) =>
-              focused ? (
-                <Ionicons name='person-outline' size={32} color={color} />
-              ) : (
-                <Ionicons name='person-outline' size={32} />
-              ),
+            tabBarIcon: (props) => ((props.focused) ? <PersonIconFilled /> : <PersonIcon />),
             tabBarLabel: (props) => (
               <Text fontFamily={props.focused ? fonts.bold : fonts.regular}>
                 {BaseTabRoutes.PROFILE}
