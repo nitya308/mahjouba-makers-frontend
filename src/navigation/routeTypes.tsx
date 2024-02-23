@@ -2,13 +2,17 @@
 // Use NavigatorScreenParams to nest navigators within navigators
 
 export enum BaseTabRoutes {
-  JOBS = 'search',
+  JOBS = 'home',
   PROFILE = 'profile',
   CURRJOB = 'my job',
+  BULLETIN = 'bulletin',
+  PAYMENT = 'payment',
 }
 
 export type BaseNavigationList = {
   [BaseTabRoutes.JOBS]: Record<string, unknown>;
   [BaseTabRoutes.PROFILE]: Record<string, unknown>;
   [BaseTabRoutes.CURRJOB]: Record<string, unknown>;
+  [BaseTabRoutes.BULLETIN]: Record<string, unknown>;
+  [BaseTabRoutes.PAYMENT]: Record<string, unknown>;
 };

@@ -1,15 +1,19 @@
-import { 
+import {
+  BulletinPage,
+  ForbiddenPage,
   FrontPage,
+  JobsPage,
+  PaymentPage,
   ResourcesPage,
   UsersPage,
-  ForbiddenPage,
-  JobsPage,
 } from './BaseScreens';
 
-export { 
-  FrontPage, 
-  ResourcesPage, 
-  UsersPage,
+export {
+  BulletinPage,
   ForbiddenPage,
+  FrontPage,
   JobsPage,
+  PaymentPage,
+  ResourcesPage,
+  UsersPage,
 };
