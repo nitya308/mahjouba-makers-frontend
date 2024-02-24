@@ -21,6 +21,10 @@ import AudioIcon from '../../../assets/audio_icon.svg';
 import * as Speech from 'expo-speech';
 import i18next from 'i18next';
 import { integer } from 'aws-sdk/clients/cloudfront';
+import { PartType } from 'types/part_type';
+import { ScreenWidth } from 'react-native-elements/dist/helpers';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { ItemClick } from 'native-base/lib/typescript/components/composites/Typeahead/useTypeahead/types';
 
 const JobsPage = ({
   setSortField,
@@ -40,7 +44,6 @@ const JobsPage = ({
   const { t } = useTranslation();
 
   const [isModalVisible, setModalVisible] = useState(false);
-  const [jobsAvailable, setJobsAvailable] = useState(false);
   const materialNames = Object.values(materialsMap).map(material => material.name);
   const [selectedMaterialIds, setSelectedMaterialIds] = useState<string[]>([]);
   const [scrollViewWidth, setScrollViewWidth] = React.useState(0);
@@ -51,58 +54,46 @@ const JobsPage = ({
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
+  const updateResultArray = () => {
+    const transformedArray = jobFeedIds.flatMap((jobId) => {
+      const job = jobsMap[jobId];
+      const part = partsMap[job.partTypeId];
 
-  // const resultArray = jobFeedIds.map((jobId) => {
-  //   const job = jobsMap[jobId];
-  //   const part = partsMap[job.partTypeId];
-  //   const materials = part?.materialIds?.map((materialId) => {
-  //     const material = materialsMap[materialId];
-  //     return material ? material.name : '';
-  //   });
-  
-  //   // Assuming you want to return an object with the relevant information
-  //   return {
-  //     jobId,
-  //     //return name later
-  //     partName: part ? part.name : '',
-  //     materials: materials || [],
-  //   };
-  // });
+      if (part?.materialIds && part?.materialIds.some(materialId => selectedMaterialIds.includes(materialId))) {
+        const materials = part?.materialIds?.map((materialId) => {
+          const material = materialsMap[materialId];
+          return material ? material.name : '';
+        }) || [];
 
-  const resultArray: { jobId: string; partName: string; material: string; }[] = jobFeedIds.flatMap((jobId) => {
-    const job = jobsMap[jobId];
-    const part = partsMap[job.partTypeId];
-    const materials = part?.materialIds?.map((materialId) => {
-      const material = materialsMap[materialId];
-      return material ? material.name : '';
-    }) || [];
-  
-    return materials.map((material) => ({
-      jobId,
-      partName: part ? part.name : '',
-      material,
-    }));
-  });
-  
-  // resultArray now contains arrays with job id, part name, and material for each entry
-  console.log('test3333', resultArray);
-  
+        return [{
+          job,
+          part,
+          materials,
+        }];
+      } else {
+        return []; // Return an empty array for entries that don't match the condition
+      }
+    });
 
+    setResultArray(transformedArray);
+  };
+
+  const [resultArray, setResultArray] = useState<{ job: Job, part: PartType, materials: string[] }[]>([]);
   useEffect(() => {
-    // console.log('hello', resultArray);
-    setJobsAvailable(false);
+    updateResultArray();
+
   }, [selectedMaterialIds]);
 
   useEffect(() => {
+    if (resultArray.length == 0) {
+      updateResultArray();
+    }
     if (selectedMaterialIds.length == 0) {
       setSelectedMaterialIds(userData?.materialIds ? userData?.materialIds : []);
 
     }
+
   }, []);
-
-  
-
-  
 
   const customCheckedIcon = (
     <View
@@ -115,94 +106,7 @@ const JobsPage = ({
     />
   );
 
-  //   const products = data.map(obj => ({title: obj.title, description: obj.description}))
-  // this.setState({isLoaded: true, products})
-
-  // const resultArray = jobFeedIds.map((jobId) => {
-  //   const job = jobsMap[jobId];
-  //   const part = partsMap[job.partTypeId];
-  //   const materials = part?.materialIds?.map((materialId) => {
-  //     const material = materialsMap[materialId];
-  //     return material ? material.name : '';
-  //   });
-  
-  // {jobFeedIds.map((jobId: string) => {
-  //   const job = jobsMap[jobId];
-  //   const part = partsMap[job.partTypeId];
-  //   const materials = part?.materialIds?.map((materialId: string) => {
-  //     const material = materialsMap[materialId];
-  //     return material ? material.name : '';
-  //   });
-  // })}
-
-  
-  // const renderItem = ({ item, index }: { item: string, index: integer }) => (
-  //   // jobs should be loaded into map here)
-
-  //   // {jobFeedIds.map((jobId: string) => {
-  //   //   const job = jobsMap[jobId];
-  //   //   const part = partsMap[job.partTypeId];
-  //   //   const materials = part?.materialIds?.map((materialId: string) => {
-  //   //     const material = materialsMap[materialId];
-  //   //     return material ? material.name : '';
-  //   //   });
-  //   // })}
-
-    
-    
-    
-  //   <Animated.View
-  //     style={{
-  //       transform: [
-  //         {
-  //           scale: pan.x.interpolate({
-  //             inputRange: [
-  //               (index - 1) * boxWidth - halfBoxDistance,
-  //               index * boxWidth - halfBoxDistance,
-  //               (index + 1) * boxWidth - halfBoxDistance, // adjust positioning
-  //             ],
-  //             outputRange: [0.8, 1, 0.8], // scale down when out of scope
-  //             extrapolate: 'clamp',
-  //           }),
-  //         },
-  //       ],
-  //     }}>
-  //     <View style={{
-  //       height: '100%',
-  //       width: boxWidth,
-  //       borderRadius: 24,
-  //       backgroundColor: `rgba(${(index * 13) % 255}, ${(index * 35) % 255
-  //       }, ${(index * 4) % 255}, .5)`,
-  //     }}>
-  //       {/* pressable job card should be returned here */}
-  //       {/* <Pressable style={styles.jobCard} key={job._id} onPress={() => handleSelect(job)}>
-  //         <JobCard job={job} part={part} materials={materials} />
-  //       </Pressable> */}
-  //       <Text>{item}</Text>
-  //     </View>
-  //   </Animated.View>
-  // );
-
-  // const renderItem = ({ item, index }: { item: {
-  //   jobId: string,
-  //   partName: string,
-  //   material: string,
-  // }, index:integer }) => (
-
-
-  //   <View>
-  //     <Text>Job ID: {item.jobId}</Text>
-  //     <Text>Material: {item.material}</Text>
-  //     <Text>Part Name: {item.partName}</Text>
-  //     {/* Add additional information or styling as needed */}
-  //   </View>
-  // );
-
-
-  const renderItem = ({ item, index }: { item: {
-    jobId: string,
-    partName: string,
-    material: string,
+  const renderItem = ({ item, index }: { item: { job: Job, part: PartType, materials: string[]
   }, index: number }) => (
     <Animated.View
       style={{
@@ -221,12 +125,19 @@ const JobsPage = ({
         ],
       }}>
       <View>
-        <Text>Job ID: {item.jobId}</Text>
-        <Text>Material: {item.material}</Text>
-        <Text>Part Name: {item.partName}</Text>
-        {/* Add additional information or styling as needed */}
+        <Pressable style={styles.jobCard} key={item.job._id} onPress={() => handleSelect(item.job)}>
+          <JobCard job={item.job} part={item.part} materials={item.materials} />
+        </Pressable>
       </View>
     </Animated.View>
+  );
+
+  const renderListEmpty = () => (
+    <GestureHandlerRootView>
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <Text>No Jobs Available with your Selected Materials</Text>
+      </View>
+    </GestureHandlerRootView>
   );
   
   
@@ -235,162 +146,108 @@ const JobsPage = ({
   }
 
   return (
-    <View style={{ width:'100%' } }>
+    <GestureHandlerRootView>
+    
+      <View style={{ width:'100%' } }>
+        <ScrollView>
+          <BaseView smallLogo showTopRightIcon>
+            <VStack height="100%" width="90%" marginTop={'150px'} paddingBottom={100}>
+              <Text fontSize={24} fontFamily={fonts.regular}>{t('Job Search')}
+                <IconButton
+                  icon={<AudioIcon />}
+                  onPress={() => {
+                    Speech.speak(t('Job Search'), { language: i18next.language });
+                  }}
+                />
+              </Text>
+              <View>
+                <TouchableOpacity onPress={toggleModal} style={styles.button}>
+                  {
+                    Object.values(materialsMap)?.map((material: IMaterial) => {
+                      if (material) {
+                        <Text>{material.name}</Text>;
+                      }
 
-      <FlatList
-        horizontal
-        data={resultArray}
-        // data={resultArray}
-        style={{ backgroundColor: '#6b6b6b', height: 250 }}
-        contentContainerStyle={{ paddingVertical: 16 }}
-        contentInsetAdjustmentBehavior="never"
-        snapToAlignment="center"
-        decelerationRate="fast"
-        automaticallyAdjustContentInsets={false}
-        showsHorizontalScrollIndicator={false}
-        showsVerticalScrollIndicator={false}
-        scrollEventThrottle={1}
-        snapToInterval={boxWidth}
-        contentInset={{
-          left: halfBoxDistance,
-          right: halfBoxDistance,
-        }}
-        contentOffset={{ x: halfBoxDistance * -1, y: 0 }}
-        onLayout={(e) => {
-          setScrollViewWidth(e.nativeEvent.layout.width);
-          console.log(scrollViewWidth);
-        }}
-        onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { x: pan.x } } }],
-          {
-            useNativeDriver: false,
-          },
-        )}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.jobId} // assuming jobId is a unique identifier
-      />
+                      return <></>;
+                    })
+                  }
 
-      {/* <FlatList horizontal
-        data={['hello', 'dara', 'is', 'here', 'test', 'one', 'two']}
-        // data={resultArray}
-        style={{ backgroundColor: '#6b6b6b', height: 250 }}
-        contentContainerStyle={{ paddingVertical: 16 }}
-        contentInsetAdjustmentBehavior="never"
-        snapToAlignment="center"
-        decelerationRate="fast"
-        automaticallyAdjustContentInsets={false}
-        showsHorizontalScrollIndicator={false}
-        showsVerticalScrollIndicator={false}
-        scrollEventThrottle={1}
-        snapToInterval={boxWidth}
-        contentInset={{
-          left: halfBoxDistance,
-          right: halfBoxDistance,
-        }}
-        contentOffset={{ x: halfBoxDistance * -1, y: 0 }}
-        onLayout={(e) => {
-          setScrollViewWidth(e.nativeEvent.layout.width);
-          console.log(scrollViewWidth);
-        }}
-        onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { x: pan.x } } }],
-          {
-            useNativeDriver: false,
-          },
-        )}
-        keyExtractor={(item, index) => `${index}-${item}`}
-        renderItem={renderItem}
-      >
+                  <Text style={styles.plusSign}>+</Text>
+                </TouchableOpacity>
+                <Modal visible={isModalVisible} animationType="fade" transparent={true}  >
+                  <View style={styles.modalContainer}>
+                    <View style={styles.modalContent}>
+                      <Text>Select Materials</Text>
+                      <MaterialSelector
+                        selectedMaterialIds={selectedMaterialIds}
+                        setSelectedMaterialIds={setSelectedMaterialIds}
 
-      
-      </FlatList> */}
-    </View>
-    // <ScrollView>
-    //   <BaseView smallLogo showTopRightIcon>
-    //     <VStack height="100%" width="90%" marginTop={'150px'} paddingBottom={100}>
-    //       <Text fontSize={24} fontFamily={fonts.regular}>{t('Job Search')}
-    //         <IconButton
-    //           icon={<AudioIcon />}
-    //           onPress={() => {
-    //             Speech.speak(t('Job Search'), { language: i18next.language });
-    //           }}
-    //         />
-    //       </Text>
-    //       <View>
-    //         <TouchableOpacity onPress={toggleModal} style={styles.button}>
-    //           {
-    //             Object.values(materialsMap)?.map((material: IMaterial) => {
-    //               if (material) {
-    //                 <Text>{material.name}</Text>;
-    //               }
-
-  //               return <></>;
-  //             })
-  //           }
-
-  //           <Text style={styles.plusSign}>+</Text>
-  //         </TouchableOpacity>
-  //         <Modal visible={isModalVisible} animationType="fade" transparent={true}  >
-  //           <View style={styles.modalContainer}>
-  //             <View style={styles.modalContent}>
-  //               <Text>Select Materials</Text>
-  //               <MaterialSelector
-  //                 selectedMaterialIds={selectedMaterialIds}
-  //                 setSelectedMaterialIds={setSelectedMaterialIds}
-
-  //               />
-  //               <TouchableOpacity onPress={toggleModal}>
-  //                 <Text>Close</Text>
-  //               </TouchableOpacity>
-  //             </View>
-  //           </View>
-  //         </Modal>
-  //       </View>
-  //       {jobFeedIds.map((jobId: string) => {
-  //         const job = jobsMap[jobId];
-  //         const part = partsMap[job.partTypeId];
-  //         const materials = part?.materialIds?.map((materialId: string) => {
-  //           const material = materialsMap[materialId];
-  //           return material ? material.name : ''; // Return the name if available, otherwise an empty string
-  //         });
-
-  //         //check to see if no jobs are available with given materials
-  //         if (part?.materialIds && part?.materialIds.some(materialId => selectedMaterialIds.includes(materialId))) {
-  //           if (!jobsAvailable) {
-  //             setJobsAvailable(true);
-  //           }
-  //           return (
-  // <Pressable style={styles.jobCard} key={job._id} onPress={() => handleSelect(job)}>
-  //   <JobCard job={job} part={part} materials={materials} />
-  // </Pressable>
-  //           );
-  //         }
-  //       })}
-  //       {
-  //         !jobsAvailable && (<View><Text>No Jobs Available with your Selected Materials</Text></View>)
-  //       }
-  //       {cursor && (
-  //         <Button onPress={pullNextPage} m='5px'>
-  //           pull next page
-  //         </Button>
-  //       )}
-  //       <Button onPress={reloadJobs} m='5px'>
-  //         reload
-  //       </Button>
-  //       <Button onPress={() => setSortField('price')} m='5px'>
-  //         sort by price
-  //       </Button>
-  //       <Button onPress={() => setSortField(undefined)} m='5px'>
-  //         unsort
-  //       </Button>
-  //     </VStack>
-  //   </BaseView>
-  // </ScrollView>
+                      />
+                      <TouchableOpacity onPress={toggleModal}>
+                        <Text>Close</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </Modal>
+              </View>
+              <FlatList
+                horizontal
+                data={resultArray}
+                style={{ height: 250,  marginTop:30, paddingBottom: 210 }}
+                contentContainerStyle={{ paddingVertical: 16 }}
+                contentInsetAdjustmentBehavior="never"
+                snapToAlignment="center"
+                decelerationRate="fast"
+                automaticallyAdjustContentInsets={false}
+                showsHorizontalScrollIndicator={false}
+                showsVerticalScrollIndicator={false}
+                scrollEventThrottle={1}
+                snapToInterval={boxWidth}
+                ListEmptyComponent={renderListEmpty} 
+                contentInset={{
+                  left: halfBoxDistance,
+                  right: halfBoxDistance,
+                }}
+                contentOffset={{ x: halfBoxDistance * -1, y: 0 }}
+                onLayout={(e) => {
+                  setScrollViewWidth(e.nativeEvent.layout.width);
+                  console.log(scrollViewWidth);
+                }}
+                onScroll={Animated.event(
+                  [{ nativeEvent: { contentOffset: { x: pan.x } } }],
+                  {
+                    useNativeDriver: false,
+                  },
+                )}
+                renderItem={renderItem}
+                keyExtractor={(item) => item.job._id} // assuming jobId is a unique identifier
+              />
+              
+              {cursor && (
+                <Button onPress={pullNextPage} m='5px'>
+            pull next page
+                </Button>
+              )}
+              <Button onPress={reloadJobs} m='5px'>
+          reload
+              </Button>
+              <Button onPress={() => setSortField('price')} m='5px'>
+          sort by price
+              </Button>
+              <Button onPress={() => setSortField(undefined)} m='5px'>
+          unsort
+              </Button>
+            </VStack>
+          </BaseView>
+        </ScrollView>
+      </View>
+    </GestureHandlerRootView>
   );
 };
 
 const styles = StyleSheet.create({
   jobCard: {
+    width: ScreenWidth * .75,
     marginBottom: 15,
   },
   button: {
