@@ -55,6 +55,7 @@ const JobsPage = ({
     setModalVisible(!isModalVisible);
   };
   const updateResultArray = () => {
+    console.log('darawuzhere', jobFeedIds);
     const transformedArray = jobFeedIds.flatMap((jobId) => {
       const job = jobsMap[jobId];
       const part = partsMap[job.partTypeId];
@@ -118,13 +119,13 @@ const JobsPage = ({
                 index * boxWidth - halfBoxDistance,
                 (index + 1) * boxWidth - halfBoxDistance,
               ],
-              outputRange: [0.8, 1, 0.8],
+              outputRange: [0.7, 1.1, 0.7],
               extrapolate: 'clamp',
             }),
           },
         ],
       }}>
-      <View>
+      <View style={{alignContent:'center', alignItems:'center'}}>
         <Pressable style={styles.jobCard} key={item.job._id} onPress={() => handleSelect(item.job)}>
           <JobCard job={item.job} part={item.part} materials={item.materials} />
         </Pressable>
@@ -133,11 +134,9 @@ const JobsPage = ({
   );
 
   const renderListEmpty = () => (
-    <GestureHandlerRootView>
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Text>No Jobs Available with your Selected Materials</Text>
-      </View>
-    </GestureHandlerRootView>
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Text>No Jobs Available with your Selected Materials</Text>
+    </View>
   );
   
   
@@ -247,7 +246,7 @@ const JobsPage = ({
 
 const styles = StyleSheet.create({
   jobCard: {
-    width: ScreenWidth * .75,
+    width: ScreenWidth * .6,
     marginBottom: 15,
   },
   button: {
