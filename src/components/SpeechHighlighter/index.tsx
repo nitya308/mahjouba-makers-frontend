@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text } from 'react-native';
 import * as Speech from 'expo-speech';
 
-const TextHighlight2 = ({ text, pressed, setPressed }: { text: string, pressed: boolean, setPressed: React.Dispatch<React.SetStateAction<boolean>> }) => {
+const TextHighlighter = ({ text, pressed, setPressed }: { text: string, pressed: boolean, setPressed: React.Dispatch<React.SetStateAction<boolean>> }) => {
 
   useEffect(() => {
     if (pressed) {
@@ -29,7 +29,7 @@ const TextHighlight2 = ({ text, pressed, setPressed }: { text: string, pressed: 
     });
   };
 
-  const [before, setBefore] = useState('text');
+  const [before, setBefore] = useState(text);
   const [curr, setCurr] = useState('');
   const [after, setAfter] = useState('');
 
@@ -42,4 +42,4 @@ const TextHighlight2 = ({ text, pressed, setPressed }: { text: string, pressed: 
   );
 };
 
-export default TextHighlight2;
+export default TextHighlighter;

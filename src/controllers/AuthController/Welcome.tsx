@@ -6,8 +6,7 @@ import { Languages } from 'types/user';
 import { SafeAreaView } from 'react-native';
 import * as Speech from 'expo-speech';
 import AudioIcon from '../../assets/audio_icon.svg';
-import TextHighlight from './highlight';
-import TextHighlight2 from './highlight2';
+import TextHighlighter from '../../components/SpeechHighlighter';
 
 export default function Welcome({ navigation }) {
 
@@ -25,8 +24,8 @@ export default function Welcome({ navigation }) {
           <SharpButton w='100%' my='10px'
             size='sm' onPress={() => handleLanguageSelection(Languages.EN)}>
             <Text color='black' fontWeight='medium'>Welcome</Text>
-            <TextHighlight2 text={'This is a welcome to my app'} pressed={press} setPressed={setPressed}></TextHighlight2>
-            <TextHighlight2 text={'here is some different stuff'} pressed={press} setPressed={setPressed}></TextHighlight2>
+            <TextHighlighter text={'This is a welcome to my app'} pressed={press} setPressed={setPressed}></TextHighlighter>
+            <TextHighlighter text={'here is some different stuff'} pressed={press} setPressed={setPressed}></TextHighlighter>
             <IconButton
               icon={<AudioIcon />}
               onPress={() => {
