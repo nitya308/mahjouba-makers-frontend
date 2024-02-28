@@ -15,7 +15,7 @@ export default function Authenticate({ navigation }) {
         <VStack space={2} paddingTop={300}>
           <SharpButton w='100%' my='10px'
             size='sm' onPress={() => { navigation.navigate('Login'); }}>
-            <Text color='black' fontWeight='medium'>{t('Sign In')}</Text>
+            <Text color='black' fontWeight='medium'>{t('git In')}</Text>
           </SharpButton>
           <SharpButton w='100%' my='10px'
             size='sm' onPress={() => { navigation.navigate('Signup'); }}>
