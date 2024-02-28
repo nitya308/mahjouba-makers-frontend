@@ -7,6 +7,7 @@ import { SafeAreaView } from 'react-native';
 import * as Speech from 'expo-speech';
 import AudioIcon from '../../assets/audio_icon.svg';
 import TextHighlighter from '../../components/SpeechHighlighter';
+import { useTranslation } from 'react-i18next';
 
 export default function Welcome({ navigation }) {
 
@@ -17,6 +18,8 @@ export default function Welcome({ navigation }) {
 
   const [press, setPressed] = useState(false);
 
+  const { t } = useTranslation();
+
   return (
     <SafeAreaView>
       <ScrollView>
@@ -24,16 +27,15 @@ export default function Welcome({ navigation }) {
           <SharpButton w='100%' my='10px'
             size='sm' onPress={() => handleLanguageSelection(Languages.EN)}>
             <Text color='black' fontWeight='medium'>Welcome</Text>
-            <TextHighlighter text={'This is a welcome to my app'} pressed={press} setPressed={setPressed}></TextHighlighter>
-            <TextHighlighter text={'here is some different stuff'} pressed={press} setPressed={setPressed}></TextHighlighter>
-            <IconButton
-              icon={<AudioIcon />}
-              onPress={() => {
-                setPressed(true);
-                // Speech.speak((text), { language: i18next.language });
-              }}
-            />
           </SharpButton>
+          <TextHighlighter text={t('This is a welcome to my app')} pressed={press} setPressed={setPressed}></TextHighlighter>
+          <TextHighlighter text={t('here is some different stuff')} pressed={press} setPressed={setPressed}></TextHighlighter>
+          <IconButton
+            icon={<AudioIcon />}
+            onPress={() => {
+              setPressed(true);
+            }}
+          />
           <SharpButton w='100%' my='10px'
             size='sm' onPress={() => handleLanguageSelection(Languages.FR)}>
             <Text color='black' fontWeight='medium'>French</Text>

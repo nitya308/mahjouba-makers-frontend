@@ -51,7 +51,6 @@
     "react": "18.2.0",
     "react-devtools-core": "^4.14.0",
     "react-dom": "^18.2.0",
-    "react-highlighter": "^0.4.3",
     "react-i18next": "^13.4.0",
     "react-native": "0.71.11",
     "react-native-devsettings": "^1.0.5",
