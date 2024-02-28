@@ -26,6 +26,7 @@ export default function Welcome({ navigation }) {
             size='sm' onPress={() => handleLanguageSelection(Languages.EN)}>
             <Text color='black' fontWeight='medium'>Welcome</Text>
             <TextHighlight2 text={'This is a welcome to my app'} pressed={press} setPressed={setPressed}></TextHighlight2>
+            <TextHighlight2 text={'here is some different stuff'} pressed={press} setPressed={setPressed}></TextHighlight2>
             <IconButton
               icon={<AudioIcon />}
               onPress={() => {
