@@ -8,17 +8,35 @@ import * as Speech from 'expo-speech';
 import AudioIcon from '../../assets/audio_icon.svg';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Highlighter } from 'react-highlighter';
+import TextHighlight from './highlight';
 
 export default function Welcome({ navigation }) {
-
-  const textToHighlight = 'Welcome to the app. This is a test of the audio feature.';
 
   const handleLanguageSelection = (language: Languages) => {
     i18next.changeLanguage(language);
     navigation.navigate('Authenticate');
   };
 
-  const searchWords = ['quick', 'brown', 'lazy'];
+  const handlePlay = () => {
+    const inputValue = 'Welcome to the app. This is a test of the audio feature.';
+    Speech.speak(inputValue, {
+      onDone: () => {
+        setBefore('Welcome to the app. This is a test of the audio feature.');
+      },
+      onBoundary: (boundaries: any) => {
+        const { charIndex, charLength } = boundaries;
+        const word = inputValue.substring(charIndex, charIndex + charLength);
+        setBefore(inputValue.substring(0, charIndex));
+        setCurr(word);
+        setAfter(inputValue.substring(charIndex + charLength));
+        // console.log(boundaries, word)
+      },
+    });
+  };
+
+  const [before, setBefore] = useState('Welcome to the app. This is a test of the audio feature.');
+  const [curr, setCurr] = useState('');
+  const [after, setAfter] = useState('');
 
   return (
     <SafeAreaView>
@@ -27,16 +45,12 @@ export default function Welcome({ navigation }) {
           <SharpButton w='100%' my='10px'
             size='sm' onPress={() => handleLanguageSelection(Languages.EN)}>
             <Text color='black' fontWeight='medium'>Welcome</Text>
-            <Highlighter
-              highlightClassName="YourHighlightClass"
-              searchWords={searchWords}
-              autoEscape={true}
-              textToHighlight={textToHighlight}
-            />
+            <TextHighlight before={before} curr={curr} after={after}></TextHighlight>
             <IconButton
               icon={<AudioIcon />}
               onPress={() => {
-                Speech.speak((text), { language: i18next.language });
+                handlePlay();
+                // Speech.speak((text), { language: i18next.language });
               }}
             />
           </SharpButton>
@@ -51,6 +65,6 @@ export default function Welcome({ navigation }) {
         </VStack>
       </ScrollView>
     </SafeAreaView>
-      
+
   );
 }
