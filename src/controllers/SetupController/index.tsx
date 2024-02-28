@@ -146,7 +146,7 @@ export default function SetupController(): JSX.Element {
       case 0:
         return <Box w='90%' mx='auto'>
           <Heading fontSize='lg' mx='auto'>
-            ID Card
+            ID Number
           </Heading>
           <IDSetup
             idNo={idNo}

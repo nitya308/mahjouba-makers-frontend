@@ -1,49 +1,29 @@
-import React, { useState } from 'react';
-import { View, Box, Heading, Center, Text, Button } from 'native-base';
+import React from 'react';
 import Signup from './Signup';
 import Login from './Login';
-import { googleSignIn } from 'utils/auth';
-import ArchScroll from 'components/ArchScroll';
-import SharpButton from 'components/SharpButton';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import Welcome from './Welcome';
+import Authenticate from './Authenticate';
+// import { RootStackParamList } from './src/types/nav';
 
-export default function AuthController() {
-  const [newUser, setNewUser] = useState(false);
+const RootStack = createStackNavigator();
 
-  return <View flex='1'>
-    <ArchScroll>
-      <Center h='100%' w='100%'> 
-        <Box 
-          w='80%'
-          py='40px'
-          px='20px'
-          borderRadius={20}>
-          <Heading fontSize='xl' mb='20px' mx='auto'>
-            { newUser ? 'Sign up' : 'Log in' }
-          </Heading>
-          {
-            newUser ?
-              <Signup /> :
-              <Login />
-          }
-          <SharpButton 
-            w='100%' 
-            backgroundColor='#eee' 
-            my='8px'
-            size='sm' 
-            onPress={() => googleSignIn()}>
-            <Text color='black' fontWeight='medium'>Sign in with google</Text>
-          </SharpButton>
-          {
-            newUser ?
-              <Text color='gray.500' fontSize='xs' mt='10px' mx='auto'>
-                Already have an account? <Text color='blue.500' fontSize='xs' onPress={() => setNewUser(false)}>Log in</Text>
-              </Text> :
-              <Text color='gray.500' fontSize='xs' mt='10px' mx='auto'>
-                Don't have an account? <Text color='blue.500' fontSize='xs' onPress={() => setNewUser(true)}>Sign up</Text>
-              </Text>
-          }
-        </Box>
-      </Center>
-    </ArchScroll>
-  </View>;
+function App() {
+  return (
+    <RootStack.Navigator >
+      <RootStack.Screen name="Welcome" component={Welcome} />
+      <RootStack.Screen name="Authenticate" component={Authenticate} options={{ headerTitle: '', headerTransparent: true }} />
+      <RootStack.Screen name="Signup" component={Signup} options={{ headerTitle: '', headerTransparent: true }}/>
+      <RootStack.Screen name="Login" component={Login} options={{ headerTitle: '', headerTransparent: true }}/>
+    </RootStack.Navigator>
+  );
 }
+
+export default () => {
+  return (
+    <NavigationContainer>
+      <App />
+    </NavigationContainer>
+  );
+};
