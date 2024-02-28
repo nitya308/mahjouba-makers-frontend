@@ -16,29 +16,6 @@ export default function Welcome({ navigation }) {
     navigation.navigate('Authenticate');
   };
 
-  // const handlePlay = () => {
-  //   const inputValue = 'Welcome to the app. This is a test of the audio feature.';
-  //   Speech.speak(inputValue, {
-  //     onDone: () => {
-  //       setBefore('Welcome to the app. This is a test of the audio feature.');
-  //       setCurr('');
-  //       setAfter('');
-  //     },
-  //     onBoundary: (boundaries: any) => {
-  //       const { charIndex, charLength } = boundaries;
-  //       const word = inputValue.substring(charIndex, charIndex + charLength);
-  //       setBefore(inputValue.substring(0, charIndex));
-  //       setCurr(word);
-  //       setAfter(inputValue.substring(charIndex + charLength));
-  //       // console.log(boundaries, word)
-  //     },
-  //   });
-  // };
-
-  // const [before, setBefore] = useState('Welcome to the app. This is a test of the audio feature.');
-  // const [curr, setCurr] = useState('');
-  // const [after, setAfter] = useState('');
-
   const [press, setPressed] = useState(false);
 
   return (
