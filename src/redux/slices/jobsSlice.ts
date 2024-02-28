@@ -267,6 +267,7 @@ export const jobsSlice = createSlice({
     builder.addCase(pullJobs.fulfilled, (state, action) => {
       const jobs: Job[] = action.payload;
       jobs.forEach((job: Job) => {
+        console.log('test24', job);
         state.jobsMap[job._id] = job;
       });
       state.jobFeedIds = [...state.jobFeedIds, ...jobs.map((job: Job) => job._id).filter((jobId: string) => !state.jobFeedIds.includes(jobId))];

@@ -119,7 +119,7 @@ const JobsPage = ({
                 index * boxWidth - halfBoxDistance,
                 (index + 1) * boxWidth - halfBoxDistance,
               ],
-              outputRange: [0.7, 1.1, 0.7],
+              outputRange: [0.8, 1, 0.8],
               extrapolate: 'clamp',
             }),
           },
@@ -246,7 +246,8 @@ const JobsPage = ({
 
 const styles = StyleSheet.create({
   jobCard: {
-    width: ScreenWidth * .6,
+    alignSelf: 'center',
+    width: ScreenWidth * .7,
     marginBottom: 15,
   },
   button: {

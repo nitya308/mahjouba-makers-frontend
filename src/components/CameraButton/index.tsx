@@ -4,7 +4,7 @@ import { Image as ExpoImage } from 'expo-image';
 import { Box, Icon, Text } from 'native-base';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import SharpButton from 'components/SharpButton';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { TouchableOpacity } from 'react-native';
 
 export default function CameraButton({
   selectedImageAsset,
