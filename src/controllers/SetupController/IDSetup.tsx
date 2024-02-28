@@ -36,6 +36,9 @@ export default function IDSetup({
         onChangeText={setIdNo} 
       />
       <Center my='20px'>
+        <Heading fontSize='lg' mx='auto'>
+            ICE Photo
+        </Heading>
         <HStack space='6'>
           <Box>
             <Text my='5px'>Front:</Text>
