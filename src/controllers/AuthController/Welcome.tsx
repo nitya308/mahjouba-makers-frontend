@@ -22,6 +22,8 @@ export default function Welcome({ navigation }) {
     Speech.speak(inputValue, {
       onDone: () => {
         setBefore('Welcome to the app. This is a test of the audio feature.');
+        setCurr('');
+        setAfter('');
       },
       onBoundary: (boundaries: any) => {
         const { charIndex, charLength } = boundaries;
