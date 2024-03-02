@@ -55,7 +55,7 @@ export default function MaterialSelector({
       padding: 5,
     }}>
       <HStack w='100%' flex='1' minW='150px' flexShrink={0}>
-        <Text textTransform='capitalize'>{item.name}</Text>
+        <Text color='white' textTransform='capitalize'>{item.name} </Text>
         <Spacer />
         <Checkbox value={item.name} isChecked={checked} aria-label={item.name} />
       </HStack>

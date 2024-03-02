@@ -59,7 +59,7 @@ const RootNavigation = () => {
   
   if (!authenticated) {
     return (
-      <AuthController />
+      <SetupController />
     );
   } else if (loading) {
     return <View flex='1'>

@@ -5,19 +5,25 @@ import IDSetup from './IDSetup';
 import MaterialSetup from './MaterialSetup';
 import ProfileSetup from './ProfileSetup';
 import AddressSetup from './AddressSetup';
+import ICESetup from './ICESetup';
 // import { RootStackParamList } from './src/types/nav';
 
 const RootStack = createStackNavigator();
 
 function App() {
   return (
-    <RootStack.Navigator >
-      <RootStack.Screen name="ProfileSetup" component={ProfileSetup} options={{ headerTitle: '', headerTransparent: true }}/>
-      <RootStack.Screen name="IDSetup" component={IDSetup} options={{ headerTitle: '', headerTransparent: true }}/>
-      <RootStack.Screen name="ICE" component={IDSetup} options={{ headerTitle: '', headerTransparent: true }}/>
-      {/* <RootStack.Screen name="Banking" component={Banking} options={{ headerTitle: '', headerTransparent: true }} /> */}
-      <RootStack.Screen name="Materials" component={MaterialSetup} options={{ headerTitle: '', headerTransparent: true }}/>
-      <RootStack.Screen name="Address" component={AddressSetup} options={{ headerTitle: '', headerTransparent: true }}/>
+    <RootStack.Navigator screenOptions={{
+      headerTitle: '',
+      headerTransparent: true,
+      cardStyle: { backgroundColor: 'black' },
+    }}>
+      {/* <RootStack.Screen name="DataAgreement" component={DataAgreement}/> */}
+      <RootStack.Screen name="ProfileSetup" component={ProfileSetup} />
+      <RootStack.Screen name="IDSetup" component={IDSetup} />
+      <RootStack.Screen name="ICESetup" component={ICESetup} />
+      {/* <RootStack.Screen name="Banking" component={Banking} /> */}
+      <RootStack.Screen name="MaterialSetup" component={MaterialSetup} />
+      <RootStack.Screen name="AddressSetup" component={AddressSetup} />
     </RootStack.Navigator>
   );
 }

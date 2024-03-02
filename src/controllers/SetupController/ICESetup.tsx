@@ -10,17 +10,17 @@ import Colors from 'utils/Colors';
 
 export default function IDSetup({ navigation }): JSX.Element {
 
-  const [idNo, setIdNo] = useState<string | undefined>();
-  const [idPicFront, setIdPicFront] = useState<Asset | undefined>();
-  const [idPicBack, setIdPicBack] = useState<Asset | undefined>();
+  const [iceNo, setIceNo] = useState<string | undefined>();
+  const [icePicFront, setIcePicFront] = useState<Asset | undefined>();
+  const [icePicBack, setIcePicBack] = useState<Asset | undefined>();
 
   return <Center>
     <VStack space={2} mt={200}>
       <Heading fontSize='30' mx='auto' color='white'>
-        Enter your ID
+                Enter your ICE Info
       </Heading>
       <Heading fontSize='24' mx='auto' color='white' mt={10} style={styles.underline}>
-        ID Number
+        ICE Number
       </Heading>
       <Input
         w='195px'
@@ -33,26 +33,26 @@ export default function IDSetup({ navigation }): JSX.Element {
         borderColor={Colors.outline}
         borderWidth='1px'
         size='sm'
-        value={idNo}
-        onChangeText={setIdNo}
+        value={iceNo}
+        onChangeText={setIceNo}
       />
       <Center my='20px'>
         <Heading fontSize='24' mx='auto' color='white' style={styles.underline}>
-          ID Photo
+            ICE Photo
         </Heading>
         <HStack space='6'>
           <Box>
             <Text my='5px' fontSize='20' color='white'>Front:</Text>
             <CameraButton
-              selectedImageAsset={idPicFront}
-              setSelectedImageAsset={setIdPicFront}
+              selectedImageAsset={icePicFront}
+              setSelectedImageAsset={setIcePicFront}
             />
           </Box>
           <Box>
             <Text my='5px' fontSize='20' color='white'>Back:</Text>
             <CameraButton
-              selectedImageAsset={idPicBack}
-              setSelectedImageAsset={setIdPicBack}
+              selectedImageAsset={icePicBack}
+              setSelectedImageAsset={setIcePicBack}
             />
           </Box>
         </HStack>
@@ -67,7 +67,7 @@ export default function IDSetup({ navigation }): JSX.Element {
 
     <SharpButton
       style={[styles.rightButton]}
-      onPress={() => idPicFront && idPicBack && idNo ? navigation.navigate('ICESetup') : Alert.alert('Please select ID images and enter your ID number.')}>
+      onPress={() => icePicFront && icePicBack && iceNo ? navigation.navigate('MaterialSetup') : Alert.alert('Please select ICE images and enter your ICE number.')}>
       <Text color='white' fontWeight='medium' fontSize='50px' textAlign='center' lineHeight={40}>⟶</Text>
     </SharpButton>
   </Center>;
