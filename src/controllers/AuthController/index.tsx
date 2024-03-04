@@ -11,11 +11,16 @@ const RootStack = createStackNavigator();
 
 function App() {
   return (
-    <RootStack.Navigator >
+    <RootStack.Navigator  screenOptions={{
+      headerTitle: '',
+      headerTransparent: true,
+      cardStyle: { backgroundColor: 'black' }, 
+    }}
+    >
       <RootStack.Screen name="Welcome" component={Welcome} />
-      <RootStack.Screen name="Authenticate" component={Authenticate} options={{ headerTitle: '', headerTransparent: true }} />
-      <RootStack.Screen name="Signup" component={Signup} options={{ headerTitle: '', headerTransparent: true }}/>
-      <RootStack.Screen name="Login" component={Login} options={{ headerTitle: '', headerTransparent: true }}/>
+      <RootStack.Screen name="Authenticate" component={Authenticate} />
+      <RootStack.Screen name="Signup" component={Signup}/>
+      <RootStack.Screen name="Login" component={Login}/>
     </RootStack.Navigator>
   );
 }

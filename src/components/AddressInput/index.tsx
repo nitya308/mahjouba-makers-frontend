@@ -4,6 +4,7 @@ import { MAPS_API_KEY } from '@env';
 import { buildAddr } from 'utils/geoUtils';
 import Address from 'types/address';
 import { View, Text } from 'native-base';
+import Colors from 'utils/Colors';
 
 export default function AddressInput({
   setAddress,

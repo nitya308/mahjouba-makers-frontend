@@ -7,6 +7,7 @@ import ProfileImage from '../../assets/profileDefault.png';
 import { DEFAULT_PROFILE_URI } from 'utils/constants';
 import useAppSelector from 'hooks/useAppSelector';
 import { userDataSelector } from 'redux/slices/userDataSlice';
+import { useTranslation } from 'react-i18next';
 
 export default function ProfileImageSelector({
   selectedProfile,
@@ -21,6 +22,8 @@ export default function ProfileImageSelector({
   width: number;
   height: number;
 }): JSX.Element {
+  
+  const { t }  = useTranslation();
   const selectImage = async () => {
     try {
       // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -73,7 +76,7 @@ export default function ProfileImageSelector({
       mb={`${height / 2}px`}
       mx='auto'
     >
-      Select profile image
+      {t('Select profile image')}
     </Button>
   </Center>;
 }

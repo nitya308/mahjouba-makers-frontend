@@ -9,8 +9,10 @@ import { ConfirmationResult, PhoneAuthProvider, signInWithCredential } from 'fir
 import useAppDispatch from 'hooks/useAppDispatch';
 import { setName as setReduxName } from 'redux/slices/authSlice';
 import { SafeAreaView } from 'react-native';
+import Colors from 'utils/Colors';
+import { StyleSheet } from 'react-native';
 
-export default function Signup() {
+const Signup = () => {
   const dispatch = useAppDispatch();
 
   const recaptchaVerifier = useRef<any>(null);
@@ -40,7 +42,7 @@ export default function Signup() {
     if (!phone || !name) {
       setError('Complete required fields');
       return;
-    } 
+    }
     // else if (password != passConfirm) {
     //   setError('Passwords do not match');
     //   return;
@@ -75,48 +77,56 @@ export default function Signup() {
     <SafeAreaView>
       <ScrollView>
         <VStack space={2}>
-    
+
           <FirebaseRecaptchaVerifierModal
             ref={recaptchaVerifier}
             firebaseConfig={app.options}
-            // attemptInvisibleVerification
+          // attemptInvisibleVerification
           />
           {
             !phoneVerify ?
-              <VStack space={2} mb='10px'>
-                <Text fontSize='md' mx='auto'>
-              Name
+              <VStack space={2} mb='10px' alignItems='center' mt='73px'>
+                <Text color='white' fontSize='30px' textAlign='center'>
+                  Enter your name {'\n'} and phone number
                 </Text>
-                <Input 
-                  w='100%' 
-                  borderRadius='2px'  
-                  paddingY='10px' 
+                <Box height='100px' />
+                <Text color='white' fontSize='24px' style={styles.underline}>
+                  Name
+                </Text>
+                <Input
+                  w='190px'
+                  borderRadius='2px'
+                  paddingY='10px'
                   paddingX='16px'
-                  borderColor='black'
+                  borderColor={Colors.outline}
                   borderWidth='1px'
-                  placeholder='Name' 
+                  placeholderTextColor='#737B7D'
+                  placeholder='Name'
+                  color='white'
                   autoCapitalize='none'
                   size='sm'
                   type='text'
-                  value={name} 
-                  onChangeText={setName} 
+                  value={name}
+                  onChangeText={setName}
                 />
-                <Text fontSize='md' mx='auto'>
-              Phone
+                <Text color='white' fontSize='24px' style={styles.underline}>
+                  Phone Number
                 </Text>
-                <Input 
-                  w='100%' 
-                  borderRadius='2px'  
-                  paddingY='10px' 
+                <Input
+                  w='190px'
+                  borderRadius='2px'
+                  paddingY='10px'
                   paddingX='16px'
-                  borderColor='black'
+                  borderColor={Colors.outline}
                   borderWidth='1px'
-                  placeholder='Phone #' 
+                  placeholderTextColor='#737B7D'
+                  placeholder='Phone #'
                   autoCapitalize='none'
+                  color='white'
                   size='sm'
                   type='text'
-                  value={phone} 
-                  onChangeText={setPhone} 
+                  value={phone}
+                  onChangeText={setPhone}
                 />
                 {/* <Text fontSize='md' mx='auto'>
               Password
@@ -152,43 +162,54 @@ export default function Signup() {
               value={passConfirm} 
               onChangeText={setPassConfirm} 
             /> */}
-                <SharpButton w='100%' my='10px'
+                <SharpButton w='160px' my='10px'
                   size='sm' onPress={handleSubmit}>
-                  <Text color='black' fontWeight='medium'>Submit</Text>
+                  <Text color='white' fontWeight='medium'>Submit</Text>
                 </SharpButton>
-              </VStack> : 
-              <Box>
-                <Text fontSize='lg' mx='auto'>
-              Enter Verification code
-                </Text>
-                <Input 
-                  w='100%' 
-                  borderRadius='2px'  
-                  paddingY='10px' 
-                  paddingX='16px'
-                  borderColor='black'
-                  borderWidth='1px'
-                  placeholder='Ex 12346' 
-                  autoCapitalize='none'
-                  size='sm'
-                  type='text'
-                  value={confirmationCode} 
-                  onChangeText={setConfirmationCode} 
-                />
-                <SharpButton w='100%' my='10px'
-                  size='sm' onPress={handlePhoneConfirm}>
-                  <Text color='black' fontWeight='medium'>Confirm</Text>
-                </SharpButton>
-              </Box>
+              </VStack> :
+              <VStack space={2} mb='10px' alignItems='center' mt='73px'>
+                <Box alignItems='center' >
+                  <Text fontSize='24px' mx='auto' color='white' textAlign='center' >
+                    Enter Verification code
+                  </Text>
+                  <Box height='20px'/>
+                  <Input
+                    w='190px'
+                    borderRadius='2px'
+                    paddingY='10px'
+                    paddingX='16px'
+                    borderColor={Colors.outline}
+                    color='white'
+                    borderWidth='1px'
+                    placeholder='Ex 12346'
+                    autoCapitalize='none'
+                    size='sm'
+                    type='text'
+                    value={confirmationCode}
+                    onChangeText={setConfirmationCode}
+                  />
+                  <SharpButton w='160px' my='10px'
+                    size='sm' onPress={handlePhoneConfirm}>
+                    <Text color='white' fontWeight='medium'>Confirm</Text>
+                  </SharpButton>
+                </Box>
+              </VStack>
           }
           {
             error &&
-          <Center>
-            <Text color='red.500' textAlign='center' fontSize='xs'>{error}</Text>
-          </Center>
+            <Center>
+              <Text color='red.500' textAlign='center' fontSize='xs'>{error}</Text>
+            </Center>
           }
         </VStack>
       </ScrollView>
     </SafeAreaView>
   );
-}
+};
+
+const styles = StyleSheet.create({
+  italic: { fontStyle: 'italic' },
+  underline: { textDecorationLine: 'underline' },
+});
+
+export default Signup;

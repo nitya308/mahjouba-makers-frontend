@@ -7,8 +7,10 @@ import { FirebaseRecaptchaVerifierModal, FirebaseRecaptchaBanner } from 'expo-fi
 import { app, auth } from '../../../firebase';
 import { ConfirmationResult, PhoneAuthProvider, signInWithCredential } from 'firebase/auth';
 import { SafeAreaView } from 'react-native';
+import { StyleSheet } from 'react-native';
+import Colors from 'utils/Colors';
 
-export default function Login() {
+const Login = () => {
   const recaptchaVerifier = useRef<any>(null);
   const [phone, setPhone] = useState<string | undefined>('1111111111');
   const [confirmationCode, setConfirmationCode] = useState<string | undefined>('123456');
@@ -62,8 +64,8 @@ export default function Login() {
 
   return (
     <SafeAreaView>
-      <ScrollView>
-        <VStack space={2}>
+      <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}>
+        <VStack space={4} alignItems='center'>
           <FirebaseRecaptchaVerifierModal
             ref={recaptchaVerifier}
             firebaseConfig={app.options}
@@ -71,79 +73,82 @@ export default function Login() {
           />
           {
             !phoneVerify ?
-              <VStack space={2} mb='10px'>
-                <Text fontSize='md' mx='auto'>
-              Phone
+              <VStack space={2} alignItems="center">
+                <Box height='30px' />
+                <Text color='white' fontSize='30px' style={styles.italic}>
+                  Hey again!
+                </Text>
+                <Box height='10px' />
+                <Text color='white' fontSize='30px'>
+                Enter your phone{'\n'}number to sign in
+                </Text>
+                <Box height='20px' />
+                <Text color='white' fontSize='30px' style={styles.underline}>
+                  Phone Number
                 </Text>
                 <Input
-                  w='100%'
+                  w="204px"
+                  h="42px"
                   borderRadius='2px'
-                  paddingY='10px'
-                  paddingX='16px'
-                  borderColor='black'
+                  py='10px'
+                  px='16px'
+                  borderColor={Colors.outline}
                   borderWidth='1px'
                   placeholder='Phone #'
                   autoCapitalize='none'
-                  size='sm'
+                  size='md'
                   type='text'
+                  color='white'
                   value={phone}
                   onChangeText={setPhone}
                 />
-                {/* <Text fontSize='md' mx='auto'>
-              Password
-            </Text>
-            <Input 
-              w='100%' 
-              borderRadius='2px'  
-              autoCapitalize='none' 
-              paddingY='10px' 
-              paddingX='16px' 
-              borderColor='black'
-              borderWidth='1px'
-              placeholder='Password' 
-              size='sm'
-              type='password' 
-              value={password} 
-              onChangeText={setPassword} 
-            /> */}
-                <SharpButton w='100%' my='10px'
-                  size='sm' onPress={handleSubmit}>
-                  <Text color='black' fontWeight='medium'>Submit</Text>
+                <Box height='50px' />
+                <SharpButton w='90px' h='42px' size='sm' onPress={handleSubmit}>
+                  <Text color='white' fontWeight='medium'>Send</Text>
                 </SharpButton>
-              </VStack> :
-              <Box>
-                <Text fontSize='lg' mx='auto'>
-              Enter Verification code
+              </VStack>
+              :
+              <VStack space={2} alignItems='center'>
+                <Text color='white' fontSize='30px' style={{ textAlign: 'center' }} >
+                  Confirmation {'\n'} Code
                 </Text>
+                <Box height='30px' />
                 <Input
-                  w='100%'
+                  w="204px"
+                  h="42px"
                   borderRadius='2px'
-                  paddingY='10px'
-                  paddingX='16px'
-                  borderColor='black'
+                  py='10px'
+                  px='16px'
+                  borderColor={Colors.outline}
                   borderWidth='1px'
                   placeholder='Ex 12346'
                   autoCapitalize='none'
-                  size='sm'
+                  size='md'
+                  color='white'
                   type='text'
                   value={confirmationCode}
                   onChangeText={setConfirmationCode}
                 />
-                <SharpButton w='100%' my='10px'
-                  size='sm' onPress={handlePhoneConfirm}>
-                  <Text color='black' fontWeight='medium'>Confirm</Text>
+                <Box height='30px' />
+                <SharpButton w='90px' h='42px' size='sm' onPress={handlePhoneConfirm}>
+                  <Text color='white' fontWeight='medium' >Enter</Text>
                 </SharpButton>
-              </Box>
+              </VStack>
           }
-          {
-            error &&
-        <Center>
-          <Text color='red.500' textAlign='center' fontSize='xs'>{error}</Text>
-        </Center>
-          }
+          {error && (
+            <Center>
+              <Text color='red.500' textAlign='center' fontSize='xs'>{error}</Text>
+            </Center>
+          )}
         </VStack>
       </ScrollView>
     </SafeAreaView>
-
   );
-}
+};
+
+const styles = StyleSheet.create({
+  italic: { fontStyle: 'italic' },
+  underline: { textDecorationLine: 'underline' },
+});
+
+export default Login;
