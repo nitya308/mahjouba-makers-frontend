@@ -3,16 +3,15 @@ import { View, Text } from 'react-native';
 import * as Speech from 'expo-speech';
 import i18next from 'i18next';
 
-const TextHighlighter = ({ text, pressed, setPressed }: { text: string, pressed: boolean, setPressed: React.Dispatch<React.SetStateAction<boolean>> }) => {
 
+const TextHighlighter = ({ text, pressed, setPressed, style }: { text: string, pressed: boolean, setPressed: React.Dispatch<React.SetStateAction<boolean>>, style: any }) => {
   useEffect(() => {
     if (pressed) {
       handlePlay();
     }
   }, [pressed]);
-
   const handlePlay = () => {
-    Speech.speak(text, 
+    Speech.speak(text,
       {
         onDone: () => {
           setBefore(text);
@@ -30,18 +29,24 @@ const TextHighlighter = ({ text, pressed, setPressed }: { text: string, pressed:
         language: i18next.language,
       });
   };
-
   const [before, setBefore] = useState(text);
   const [curr, setCurr] = useState('');
   const [after, setAfter] = useState('');
-
   return (
-    <View style={{ flex: 1, flexDirection: 'row' }}>
-      <Text>{before}</Text>
-      <Text style={{ backgroundColor: 'yellow' }}>{curr}</Text>
-      <Text>{after}</Text>
+    <View style={{ flex: 1, flexDirection: 'row' }} >
+      <Text style={[style, { backgroundColor: 'pink', height: 30 }]}>{before}</Text>
+      <Text style={[style, { backgroundColor: 'yellow' }]}>{curr}</Text>
+      <Text style={style}>{after}</Text>
     </View>
   );
 };
-
 export default TextHighlighter;
+
+
+
+
+
+
+
+
+

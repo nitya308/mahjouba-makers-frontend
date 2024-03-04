@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState, useEffect } from 'react';
+import React, { useCallback, useRef, useState, useEffect, useTransition } from 'react';
 import { Text, Input, VStack, Center, Button, Box, ScrollView } from 'native-base';
 import { phonePassSignup, userPassSignUp } from 'utils/auth';
 import SharpButton from 'components/SharpButton';
@@ -11,9 +11,14 @@ import { setName as setReduxName } from 'redux/slices/authSlice';
 import { SafeAreaView } from 'react-native';
 import Colors from 'utils/Colors';
 import { StyleSheet } from 'react-native';
+import AudioIcon from '../../assets/audio_icon.svg';
+import { IconButton } from 'native-base';
+import TextHighlighter from 'components/SpeechHighlighter';
+import { useTranslation } from 'react-i18next';
 
 const Signup = () => {
   const dispatch = useAppDispatch();
+  
 
   const recaptchaVerifier = useRef<any>(null);
   const [name, setName] = useState<string | undefined>();
@@ -24,6 +29,7 @@ const Signup = () => {
   const [error, setError] = useState<string | undefined>();
   const [phoneVerify, setPhoneVerify] = useState(false);
   const [confirmResult, setConfirmResult] = useState<string | undefined>();
+  const [ pressed, setPressed] = useState(false);
 
   useEffect(() => {
     // Fetch country code
@@ -73,10 +79,20 @@ const Signup = () => {
     }
   }, [confirmationCode, confirmResult]);
 
+  const { t } = useTranslation();
+
   return (
     <SafeAreaView>
       <ScrollView>
+        <IconButton
+          style={styles.audioStyle}
+          icon={<AudioIcon />}
+          onPress={() => {
+            setPressed(true);
+          }}
+        />
         <VStack space={2}>
+          
 
           <FirebaseRecaptchaVerifierModal
             ref={recaptchaVerifier}
@@ -86,13 +102,11 @@ const Signup = () => {
           {
             !phoneVerify ?
               <VStack space={2} mb='10px' alignItems='center' mt='73px'>
-                <Text color='white' fontSize='30px' textAlign='center'>
-                  Enter your name {'\n'} and phone number
-                </Text>
+                <TextHighlighter style={styles.heading} text={t('Enter your Name \n and Phone Number')} pressed={pressed} setPressed={setPressed}/>
                 <Box height='100px' />
-                <Text color='white' fontSize='24px' style={styles.underline}>
+                {/* <TextHighlighter fontSize='24px'>
                   Name
-                </Text>
+                </TextHighlighter> */}
                 <Input
                   w='190px'
                   borderRadius='2px'
@@ -109,9 +123,9 @@ const Signup = () => {
                   value={name}
                   onChangeText={setName}
                 />
-                <Text color='white' fontSize='24px' style={styles.underline}>
+                <TextHighlighter color='white' fontSize='24px' style={styles.underline}>
                   Phone Number
-                </Text>
+                </TextHighlighter>
                 <Input
                   w='190px'
                   borderRadius='2px'
@@ -209,7 +223,9 @@ const Signup = () => {
 
 const styles = StyleSheet.create({
   italic: { fontStyle: 'italic' },
-  underline: { textDecorationLine: 'underline' },
+  heading: { fontSize: 30, color: 'white', textAlign: 'center'},
+  underline: { textDecorationLine: 'underline', color: 'white' },
+  audioStyle: { position: 'absolute', top: 0, right: 0, zIndex: 1 },
 });
 
 export default Signup;
