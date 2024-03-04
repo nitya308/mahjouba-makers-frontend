@@ -102,7 +102,8 @@ const Signup = () => {
           {
             !phoneVerify ?
               <VStack space={2} mb='10px' alignItems='center' mt='73px'>
-                <TextHighlighter style={styles.heading} text={t('hello this is our test update we tried something and we hope it')} pressed={pressed} setPressed={setPressed}/>
+                <TextHighlighter style={[styles.heading, styles.underline]} text={t('Enter your name')} pressed={pressed} setPressed={setPressed}/>
+                <TextHighlighter style={[styles.heading, styles.underline]} text={t('and phone number')} pressed={pressed} setPressed={setPressed}/>
                 <Box height='100px' />
                 {/* <TextHighlighter fontSize='24px'>
                   Name

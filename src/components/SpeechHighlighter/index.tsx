@@ -15,7 +15,7 @@ const TextHighlighter = ({ text, pressed, setPressed, style }: { text: string, p
     Speech.speak(text,
       {
         onDone: () => {
-          setBefore(text);
+          setBefore(text.substring(0, text.length));
           setCurr('');
           setAfter('');
           setPressed(false);
@@ -34,11 +34,11 @@ const TextHighlighter = ({ text, pressed, setPressed, style }: { text: string, p
   const [curr, setCurr] = useState('');
   const [after, setAfter] = useState('');
   return (
-    <View style={{ flex: 1, flexDirection: 'row', flexWrap: 'wrap' }} >
-      <Text style={[style, { backgroundColor: 'pink' }]}>{before}</Text>
-      <Text style={[style, { backgroundColor: 'yellow' }]}>{curr}</Text>
-      <Text style={[style, { backgroundColor: 'pink' }]}>{after}</Text>
-    </View>
+    <Text style={style}>
+      <Text>{before}</Text>
+      <Text style={{ backgroundColor: 'yellow' }}>{curr}</Text>
+      <Text>{after}</Text>
+    </Text>
   );
 };
 export default TextHighlighter;
