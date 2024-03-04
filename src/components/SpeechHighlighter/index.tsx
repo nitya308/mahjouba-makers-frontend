@@ -36,7 +36,7 @@ const TextHighlighter = ({ text, pressed, setPressed, style }: { text: string, p
   return (
     <Text style={style}>
       <Text>{before}</Text>
-      <Text style={{ backgroundColor: 'yellow' }}>{curr}</Text>
+      <Text style={{ backgroundColor: 'yellow', color: 'black' }}>{curr}</Text>
       <Text>{after}</Text>
     </Text>
   );
