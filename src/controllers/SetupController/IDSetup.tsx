@@ -10,8 +10,8 @@ import { AntDesign } from '@expo/vector-icons';
 import Colors from 'utils/Colors';
 import DotProgress from 'components/DotProgress';
 
-export default function IDSetup({ navigation }): JSX.Element {
-
+export default function IDSetup({ navigation, route }): JSX.Element {
+  const { name, selectedImage } = route.params;
   const [idNo, setIdNo] = useState<string | undefined>();
   const [idPicFront, setIdPicFront] = useState<Asset | undefined>();
   const [idPicBack, setIdPicBack] = useState<Asset | undefined>();
@@ -73,10 +73,11 @@ export default function IDSetup({ navigation }): JSX.Element {
         />
         <DotProgress progress={2} completion={7} />
         <SharpButton
+          backgroundColor={'rgba(255, 192, 29, 0.2)'}
           leftIcon={<Icon as={AntDesign} name='arrowright' color='white' size='lg' />}
           mr='30px'
           p='10px'
-          onPress={() => (idNo && idPicBack && idPicFront ? navigation.navigate('ICESetup') : alert('Please complete all fields'))}
+          onPress={() => (idNo && idPicBack && idPicFront ? navigation.navigate('ICESetup', { name, selectedImage, idNo, idPicBack, idPicFront }) : alert('Please complete all fields'))}
         />
       </HStack>
     </View>

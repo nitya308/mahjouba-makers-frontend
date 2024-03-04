@@ -4,7 +4,8 @@ import SharpButton from 'components/SharpButton';
 import DotProgress from 'components/DotProgress';
 import { AntDesign } from '@expo/vector-icons';
 
-export default function DataAgreement({ navigation }): JSX.Element {
+export default function DataAgreement({ navigation, route }): JSX.Element {
+  const { name, selectedImage } = route.params;
   return (
     <View style={{ flex: 1, position: 'relative' }}>
       <Box w='100%' minH='60px' alignItems='center'>
@@ -36,10 +37,11 @@ export default function DataAgreement({ navigation }): JSX.Element {
           />
           <DotProgress progress={1} completion={7} />
           <SharpButton
+            backgroundColor={'rgba(255, 192, 29, 0.2)'}
             leftIcon={<Icon as={AntDesign} name='arrowright' color='white' size='lg' />}
             p='10px'
             mr='30px'
-            onPress={() => (navigation.navigate('IDSetup'))}
+            onPress={() => (navigation.navigate('IDSetup', { name, selectedImage }))}
           />
         </HStack>
       </View>

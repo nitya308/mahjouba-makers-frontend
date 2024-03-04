@@ -6,12 +6,13 @@ import SharpButton from 'components/SharpButton';
 import DotProgress from 'components/DotProgress';
 import { AntDesign } from '@expo/vector-icons';
 
-export default function MaterialSetup({ navigation }): JSX.Element {
+export default function MaterialSetup({ navigation, route }): JSX.Element {
+  const { name, selectedImage, idNo, idPicBack, idPicFront, iceNo, icePicBack, icePicFront } = route.params;
   const [selectedMaterialIds, setSelectedMaterialIds] = useState<string[]>([]);
   return (
-    <View flex='1'>
-      <Box minH='200px' mt='150'>
-        <Text fontSize='30' color='white' textAlign='center'>
+    <View flex='1' alignItems='center'>
+      <Box minH='200px' mt='120' alignItems='flex-start'>
+        <Text fontSize='30' color='white' textAlign='center' mb='5'>
           What materials do {'\n'} you work with?
         </Text>
         <MaterialSelector
@@ -29,10 +30,12 @@ export default function MaterialSetup({ navigation }): JSX.Element {
           />
           <DotProgress progress={5} completion={7} />
           <SharpButton
+            backgroundColor={'rgba(255, 192, 29, 0.2)'}
             leftIcon={<Icon as={AntDesign} name='arrowright' color='white' size='lg' />}
             p='10px'
             mr='30px'
-            onPress={() => (selectedMaterialIds ? navigation.navigate('AddressSetup') : Alert.alert('Please complete all fields'))}
+            onPress={() => (selectedMaterialIds ? navigation.navigate('AddressSetup', 
+              { name, selectedProfileImage: selectedImage, idNo, idPicBack, idPicFront, iceNo, icePicBack, icePicFront, selectedMaterialIds }) : Alert.alert('Please complete all fields'))}
           />
         </HStack>
       </View>

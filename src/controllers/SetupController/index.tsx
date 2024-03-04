@@ -20,7 +20,6 @@ function App() {
       cardStyle: { backgroundColor: 'black' },
       headerLeft: () => null,
     }}>
-      {/* <RootStack.Screen name="DataAgreement" component={DataAgreement}/> */}
       <RootStack.Screen name="ProfileSetup" component={ProfileSetup} />
       <RootStack.Screen name="DataAgreement" component={DataAgreement} />
       <RootStack.Screen name="IDSetup" component={IDSetup} />

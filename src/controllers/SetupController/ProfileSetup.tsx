@@ -67,10 +67,11 @@ export default function ProfileSetup({ navigation }): JSX.Element {
           />
           <DotProgress progress={0} completion={7} />
           <SharpButton
+            backgroundColor={'rgba(255, 192, 29, 0.2)'}
             leftIcon={<Icon as={AntDesign} name='arrowright' color='white' size='lg' />}
             mr='30px'
             p='10px'
-            onPress={() => (name && selectedImage ? navigation.navigate('DataAgreement') : alert('Please complete all fields'))}
+            onPress={() => (name && selectedImage ? navigation.navigate('DataAgreement', { name, selectedImage }) : alert('Please complete all fields'))}
           />
         </HStack>
       </View>
