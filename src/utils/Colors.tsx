@@ -3,6 +3,7 @@ export default {
   backgroundBase: '#FFF4D8',
   backgroundLight: '#FFFDF6',
   buttonMain: '#E2E5E600',
+  highlight: 'rgba(255, 192, 29, 0.1)',
   outline: '#B78433',
   white: '#FFFFFF',
   black: '#000000',

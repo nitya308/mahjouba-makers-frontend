@@ -119,6 +119,7 @@ export default function AddressSetup({ navigation, route }): JSX.Element {
             </Box>
           </Box>
           <SharpButton
+            backgroundColor={Colors.highlight}
             mt='20px'
             w='200px'
             onPress={() => selectedAddress ? handleSubmit() : Alert.alert('Please complete all fields')}

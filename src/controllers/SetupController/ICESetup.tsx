@@ -75,7 +75,7 @@ export default function IDSetup({ navigation, route }): JSX.Element {
           />
           <DotProgress progress={3} completion={7} />
           <SharpButton
-            backgroundColor={'rgba(255, 192, 29, 0.2)'}
+            backgroundColor={Colors.highlight}
             leftIcon={<Icon as={AntDesign} name='arrowright' color='white' size='lg' />}
             p='10px'
             mr='30px'

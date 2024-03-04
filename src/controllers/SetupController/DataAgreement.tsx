@@ -3,6 +3,7 @@ import { View, Box, HStack, Heading, Icon, Text } from 'native-base';
 import SharpButton from 'components/SharpButton';
 import DotProgress from 'components/DotProgress';
 import { AntDesign } from '@expo/vector-icons';
+import Colors from 'utils/Colors';
 
 export default function DataAgreement({ navigation, route }): JSX.Element {
   const { name, selectedImage } = route.params;
@@ -37,7 +38,7 @@ export default function DataAgreement({ navigation, route }): JSX.Element {
           />
           <DotProgress progress={1} completion={7} />
           <SharpButton
-            backgroundColor={'rgba(255, 192, 29, 0.2)'}
+            backgroundColor={Colors.highlight}
             leftIcon={<Icon as={AntDesign} name='arrowright' color='white' size='lg' />}
             p='10px'
             mr='30px'

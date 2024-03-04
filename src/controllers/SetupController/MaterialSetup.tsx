@@ -5,6 +5,7 @@ import { Alert } from 'react-native';
 import SharpButton from 'components/SharpButton';
 import DotProgress from 'components/DotProgress';
 import { AntDesign } from '@expo/vector-icons';
+import Colors from 'utils/Colors';
 
 export default function MaterialSetup({ navigation, route }): JSX.Element {
   const { name, selectedImage, idNo, idPicBack, idPicFront, iceNo, icePicBack, icePicFront } = route.params;
@@ -30,7 +31,7 @@ export default function MaterialSetup({ navigation, route }): JSX.Element {
           />
           <DotProgress progress={5} completion={7} />
           <SharpButton
-            backgroundColor={'rgba(255, 192, 29, 0.2)'}
+            backgroundColor={Colors.highlight}
             leftIcon={<Icon as={AntDesign} name='arrowright' color='white' size='lg' />}
             p='10px'
             mr='30px'

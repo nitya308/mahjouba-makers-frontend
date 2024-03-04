@@ -58,7 +58,7 @@ export default function MaterialSelector({
       borderColor={Colors.outline}
       borderWidth={1}
       marginBottom={3}
-      backgroundColor={checked ? 'rgba(255, 192, 29, 0.2)' : 'transparent'}
+      backgroundColor={checked ? Colors.highlight : 'transparent'}
     >
       <TouchableOpacity onPress={() => onSelect(item._id)} key={index} style={{
         width: '100%',
