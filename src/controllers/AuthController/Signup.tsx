@@ -102,7 +102,7 @@ const Signup = () => {
           {
             !phoneVerify ?
               <VStack space={2} mb='10px' alignItems='center' mt='73px'>
-                <TextHighlighter style={styles.heading} text={t('Enter your Name \n and Phone Number')} pressed={pressed} setPressed={setPressed}/>
+                <TextHighlighter style={styles.heading} text={t('hello this is our test update we tried something and we hope it')} pressed={pressed} setPressed={setPressed}/>
                 <Box height='100px' />
                 {/* <TextHighlighter fontSize='24px'>
                   Name
@@ -223,7 +223,7 @@ const Signup = () => {
 
 const styles = StyleSheet.create({
   italic: { fontStyle: 'italic' },
-  heading: { fontSize: 30, color: 'white', textAlign: 'center'},
+  heading: { fontSize: 30, color: 'white', textAlign: 'left' },
   underline: { textDecorationLine: 'underline', color: 'white' },
   audioStyle: { position: 'absolute', top: 0, right: 0, zIndex: 1 },
 });
