@@ -1,10 +1,15 @@
 import React, { useCallback, useRef, useState, useEffect } from 'react';
-import { Text, Input, VStack, Center, Button, Box, ScrollView } from 'native-base';
+import { Text, Input, VStack, Center, Button, Box, ScrollView, IconButton } from 'native-base';
 import SharpButton from 'components/SharpButton';
 import i18next from 'i18next';
 import { Languages } from 'types/user';
 import { SafeAreaView } from 'react-native';
 import MahjoubaLogo from '../../assets/mahjouba_logo.svg';
+
+import * as Speech from 'expo-speech';
+import AudioIcon from '../../assets/audio_icon.svg';
+import TextHighlighter from '../../components/SpeechHighlighter';
+import { useTranslation } from 'react-i18next';
 
 export default function Welcome({ navigation }) {
 
@@ -12,6 +17,7 @@ export default function Welcome({ navigation }) {
     i18next.changeLanguage(language);
     navigation.navigate('Authenticate');
   };
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <Center flex={1}>

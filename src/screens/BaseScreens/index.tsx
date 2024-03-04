@@ -1,15 +1,19 @@
-import FrontPage from './JobsPage';
-import ResourcesPage from './ResourcesPage';
-import ForbiddenPage from './ForbiddenPage';
-import JobsPage from './JobsPage';
-import ProfilePage from './ProfilePage';
 import AccountSettingsPage from './AccountSettingsPage';
+import BulletinPage from './BulletinPage';
+import ForbiddenPage from './ForbiddenPage';
+import PaymentPage from './PaymentPage';
+import ProfilePage from './ProfilePage';
+import ResourcesPage from './ResourcesPage';
+import FrontPage from './JobsPage';
+import JobsPage from './JobsPage';
 
 export {
-  FrontPage,
-  ResourcesPage,
-  ForbiddenPage,
-  JobsPage,
-  ProfilePage,
   AccountSettingsPage,
+  BulletinPage,
+  ForbiddenPage,
+  FrontPage,
+  JobsPage,
+  PaymentPage,
+  ProfilePage,
+  ResourcesPage,
 };
