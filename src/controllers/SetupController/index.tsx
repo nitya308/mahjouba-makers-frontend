@@ -6,6 +6,8 @@ import MaterialSetup from './MaterialSetup';
 import ProfileSetup from './ProfileSetup';
 import AddressSetup from './AddressSetup';
 import ICESetup from './ICESetup';
+import DataAgreement from './DataAgreement';
+import BankingSetup from './BankingSetup';
 // import { RootStackParamList } from './src/types/nav';
 
 const RootStack = createStackNavigator();
@@ -16,12 +18,14 @@ function App() {
       headerTitle: '',
       headerTransparent: true,
       cardStyle: { backgroundColor: 'black' },
+      headerLeft: () => null,
     }}>
       {/* <RootStack.Screen name="DataAgreement" component={DataAgreement}/> */}
       <RootStack.Screen name="ProfileSetup" component={ProfileSetup} />
+      <RootStack.Screen name="DataAgreement" component={DataAgreement} />
       <RootStack.Screen name="IDSetup" component={IDSetup} />
       <RootStack.Screen name="ICESetup" component={ICESetup} />
-      {/* <RootStack.Screen name="Banking" component={Banking} /> */}
+      <RootStack.Screen name="BankingSetup" component={BankingSetup} />
       <RootStack.Screen name="MaterialSetup" component={MaterialSetup} />
       <RootStack.Screen name="AddressSetup" component={AddressSetup} />
     </RootStack.Navigator>
