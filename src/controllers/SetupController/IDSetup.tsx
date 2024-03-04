@@ -9,23 +9,24 @@ import { Alert } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import Colors from 'utils/Colors';
 import DotProgress from 'components/DotProgress';
+import { useTranslation } from 'react-i18next';
 
 export default function IDSetup({ navigation, route }): JSX.Element {
   const { name, selectedImage } = route.params;
   const [idNo, setIdNo] = useState<string | undefined>();
   const [idPicFront, setIdPicFront] = useState<Asset | undefined>();
   const [idPicBack, setIdPicBack] = useState<Asset | undefined>();
-
+  const { t } = useTranslation();
 
   return (
     <View flex={1}>
       <Center flex={1} >
         <VStack space={2}>
           <Heading fontSize='30' color='white' textAlign='center'>
-            Enter your ID
+            {t('Enter your ID')}
           </Heading>
-          <Heading fontSize='24' color='white' mt='40px' style={styles.underline} textAlign='center'>
-            ID Number
+          <Heading fontSize='24' color='white' mt='40px' textDecorationLine='underline' textAlign='center'>
+            {t('ID Number')}
           </Heading>
           <Input
             w='195px'
@@ -42,8 +43,8 @@ export default function IDSetup({ navigation, route }): JSX.Element {
             onChangeText={setIdNo}
           />
           <Center my='20px'>
-            <Heading fontSize='24' color='white' style={styles.underline}>
-              ID Photo
+            <Heading fontSize='24' color='white' textDecorationLine='underline'>
+              {t('ID Photo')}
             </Heading>
             <HStack space='6'>
               <Box>
@@ -84,7 +85,3 @@ export default function IDSetup({ navigation, route }): JSX.Element {
   );
 }
 
-
-const styles = StyleSheet.create({
-  underline: { textDecorationLine: 'underline' },
-});

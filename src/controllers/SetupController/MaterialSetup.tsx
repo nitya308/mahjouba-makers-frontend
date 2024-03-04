@@ -6,15 +6,18 @@ import SharpButton from 'components/SharpButton';
 import DotProgress from 'components/DotProgress';
 import { AntDesign } from '@expo/vector-icons';
 import Colors from 'utils/Colors';
+import { useTranslation } from 'react-i18next';
 
 export default function MaterialSetup({ navigation, route }): JSX.Element {
   const { name, selectedImage, idNo, idPicBack, idPicFront, iceNo, icePicBack, icePicFront } = route.params;
   const [selectedMaterialIds, setSelectedMaterialIds] = useState<string[]>([]);
+  const { t } = useTranslation();
+
   return (
     <View flex='1' alignItems='center'>
       <Box minH='200px' mt='120' alignItems='flex-start'>
         <Text fontSize='30' color='white' textAlign='center' mb='5'>
-          What materials do {'\n'} you work with?
+          {t('What materials do \n you work with?')}
         </Text>
         <MaterialSelector
           selectedMaterialIds={selectedMaterialIds}

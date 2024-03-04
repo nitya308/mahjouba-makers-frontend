@@ -6,6 +6,7 @@ import { Box, Checkbox, FlatList, HStack, Spacer, Text } from 'native-base';
 import materialsApi from 'requests/materialsApi';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Colors from 'utils/Colors';
+import { useTranslation } from 'react-i18next';
 
 export default function MaterialSelector({
   selectedMaterialIds,
@@ -15,7 +16,7 @@ export default function MaterialSelector({
   setSelectedMaterialIds: (newMaterials: string[]) => void,
 }): JSX.Element {
   const { fbUserRef } = useAppSelector(authSelector);
-
+  const { t } = useTranslation();
   const [materialList, setMaterialList] = useState<IMaterial[]>([]);
 
   useEffect(() => {
@@ -66,7 +67,7 @@ export default function MaterialSelector({
       }}>
         <HStack w='100%' flex='1' minW='150px' flexShrink={0}>
           <Checkbox value={item.name} colorScheme="orange" isChecked={checked} aria-label={item.name} />
-          <Text lineHeight={22} ml='10' fontSize='18px' color='white' textTransform='capitalize'>{item.name} </Text>
+          <Text lineHeight={22} ml='10' fontSize='18px' color='white' textTransform='capitalize'> {t(item.name)} </Text>
         </HStack>
       </TouchableOpacity>
     </Box>;

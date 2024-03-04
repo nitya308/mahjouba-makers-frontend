@@ -4,14 +4,17 @@ import SharpButton from 'components/SharpButton';
 import DotProgress from 'components/DotProgress';
 import { AntDesign } from '@expo/vector-icons';
 import Colors from 'utils/Colors';
+import { useTranslation } from 'react-i18next';
 
 export default function BankingSetup({ navigation, route }): JSX.Element {
   const { name, selectedImage, idNo, idPicBack, idPicFront, iceNo, icePicBack, icePicFront } = route.params;
+  const { t } = useTranslation();
+
   return (
     <View style={{ flex: 1, position: 'relative' }}>
       <Box w='100%' minH='60px' alignItems='center'>
         <Heading fontSize='30' color='white' mt='150px' textAlign='center'>
-                    Enter your Banking {'\n'} Information
+          {t('Enter your Banking \n Information')}
         </Heading>
       </Box>
       <View style={{ position: 'absolute', bottom: 0, left: 0, right: 0, marginBottom: 50 }}>

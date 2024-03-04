@@ -4,36 +4,34 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import CameraButton from 'components/CameraButton';
 import { Asset } from 'react-native-image-picker';
-import { StyleSheet } from 'react-native';
-import { Alert } from 'react-native';
 import Colors from 'utils/Colors';
 import { AntDesign } from '@expo/vector-icons';
 import DotProgress from 'components/DotProgress';
+import { useTranslation } from 'react-i18next';
 
 export default function IDSetup({ navigation, route }): JSX.Element {
   const { name, selectedImage, idNo, idPicBack, idPicFront } = route.params;
   const [iceNo, setIceNo] = useState<string | undefined>();
   const [icePicFront, setIcePicFront] = useState<Asset | undefined>();
   const [icePicBack, setIcePicBack] = useState<Asset | undefined>();
-
-
+  const { t } = useTranslation();
 
   return (
     <View style={{ flex: 1 }}>
       <VStack flex={1} justifyContent="center" alignItems="center">
         <VStack space={2} alignItems="center">
           <Heading fontSize='30' color='white' textAlign='center'>
-            Enter your ICE Info
+            {t('Enter your ICE Info')}
           </Heading>
-          <Heading fontSize='24' color='white' mt='40px' style={styles.underline} textAlign='center'>
-            ICE Number
+          <Heading fontSize='24' color='white' mt='40px' textAlign='center' textDecorationLine='underline'>
+            {t('ICE Number')}
           </Heading>
           <Input
             w='195px'
             borderRadius='2px'
             paddingY='10px'
             paddingX='16px'
-            placeholder='Number'
+            placeholder={t('Number')}
             autoCapitalize='none'
             color='white'
             borderColor={Colors.outline}
@@ -43,19 +41,19 @@ export default function IDSetup({ navigation, route }): JSX.Element {
             onChangeText={setIceNo}
           />
           <Center my='20px'>
-            <Heading fontSize='24' color='white' style={styles.underline}>
-              ICE Photo
+            <Heading fontSize='24' color='white' textDecorationLine='underline'>
+              {t('ICE Photo')}
             </Heading>
             <HStack space='6'>
               <Box>
-                <Text my='5px' fontSize='20' color='white'>Front:</Text>
+                <Text my='5px' fontSize='20' color='white'>{t('Front:')}</Text>
                 <CameraButton
                   selectedImageAsset={icePicFront}
                   setSelectedImageAsset={setIcePicFront}
                 />
               </Box>
               <Box>
-                <Text my='5px' fontSize='20' color='white'>Back:</Text>
+                <Text my='5px' fontSize='20' color='white'>{t('Back:')}</Text>
                 <CameraButton
                   selectedImageAsset={icePicBack}
                   setSelectedImageAsset={setIcePicBack}
@@ -80,17 +78,10 @@ export default function IDSetup({ navigation, route }): JSX.Element {
             p='10px'
             mr='30px'
             onPress={() => (iceNo && icePicBack && icePicFront ? navigation.navigate('BankingSetup', 
-              { name, selectedImage, idNo, idPicBack, idPicFront, iceNo, icePicBack, icePicFront }) : Alert.alert('Please complete all fields'))}
+              { name, selectedImage, idNo, idPicBack, idPicFront, iceNo, icePicBack, icePicFront }) : alert('Please complete all fields'))}
           />
         </HStack>
       </View>
     </View>
   );
 }
-
-
-
-const styles = StyleSheet.create({
-  italic: { fontStyle: 'italic' },
-  underline: { textDecorationLine: 'underline' },
-});

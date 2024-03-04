@@ -5,6 +5,8 @@ import { Box, Icon, Text } from 'native-base';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import SharpButton from 'components/SharpButton';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import Colors from 'utils/Colors';
+import { useTranslation } from 'react-i18next';
 
 export default function CameraButton({
   selectedImageAsset,
@@ -13,6 +15,7 @@ export default function CameraButton({
   selectedImageAsset?: Asset,
   setSelectedImageAsset: (newAsset?: Asset) => void;
 }): JSX.Element {
+  const { t } = useTranslation();
   const handleCameraSelect = useCallback(async () => {
     try {
       const cameraRes = await launchCamera({
@@ -39,7 +42,7 @@ export default function CameraButton({
 
   return (
     selectedImageAsset?.uri ?
-      <Box>
+      <Box borderColor={Colors.outline}>
         <ExpoImage
           source={{
             uri: selectedImageAsset.uri,
@@ -53,11 +56,12 @@ export default function CameraButton({
           }}
         />
         <TouchableOpacity onPress={handleCameraSelect}>
-          <Text fontSize='xs' textDecorationLine='underline' fontWeight='bold' ml='auto'>Retake</Text>
+          <Text fontSize='xs' textDecorationLine='underline' fontWeight='bold' ml='auto' color='white'>{t('Retake')}</Text>
         </TouchableOpacity>
       </Box> :
       <Box>
-        <SharpButton leftIcon={<Icon as={MaterialCommunityIcons} name='camera-outline' size='xl' color='black'  />} bgColor='white' py='20px' px='30px' onPress={handleCameraSelect}></SharpButton>
+        <SharpButton leftIcon={<Icon as={MaterialCommunityIcons} name='camera-outline' size='xl' color='white'  />} 
+          bgColor={Colors.highlight} py='20px' px='30px' onPress={handleCameraSelect}></SharpButton>
       </Box>
   );
 }

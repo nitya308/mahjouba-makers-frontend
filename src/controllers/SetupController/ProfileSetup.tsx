@@ -63,7 +63,7 @@ export default function ProfileSetup({ navigation }): JSX.Element {
             leftIcon={<Icon as={AntDesign} name='arrowleft' color='white' size='lg' />}
             ml='30px'
             p='10px'
-            onPress={navigation.goBack}
+            onPress={navigation.navigate('Authenticate')}
           />
           <DotProgress progress={0} completion={7} />
           <SharpButton

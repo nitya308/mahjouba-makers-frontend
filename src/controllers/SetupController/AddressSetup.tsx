@@ -7,9 +7,9 @@ import SharpButton from 'components/SharpButton';
 import DotProgress from 'components/DotProgress';
 import { AntDesign } from '@expo/vector-icons';
 import { uploadMedia } from 'utils/mediaUtils';
-import { Alert } from 'react-native';
 import { authSelector, logout } from 'redux/slices/authSlice';
 import { clearUserData, initUser, userDataSelector } from 'redux/slices/userDataSlice';
+import { useTranslation } from 'react-i18next';
 import useAppDispatch from 'hooks/useAppDispatch';
 import useAppSelector from 'hooks/useAppSelector';
 
@@ -20,17 +20,13 @@ export default function AddressSetup({ navigation, route }): JSX.Element {
   const { loading } = useAppSelector(userDataSelector);
   const [imageUploading, setImageUploading] = useState(false);
   const [error, setError] = useState<string | undefined>();
+  const { t } = useTranslation();
 
   const [selectedAddress, setSelectedAddress] = useState<Address | undefined>(undefined);
   const { name, selectedProfileImage, idNo, idPicBack, idPicFront, iceNo, icePicBack, icePicFront, selectedMaterialIds } = route.params;
 
   const handleSubmit = useCallback(async () => {
-    console.log('submitting');
-    if (!fbUserRef) {
-      console.log('no user');
-    }
     if (!idNo || !iceNo || !selectedAddress || !idPicBack?.uri || !idPicFront?.uri || !icePicBack?.uri || !icePicFront?.uri || !fbUserRef || !name) return;
-    console.log('here');
     console.log([idPicFront, idPicBack]);
     setImageUploading(true);
     try {
@@ -50,7 +46,6 @@ export default function AddressSetup({ navigation, route }): JSX.Element {
       if (selectedProfileImage) {
         profilePicUri = await uploadMedia(`${fbUserRef?.uid}-profile.jpeg`, `file://${selectedProfileImage?.path}`);
       }
-      console.log('dispatching');
 
       dispatch(initUser({
         userData: {
@@ -109,7 +104,7 @@ export default function AddressSetup({ navigation, route }): JSX.Element {
         <View style={{ flex: 1 }} alignItems='center'>
           <Box w='100%' alignItems='center' justifyContent='center' mt={150}>
             <Heading fontSize='30' color='white' textAlign='center'>
-              Where do you {'\n'} work?
+              {t('Where do you \n work?')}
             </Heading>
             <Box w={200} mt={70} borderColor={Colors.outline} borderRadius='5px' borderWidth={selectedAddress ? '2px' : '0px'}>
               <AddressInput
@@ -122,10 +117,10 @@ export default function AddressSetup({ navigation, route }): JSX.Element {
             backgroundColor={Colors.highlight}
             mt='20px'
             w='200px'
-            onPress={() => selectedAddress ? handleSubmit() : Alert.alert('Please complete all fields')}
+            onPress={() => selectedAddress ? handleSubmit() : alert('Please complete all fields')}
           >
             <Text fontSize='20' color='white' textAlign='center'>
-              Create Account
+              {t('Create Account')}
             </Text>
           </SharpButton>
           <View style={{ position: 'absolute', bottom: 0, left: 0, right: 0, marginBottom: 50 }}>
