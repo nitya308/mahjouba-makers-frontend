@@ -59,12 +59,12 @@ export default function ProfileSetup({ navigation }): JSX.Element {
       </View>
       <View >
         <HStack mb='50px' space={4} justifyContent='space-around' alignItems='center'>
-          <SharpButton
+          {/* <SharpButton
             leftIcon={<Icon as={AntDesign} name='arrowleft' color='white' size='lg' />}
             ml='30px'
             p='10px'
             onPress={navigation.navigate('Authenticate')}
-          />
+          /> */}
           <DotProgress progress={0} completion={7} />
           <SharpButton
             backgroundColor={Colors.highlight}
