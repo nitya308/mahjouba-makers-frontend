@@ -36,6 +36,7 @@ export default function IDSetup({ navigation, route }): JSX.Element {
             placeholder='Number'
             autoCapitalize='none'
             color='white'
+            backgroundColor={Colors.highlight}
             borderColor={Colors.outline}
             borderWidth='1px'
             size='sm'
