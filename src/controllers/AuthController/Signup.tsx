@@ -1,5 +1,5 @@
 import React, { useCallback, useRef, useState, useEffect, useTransition } from 'react';
-import { Text, Input, VStack, Center, Button, Box, ScrollView } from 'native-base';
+import { Text, Input, VStack, Center, Button, Box, ScrollView, Spacer } from 'native-base';
 import { phonePassSignup, userPassSignUp } from 'utils/auth';
 import SharpButton from 'components/SharpButton';
 import IDSetup from '..//SetupController/IDSetup';
@@ -15,6 +15,7 @@ import AudioIcon from '../../assets/audio_icon.svg';
 import { IconButton } from 'native-base';
 import TextHighlighter from 'components/SpeechHighlighter';
 import { useTranslation } from 'react-i18next';
+import styles from 'styles/onboarding';
 
 const Signup = () => {
   const dispatch = useAppDispatch();
@@ -102,12 +103,10 @@ const Signup = () => {
           {
             !phoneVerify ?
               <VStack space={2} mb='10px' alignItems='center' mt='73px'>
-                <TextHighlighter style={[styles.heading, styles.underline]} text={t('Enter your name')} pressed={pressed} setPressed={setPressed} />
-                <TextHighlighter style={[styles.heading, styles.underline]} text={t('and phone number')} pressed={pressed} setPressed={setPressed} />
-                <Box height='100px' />
-                {/* <TextHighlighter fontSize='24px'>
-                  Name
-                </TextHighlighter> */}
+                <TextHighlighter style={styles.heading} text={t('Enter your name')} pressed={pressed} setPressed={setPressed} />
+                <TextHighlighter style={styles.heading} text={t('and phone number')} pressed={pressed} setPressed={setPressed} />
+                <Box height='70px' />
+                <TextHighlighter style={styles.subheading} text={t('Name')} pressed={pressed} setPressed={setPressed} />
                 <Input
                   w='190px'
                   borderRadius='2px'
@@ -124,9 +123,7 @@ const Signup = () => {
                   value={name}
                   onChangeText={setName}
                 />
-                <TextHighlighter color='white' fontSize='24px' style={styles.underline}>
-                  Phone Number
-                </TextHighlighter>
+                <TextHighlighter style={styles.subheading} text={t('Phone Number')} pressed={pressed} setPressed={setPressed} />
                 <Input
                   w='190px'
                   borderRadius='2px'
@@ -179,14 +176,12 @@ const Signup = () => {
             /> */}
                 <SharpButton w='160px' my='10px'
                   size='sm' onPress={handleSubmit}>
-                  <Text color='white' fontWeight='medium'>Submit</Text>
+                  <TextHighlighter style={styles.buttonText} text={t('Submit')} pressed={pressed} setPressed={setPressed} />
                 </SharpButton>
               </VStack> :
               <VStack space={2} mb='10px' alignItems='center' mt='73px'>
                 <Box alignItems='center' >
-                  <Text fontSize='24px' mx='auto' color='white' textAlign='center' >
-                    Enter Verification code
-                  </Text>
+                  <TextHighlighter style={styles.heading} text={t('Confirmation Code')} pressed={pressed} setPressed={setPressed} />
                   <Box height='20px' />
                   <Input
                     w='190px'
@@ -205,7 +200,7 @@ const Signup = () => {
                   />
                   <SharpButton w='160px' my='10px'
                     size='sm' onPress={handlePhoneConfirm}>
-                    <Text color='white' fontWeight='medium'>Confirm</Text>
+                    <TextHighlighter style={styles.subheading} text={t('Enter')} pressed={pressed} setPressed={setPressed} />
                   </SharpButton>
                 </Box>
               </VStack>
@@ -221,12 +216,5 @@ const Signup = () => {
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  italic: { fontStyle: 'italic' },
-  heading: { fontSize: 30, color: 'white', textAlign: 'left' },
-  underline: { textDecorationLine: 'underline', color: 'white' },
-  audioStyle: { position: 'absolute', top: 0, right: 0, zIndex: 1 },
-});
 
 export default Signup;
