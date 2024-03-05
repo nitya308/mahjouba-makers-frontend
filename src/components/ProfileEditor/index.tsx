@@ -39,7 +39,7 @@ import { createPhoto } from 'redux/slices/photosSlice';
 import { DEFAULT_PROFILE_URI } from 'utils/constants';
 import AppStyles from 'styles/commonstyles';
 import AudioIcon from '../../assets/audio_icon.svg';
-import { SafeAreaView, ScrollView } from 'react-native';
+import { Modal, SafeAreaView, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
 
 export default function ProfileEditor({
   toggleEditing,
@@ -47,6 +47,7 @@ export default function ProfileEditor({
   toggleEditing: () => void;
 }): JSX.Element {
   const dispatch = useAppDispatch();
+  const [isModalVisible, setModalVisible] = useState(false);
   const { fbUserRef } = useAppSelector(authSelector);
   const { userData } = useAppSelector(userDataSelector);
   const [selectedImage, setSelectedImage] = useState<Image | undefined>();
@@ -56,6 +57,10 @@ export default function ProfileEditor({
   const { cursor, jobsMap, partsMap, materialsMap } = useAppSelector(jobsSelector);
   const addressMap = useAppSelector((state) => state.addresses.addressMap);
   const photoMap = useAppSelector((state) => state.photos.photosMap);
+
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible);
+  };
 
   useEffect(() => {
     if (userData?.materialIds) {
@@ -177,6 +182,7 @@ export default function ProfileEditor({
               size='sm'
               type='text'
               backgroundColor='#ffffff'
+              mb='7'
             />
             <AddressInput
               setAddress={setNewAddress}
@@ -213,10 +219,25 @@ export default function ProfileEditor({
             {/* TODO: Put MaterialSelector here */}
             {/* </AppModal> */}
             {/* </HStack> */}
-            <MaterialSelector
-              selectedMaterialIds={selectedMaterialIds}
-              setSelectedMaterialIds={setSelectedMaterialIds}
-            />
+            
+            <TouchableOpacity onPress={toggleModal} style={styles.button}>
+              <Text> Materials <Text style={styles.plusSign}>+</Text> </Text>
+            </TouchableOpacity>
+
+            <Modal visible={isModalVisible} animationType="fade" transparent={true}  >
+              <View style={styles.modalContainer}>
+                <View style={styles.modalContent}>
+                  <Text style={[styles.modalFont, { marginTop: 10, marginBottom: 20 }]}>Select Materials</Text>
+                  <MaterialSelector
+                    selectedMaterialIds={selectedMaterialIds}
+                    setSelectedMaterialIds={setSelectedMaterialIds}
+                  />
+                  <TouchableOpacity onPress={toggleModal}>
+                    <Text style={styles.modalFont}>Close</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </Modal>
           </Center>
           <Center>
             <SharpButton
@@ -251,3 +272,39 @@ export default function ProfileEditor({
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  plusSign: {
+    fontSize: 18,
+    color: '#080026',
+  },
+  modalContainer: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  button: {
+    borderRadius: 2,
+    borderWidth: 1,
+    borderColor: '#080026',
+    backgroundColor: '#FFFDF6',
+    flexShrink: 0,
+    marginTop: 15,
+    padding: 5,
+  },
+  modalContent: {
+    backgroundColor: 'rgba(0, 0, 0, 1)',
+    padding: 20,
+    borderRadius: 10,
+    width: 370,
+    alignItems: 'center',
+    borderColor: 'white',
+    borderWidth: 1,
+  },
+  modalFont: {
+    fontSize: 20,
+    color: 'white',
+  },
+
+});
