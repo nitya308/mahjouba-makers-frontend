@@ -5,7 +5,6 @@ import i18next from 'i18next';
 import { Languages } from 'types/user';
 import { SafeAreaView } from 'react-native';
 import MahjoubaLogo from '../../assets/mahjouba_logo.svg';
-
 import * as Speech from 'expo-speech';
 import AudioIcon from '../../assets/audio_icon.svg';
 import TextHighlighter from '../../components/SpeechHighlighter';
