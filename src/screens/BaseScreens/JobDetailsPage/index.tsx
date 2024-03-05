@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'flex-start',
     justifyContent: 'flex-start',
-    backgroundColor: Colors.backgroundWhite,
+    backgroundColor: Colors.backgroundBlack,
   },
   infoContainer: {
     width: '90%',

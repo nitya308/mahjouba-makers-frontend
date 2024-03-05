@@ -83,7 +83,7 @@ const JobsPage = ({
   useEffect(() => {
     updateResultArray();
 
-  }, [selectedMaterialIds]);
+  }, [selectedMaterialIds, materialsMap, jobFeedIds, jobsMap, partsMap]);
 
   useEffect(() => {
     if (resultArray.length == 0) {
@@ -125,7 +125,7 @@ const JobsPage = ({
           },
         ],
       }}>
-      <View style={{alignContent:'center', alignItems:'center'}}>
+      <View style={{ alignContent:'center', alignItems:'center' }}>
         <Pressable style={styles.jobCard} key={item.job._id} onPress={() => handleSelect(item.job)}>
           <JobCard job={item.job} part={item.part} materials={item.materials} />
         </Pressable>
@@ -192,7 +192,7 @@ const JobsPage = ({
               <FlatList
                 horizontal
                 data={resultArray}
-                style={{ height: 250,  marginTop:30, paddingBottom: 210 }}
+                style={{ height: 250,  marginTop:30, paddingBottom: 500 }}
                 contentContainerStyle={{ paddingVertical: 16 }}
                 contentInsetAdjustmentBehavior="never"
                 snapToAlignment="center"
@@ -201,7 +201,7 @@ const JobsPage = ({
                 showsHorizontalScrollIndicator={false}
                 showsVerticalScrollIndicator={false}
                 scrollEventThrottle={1}
-                snapToInterval={boxWidth}
+                snapToInterval={(boxWidth * 2.4)}
                 ListEmptyComponent={renderListEmpty} 
                 contentInset={{
                   left: halfBoxDistance,
