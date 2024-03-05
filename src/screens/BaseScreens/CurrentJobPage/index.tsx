@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { View, Image } from 'react-native';
-import { Center, Text, IconButton, Spinner, ScrollView, HStack } from 'native-base';
+import { Center, Text, IconButton, Spinner, ScrollView, HStack, VStack } from 'native-base';
 import useAppSelector from 'hooks/useAppSelector';
 import { userDataSelector } from 'redux/slices/userDataSlice';
 import { Job } from 'types/job';
@@ -20,6 +20,7 @@ import TimeRemainingIcon from '../../../assets/time-remaining.svg';
 import CameraButton from 'components/CameraButton';
 import MapPinIcon from '../../../assets/map_pin.svg';
 import MADIcon from '../../../assets/MADIcon.png';
+import AppStyles from 'styles/commonstyles';
 import * as Speech from 'expo-speech';
 import { useTranslation } from 'react-i18next';
 import { Asset } from 'react-native-image-picker';
@@ -134,173 +135,185 @@ export default function CurrentJobPage(
 
   return (
     <ScrollView>
-      {currentJob ? (
-        <BaseView>
-          {currentPart?.imageIds.length
-            ? <Image alt='part' source={{ uri: photoMap?.[currentPart?.imageIds[0]]?.fullUrl ?? '' }} style={styles.image} />
-            : <Image alt='placeholder' source={Placeholder} style={styles.image} />}
-          <View style={styles.infoContainer}>
-            <View style={styles.infoHeader}>
-              <Text style={styles.name}>{currentPart?.name}</Text>
-              <Text>{`Current Date: ${currentDate.toDateString()}`}</Text>
-            </View>
-            <View style={styles.timeRemaining}>
-              <TimeRemainingIcon />
-              <Text style={styles.timeRemainingText}>{`${timeRemaining.days} days ${timeRemaining.hours} hours remaining`}</Text>
-            </View>
-            <View style={styles.infoBody}>
-              <View style={styles.textAndIcon}>
-                <MapPinIcon width={28} height={28} />
-                <Text style={[styles.text, { maxWidth: '90%' }]}>{currentAddress?.description}</Text>
+      <VStack width="100%" mt='20px' alignItems='center'>
+        {currentJob ? (
+          <BaseView>
+            {currentPart?.imageIds.length
+              ? <Image alt='part' source={{ uri: photoMap?.[currentPart?.imageIds[0]]?.fullUrl ?? '' }} style={styles.image} />
+              : <Image alt='placeholder' source={Placeholder} style={styles.image} />}
+            <View>
+{/* {!part.imageIds.length ? <Image alt='placeholder' source={Placeholder} style={styles.image} /> : <Image alt='part' source={{ uri: imageUrl }} style={styles.image} />} */}
+              <View style={styles.infoContainer}>
+                <Text style={styles.name}>{currentPart?.name}</Text>
+                <Text>{`Current Date: ${currentDate.toDateString()}`}</Text>
               </View>
-              <View style={styles.textAndIcon}>
-                <Image alt='MAD icon' source={MADIcon} />
-                <Text style={styles.text}>{`${currentJob?.price} MAD`}</Text>
+              <View style={styles.infoContainer}>
+                <View style={styles.timeRemaining}>
+                  <TimeRemainingIcon />
+                  <Text style={styles.timeRemainingText}>{`${timeRemaining.days} days ${timeRemaining.hours} hours remaining`}</Text>
+                </View>
               </View>
-            </View>
-            <IconButton
-              style={styles.audioIcon}
-              icon={<AudioIcon />}
-              onPress={() => {
-                const toSpeak = t(currentPart?.name + ',') +
+              <View style={styles.infoContainer}>
+                <View style={styles.infoBody}>
+                  <View style={styles.textAndIcon}>
+                    <MapPinIcon width={28} height={28} />
+                    <Text style={[styles.text, { maxWidth: '90%' }]}>{currentAddress?.description}</Text>
+                  </View>
+                  <View style={styles.textAndIcon}>
+                    <Image alt='MAD icon' source={MADIcon} />
+                    <Text style={styles.text}>{`${currentJob?.price} MAD`}</Text>
+                  </View>
+                </View>
+              
+                <IconButton
+                  style={styles.audioIcon}
+                  icon={<AudioIcon />}
+                  onPress={() => {
+                    const toSpeak = t(currentPart?.name + ',') +
                   t('has') + `${currentPart?.completionTime}` + t('hours remaining')
                   + t('ship to address') + currentAddress?.description
                   + ',' + t('for price') + `${currentJob?.price}` + t('MAD');
-                Speech.speak(t(toSpeak), { language: i18next.language });
-              }}
-            />
-          </View>
-          <View style={styles.materialContainer}>
-            {currentPart?.materialIds?.map((materialId, index) => (
-              <View key={index}>
-                <Text style={styles.text}>{materialsMap?.[materialId]?.name ?? ''}</Text>
-              </View>
-            ))}
-            <IconButton
-              style={styles.audioIcon}
-              icon={<AudioIcon />}
-              onPress={() => {
-                const materialsString = currentPart?.materialIds
-                  .map((materialId) => t(materialsMap?.[materialId]?.name) ?? '')
-                  .join(', ');
-                Speech.speak(materialsString, { language: i18next.language });
-              }}
-            />
-          </View>
-          <Center marginTop={'10px'}>
-            <SharpButton
-              width={'200px'}
-              backgroundColor={Colors.yellow}
-              my='2px'
-              size='sm'
-              onPress={() => {
-                dispatch(unacceptJob({ jobId: currentJobId ?? '', fbUserRef }));
-                setDetailsPageOpen(false);
-              }}
-              marginBottom={'10px'}
-            >
-              <Text fontFamily={fonts.regular}>
-                Unaccept Job
-              </Text>
-            </SharpButton>
-            <IconButton
-              style={styles.buttonAudioIcon}
-              icon={<AudioIcon />}
-              onPress={() => {
-                Speech.speak(t('Unaccept Job'), { language: i18next.language });
-              }}
-            />
-          </Center>
-          <Center marginTop={'10px'}>
-            <AppModal
-              showModal={showModal}
-              setShowModal={setShowModal}
-              modalButton={
-                <SharpButton
-                  width={'200px'}
-                  backgroundColor={Colors.yellow}
-                  my='2px'
-                  size='sm'
-                  onPress={() => {
-                    setShowModal(true);
+                    Speech.speak(t(toSpeak), { language: i18next.language });
                   }}
-                >
-                  <Text fontFamily={fonts.regular}>
-                    Complete Job
-                  </Text>
-                </SharpButton>
-              }
-              backgroundColor={Colors.white}
-              closeButton={true}
-            >
-              <HStack alignItems={'center'}>
-                <Text fontStyle={fonts.regular} marginTop={'20px'} maxWidth={'220px'}>
-                  Please upload at least 1 image of the completed part.
-                </Text>
+                />
+              </View>
+            </View>
+            <View style={styles.infoContainer}>
+              <View style={styles.materialContainer}>
+                {currentPart?.materialIds?.map((materialId, index) => (
+                  <View key={index}>
+                    <Text style={styles.text}>{materialsMap?.[materialId]?.name ?? ''}</Text>
+                  </View>
+                ))}
                 <IconButton
+                  style={styles.audioIcon}
                   icon={<AudioIcon />}
                   onPress={() => {
-                    Speech.speak(t('My Profile'), { language: i18next.language });
+                    const materialsString = currentPart?.materialIds
+                      .map((materialId) => t(materialsMap?.[materialId]?.name) ?? '')
+                      .join(', ');
+                    Speech.speak(materialsString, { language: i18next.language });
                   }}
                 />
-              </HStack>
-              <Center marginTop={'10px'}>
-                <CameraButton
-                  selectedImageAsset={completeJobPhoto}
-                  setSelectedImageAsset={setCompleteJobPhoto}
-                />
-              </Center>
-              <Center marginTop={'10px'}>
-                <SharpButton
-                  width={'80px'}
-                  backgroundColor={Colors.yellow}
-                  my='2px'
-                  size='sm'
-                  onPress={handleCompleteJobSubmit}
-                  marginTop={'10px'}
-                >
-                  <Text fontFamily={fonts.regular}>
-                    Finalize
+              </View>
+            </View>
+            <Center marginTop={'10px'}>
+              <SharpButton
+                width={'200px'}
+                backgroundColor={Colors.yellow}
+                my='2px'
+                size='sm'
+                onPress={() => {
+                  dispatch(unacceptJob({ jobId: currentJobId ?? '', fbUserRef }));
+                  setDetailsPageOpen(false);
+                }}
+                marginBottom={'10px'}
+              >
+                <Text fontFamily={fonts.regular}>
+                Unaccept Job
+                </Text>
+              </SharpButton>
+              <IconButton
+                style={styles.buttonAudioIcon}
+                icon={<AudioIcon />}
+                onPress={() => {
+                  Speech.speak(t('Unaccept Job'), { language: i18next.language });
+                }}
+              />
+            </Center>
+            <Center marginTop={'10px'}>
+              <AppModal
+                showModal={showModal}
+                setShowModal={setShowModal}
+                modalButton={
+                  <SharpButton
+                    width={'200px'}
+                    backgroundColor={Colors.yellow}
+                    my='2px'
+                    size='sm'
+                    onPress={() => {
+                      setShowModal(true);
+                    }}
+                  >
+                    <Text fontFamily={fonts.regular}>
+                    Complete Job
+                    </Text>
+                  </SharpButton>
+                }
+                backgroundColor={Colors.white}
+                closeButton={true}
+              >
+                <HStack alignItems={'center'}>
+                  <Text fontStyle={fonts.regular} marginTop={'20px'} maxWidth={'220px'}>
+                  Please upload at least 1 image of the completed part.
                   </Text>
-                </SharpButton>
-              </Center>
-            </AppModal>
-            <IconButton
-              style={styles.buttonAudioIcon}
-              icon={<AudioIcon />}
-              onPress={() => {
-                Speech.speak(t('Complete Job'), { language: i18next.language });
-              }}
-            />
-          </Center>
-        </BaseView>
-      )
-        :
-        <BaseView>
-          <Center
-            marginTop={'100px'}
-          >
-            <Text>
+                  <IconButton
+                    icon={<AudioIcon />}
+                    onPress={() => {
+                      Speech.speak(t('My Profile'), { language: i18next.language });
+                    }}
+                  />
+                </HStack>
+                <Center marginTop={'10px'}>
+                  <CameraButton
+                    selectedImageAsset={completeJobPhoto}
+                    setSelectedImageAsset={setCompleteJobPhoto}
+                  />
+                </Center>
+                <Center marginTop={'10px'}>
+                  <SharpButton
+                    width={'80px'}
+                    backgroundColor={Colors.yellow}
+                    my='2px'
+                    size='sm'
+                    onPress={handleCompleteJobSubmit}
+                    marginTop={'10px'}
+                  >
+                    <Text fontFamily={fonts.regular}>
+                    Finalize
+                    </Text>
+                  </SharpButton>
+                </Center>
+              </AppModal>
+              <IconButton
+                style={styles.buttonAudioIcon}
+                icon={<AudioIcon />}
+                onPress={() => {
+                  Speech.speak(t('Complete Job'), { language: i18next.language });
+                }}
+              />
+            </Center>
+          </BaseView>
+        )
+          :
+          <BaseView>
+            <Center
+              marginTop={'100px'}
+            >
+              <Text>
               You haven't accepted a job yet
-            </Text>
-          </Center>
-        </BaseView>
-      }
+              </Text>
+            </Center>
+          </BaseView>
+        }
+      </VStack>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    alignItems: 'flex-start',
-    justifyContent: 'flex-start',
-  },
+  // container: {
+  //   alignItems: 'flex-start',
+  //   justifyContent: 'flex-start',
+  // },
   infoContainer: {
     width: '90%',
-    alignSelf: 'center',
-    borderColor: '#000000',
+    borderColor: Colors.yellow,
     borderWidth: 1,
-    marginBottom: 15,
+    alignSelf: 'center',
+    paddingHorizontal: 5,
+    paddingVertical: 10,
+    marginBottom: 10,
   },
   materialContainer: {
     width: '90%',
@@ -308,50 +321,52 @@ const styles = StyleSheet.create({
     borderColor: '#000000',
     borderWidth: 1,
     marginBottom: 15,
-    padding: 10,
   },
   timeRemaining: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
-    backgroundColor: '#FFC01D',
-    borderBottomColor: '#000000',
+    // backgroundColor: '#FFC01D',
+    // borderBottomColor: '#000000',
+    color: 'white',
     borderBottomWidth: 1,
-    padding: 10,
   },
   textAndIcon: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
   },
-  infoHeader: {
-    backgroundColor: '#FFF4D8',
-    paddingTop: 10,
-    paddingHorizontal: 10,
-    borderBottomColor: '#000000',
-    borderBottomWidth: 1,
-  },
-  infoBody: {
-    padding: 10,
-  },
+  // infoHeader: {
+  //   backgroundColor: '#FFF4D8',
+  //   paddingTop: 10,
+  //   paddingHorizontal: 10,
+  //   borderBottomColor: '#000000',
+  //   borderBottomWidth: 1,
+  // },
+  // infoBody: {
+  //   padding: 10,
+  // },
   image: {
-    width: '100%',
-    height: 250,
+    // width: '200%',
+    marginTop: 200,
+    height: '40%',
     marginBottom: 20,
   },
   name: {
+    color: 'white',
     fontSize: 40,
     lineHeight: 40,
   },
   timeRemainingText: {
+    color: 'white',
     fontSize: 20,
     lineHeight: 24,
   },
   text: {
+    lineHeight: 25,
     fontSize: 20,
-    lineHeight: 24,
-    marginTop: 5,
-    marginBottom: 5,
+    maxWidth: '90%',
+    color: 'white',
   },
   button: {
     marginTop: 10,
