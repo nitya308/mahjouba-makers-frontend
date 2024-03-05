@@ -12,6 +12,8 @@ import * as Speech from 'expo-speech';
 import i18next from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { Icon } from 'react-native-elements';
+import TextHighlighter from 'components/SpeechHighlighter';
+import AppStyles from 'styles/commonstyles';
 
 
 const JobCard = ({ job, part, materials }: { job: Job, part: PartType, materials: string[] }) => {
@@ -19,6 +21,7 @@ const JobCard = ({ job, part, materials }: { job: Job, part: PartType, materials
   const { t } = useTranslation();
 
   const photoMap = useAppSelector((state) => state.photos.photosMap);
+  const [pressed, setPressed] = useState(false);
 
   // Display different image depending on current jobStatus
   const imageUrl = (job?.jobStatus === JOB_STATUS_ENUM.COMPLETE || job?.jobStatus === JOB_STATUS_ENUM.PENDING_REVIEW)
@@ -34,33 +37,34 @@ const JobCard = ({ job, part, materials }: { job: Job, part: PartType, materials
         }
       </View>
       <View style={styles.cardContent}>
+        <IconButton
+          style={AppStyles.audioStyle}
+          icon={<AudioIcon />}
+          onPress={() => {
+            setPressed(true);
+          }}
+        />
         <View style={styles.namePriceContainer}>
-          <Text style={styles.name}>{part?.name}</Text>
+          <TextHighlighter style={styles.name} text={t(part?.name)} pressed={pressed} setPressed={setPressed} />
         </View>
-        
-        <View>
-          {
-            // TODO: TBH we probably should be displaying jobId, it's hard to distinguish between jobs
-            // just off of the part name - Eric
-          }
-        </View>
-        
         {materials && materials?.length > 0 && (
           <View style={styles.materialContainer}>
-            <HammerIcon/>
+            <HammerIcon />
             {materials.map((material, index) => (
               <View key={material}>
-                <Text style={styles.materialChip}>
-                  {material}
-                  {index < materials.length - 1 && ','}
-                </Text>
+                {index < materials.length - 1 &&
+                  <TextHighlighter style={styles.materialChip} text={t(material + ',')} pressed={pressed} setPressed={setPressed} />
+                }
+                {index == materials.length - 1 &&
+                  <TextHighlighter style={styles.materialChip} text={t(material)} pressed={pressed} setPressed={setPressed} />
+                }
               </View>
             ))}
           </View>
         )}
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Money1/>
-          <Text style={styles.price}>{job?.price}</Text>
+        <View style={styles.materialContainer}>
+          <Money1 />
+          <TextHighlighter style={styles.price} text={t(job?.price?.toString())} pressed={pressed} setPressed={setPressed} />
         </View>
         {job?.completionDate && (
           <Text style={styles.completionDate}>
@@ -99,26 +103,27 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 10,
   },
   materialContainer: {
-    paddingTop: 10,
+    paddingTop: 20,
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 10,
+    alignItems: 'center',
   },
   materialChip: {
     fontSize: 20,
     color: 'white',
   },
   cardContent: {
-    paddingLeft: 10,
+    paddingLeft: 20,
     paddingRight: 10,
-    paddingTop: 40, 
+    paddingTop: 10,
     paddingBottom: 40,
   },
   namePriceContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingTop: 40,
+    paddingTop: 10,
   },
   name: {
     paddingTop: 20,
@@ -126,7 +131,6 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
   price: {
-    paddingTop: 20,
     fontSize: 20,
     color: 'white',
   },

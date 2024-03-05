@@ -4,6 +4,8 @@ import * as Speech from 'expo-speech';
 import i18next from 'i18next';
 import { HStack } from 'native-base';
 import Colors from 'utils/Colors';
+import { color } from 'react-native-elements/dist/helpers';
+import { fonts } from 'utils/constants';
 
 
 const TextHighlighter = ({ text, pressed, setPressed, style }: { text: string, pressed: boolean, setPressed: React.Dispatch<React.SetStateAction<boolean>>, style?: TextStyle }) => {
@@ -35,7 +37,7 @@ const TextHighlighter = ({ text, pressed, setPressed, style }: { text: string, p
   const [curr, setCurr] = useState('');
   const [after, setAfter] = useState('');
   return (
-    <Text style={style?.color ? style :  { color: Colors.white }}>
+    <Text style={[style ? style : {}, style?.color ? {} : { color: Colors.white }, style?.fontFamily ? {} : { fontFamily: fonts.regular }]}>
       <Text>{before}</Text>
       <Text style={{ backgroundColor: 'yellow', color: 'black' }}>{curr}</Text>
       <Text>{after}</Text>
