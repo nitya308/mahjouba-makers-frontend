@@ -1,5 +1,5 @@
 import SharpButton from 'components/SharpButton';
-import { Center, Heading, Input, VStack, HStack, Box, Text, Icon, View } from 'native-base';
+import { Center, Heading, Input, VStack, HStack, Box, Text, Icon, View, IconButton } from 'native-base';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import CameraButton from 'components/CameraButton';
@@ -10,6 +10,9 @@ import { AntDesign } from '@expo/vector-icons';
 import Colors from 'utils/Colors';
 import DotProgress from 'components/DotProgress';
 import { useTranslation } from 'react-i18next';
+import styles from 'styles/onboarding';
+import TextHighlighter from 'components/SpeechHighlighter';
+import AudioIcon from '../../assets/audio_icon.svg';
 
 export default function IDSetup({ navigation, route }): JSX.Element {
   const { name, selectedImage } = route.params;
@@ -17,17 +20,21 @@ export default function IDSetup({ navigation, route }): JSX.Element {
   const [idPicFront, setIdPicFront] = useState<Asset | undefined>();
   const [idPicBack, setIdPicBack] = useState<Asset | undefined>();
   const { t } = useTranslation();
+  const [pressed, setPressed] = useState(false);
 
   return (
     <View flex={1}>
+      <IconButton
+        style={styles.audioStyle}
+        icon={<AudioIcon />}
+        onPress={() => {
+          setPressed(true);
+        }}
+      />
       <Center flex={1} >
         <VStack space={2}>
-          <Heading fontSize='30' color='white' textAlign='center'>
-            {t('Enter your ID')}
-          </Heading>
-          <Heading fontSize='24' color='white' mt='40px' textDecorationLine='underline' textAlign='center'>
-            {t('ID Number')}
-          </Heading>
+          <TextHighlighter style={styles.heading} text={t('Enter your ID')} pressed={pressed} setPressed={setPressed} />
+          <TextHighlighter style={styles.subheading} text={t('ID Number')} pressed={pressed} setPressed={setPressed} />
           <Input
             w='195px'
             borderRadius='2px'
@@ -44,19 +51,17 @@ export default function IDSetup({ navigation, route }): JSX.Element {
             onChangeText={setIdNo}
           />
           <Center my='20px'>
-            <Heading fontSize='24' color='white' textDecorationLine='underline'>
-              {t('ID Photo')}
-            </Heading>
+            <TextHighlighter style={styles.subheading} text={t('ID Photo')} pressed={pressed} setPressed={setPressed} />
             <HStack space='6'>
               <Box>
-                <Text my='5px' fontSize='20' color='white'>Front:</Text>
+                <TextHighlighter style={styles.small} text={t('Front:')} pressed={pressed} setPressed={setPressed} />
                 <CameraButton
                   selectedImageAsset={idPicFront}
                   setSelectedImageAsset={setIdPicFront}
                 />
               </Box>
               <Box>
-                <Text my='5px' fontSize='20' color='white'>Back:</Text>
+                <TextHighlighter style={styles.small} text={t('Back:')} pressed={pressed} setPressed={setPressed} />
                 <CameraButton
                   selectedImageAsset={idPicBack}
                   setSelectedImageAsset={setIdPicBack}

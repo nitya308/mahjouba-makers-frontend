@@ -69,14 +69,14 @@ const Login = () => {
 
   return (
     <SafeAreaView>
+      <IconButton
+        style={styles.audioStyle}
+        icon={<AudioIcon />}
+        onPress={() => {
+          setPressed(true);
+        }}
+      />
       <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}>
-        <IconButton
-          style={styles.audioStyle}
-          icon={<AudioIcon />}
-          onPress={() => {
-            setPressed(true);
-          }}
-        />
         <VStack space={4} alignItems='center'>
           <FirebaseRecaptchaVerifierModal
             ref={recaptchaVerifier}
@@ -89,8 +89,7 @@ const Login = () => {
                 <Box height='30px' />
                 <TextHighlighter style={styles.heading} text={t('Hey again!')} pressed={pressed} setPressed={setPressed} />
                 <Box height='10px' />
-                <TextHighlighter style={styles.heading} text={t('Enter your phone')} pressed={pressed} setPressed={setPressed} />
-                <TextHighlighter style={styles.heading} text={t('number to sign in')} pressed={pressed} setPressed={setPressed} />
+                <TextHighlighter style={styles.heading} text={t('Enter your phone \n number to sign in')} pressed={pressed} setPressed={setPressed} />
                 <Box height='20px' />
                 <TextHighlighter style={styles.subheading} text={t('Phone Number')} pressed={pressed} setPressed={setPressed} />
                 <Input

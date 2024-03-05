@@ -84,14 +84,15 @@ const Signup = () => {
 
   return (
     <SafeAreaView>
+      <IconButton
+        style={styles.audioStyle}
+        icon={<AudioIcon />}
+        onPress={() => {
+          setPressed(true);
+        }}
+      />
       <ScrollView>
-        <IconButton
-          style={styles.audioStyle}
-          icon={<AudioIcon />}
-          onPress={() => {
-            setPressed(true);
-          }}
-        />
+        
         <VStack space={2}>
 
 
@@ -103,8 +104,7 @@ const Signup = () => {
           {
             !phoneVerify ?
               <VStack space={2} mb='10px' alignItems='center' mt='73px'>
-                <TextHighlighter style={styles.heading} text={t('Enter your name')} pressed={pressed} setPressed={setPressed} />
-                <TextHighlighter style={styles.heading} text={t('and phone number')} pressed={pressed} setPressed={setPressed} />
+                <TextHighlighter style={styles.heading} text={t('Enter your name \n and phone number')} pressed={pressed} setPressed={setPressed} />
                 <Box height='70px' />
                 <TextHighlighter style={styles.subheading} text={t('Name')} pressed={pressed} setPressed={setPressed} />
                 <Input

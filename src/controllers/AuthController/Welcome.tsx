@@ -21,14 +21,15 @@ export default function Welcome({ navigation }) {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
+      <IconButton
+        style={styles.audioStyle}
+        icon={<AudioIcon />}
+        onPress={() => {
+          setPressed(true);
+        }}
+      />
       <Center flex={1}>
-        <IconButton
-          style={styles.audioStyle}
-          icon={<AudioIcon />}
-          onPress={() => {
-            setPressed(true);
-          }}
-        />
+
         <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}>
           <VStack space={2} alignItems="center">
             <MahjoubaLogo width='141px' height='104.88px' />
