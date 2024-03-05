@@ -23,48 +23,6 @@ import { BaseNavigationList, BaseTabRoutes } from '../routeTypes';
 const BaseTab = createBottomTabNavigator<BaseNavigationList>();
 const BaseStack = createStackNavigator<BaseNavigationList>();
 
-// const ProtectedRoute = (allowableScopes: UserScopes[]) => {
-//   const { authenticated, role } = useAppSelector((state) => state.auth);
-
-//   return (allowableScopes.includes(role) && authenticated);
-// };
-
-// const JobsNavigator = () => {
-//   return (
-//     <BaseStack.Navigator initialRouteName={BaseTabRoutes.JOBS}>
-//       <BaseStack.Screen
-//         name={BaseTabRoutes.JOBS}
-//         component={JobsController}
-//         options={{ header: () => null }}
-//       />
-//     </BaseStack.Navigator>
-//   );
-// };
-
-// const CurrentJobNavigator = () => {
-//   return (
-//     <BaseStack.Navigator initialRouteName={BaseTabRoutes.JOBS}>
-//       <BaseStack.Screen
-//         name={BaseTabRoutes.CURRJOB}
-//         component={CurrentJobController}
-//         options={{ header: () => null }}
-//       />
-//     </BaseStack.Navigator>
-//   );
-// };
-
-// const ProfileNavigator = () => {
-//   return (
-//     <BaseStack.Navigator initialRouteName={BaseTabRoutes.JOBS}>
-//       <BaseStack.Screen
-//         name={BaseTabRoutes.PROFILE}
-//         component={ProfileController}
-//         options={{ header: () => null }}
-//       />
-//     </BaseStack.Navigator>
-//   );
-// };
-
 const BaseNavigation = () => {
   return (
     <NavigationContainer>
@@ -72,16 +30,19 @@ const BaseNavigation = () => {
         screenOptions={{
           header: () => null,
           tabBarStyle: {
-            backgroundColor: Colors.backgroundWhite,
+            backgroundColor: Colors.backgroundBlack,
             width: '100%',
             alignSelf: 'center',
             borderTopWidth: 2,
-            borderTopColor: 'black',
+            borderTopColor: 'white',
             position: 'absolute',
             height: 120,
           },
           tabBarIconStyle: {
             marginTop: 10,
+          },
+          tabBarLabelStyle: {
+            color: 'white',
           },
           tabBarActiveTintColor: '#FFC01D',
         }}
@@ -93,7 +54,7 @@ const BaseNavigation = () => {
           options={{
             tabBarIcon: (props) => ((props.focused) ? <SearchIconFilled /> : <SearchIcon />),
             tabBarLabel: (props) => (
-              <Text fontFamily={props.focused ? fonts.bold : fonts.regular}>
+              <Text color={props.focused ? Colors.yellow : Colors.white}>
                 {BaseTabRoutes.JOBS}
               </Text>
             ),
@@ -105,7 +66,7 @@ const BaseNavigation = () => {
           options={{
             tabBarIcon: (props) => ((props.focused) ? <SearchIconFilled /> : <SearchIcon />),
             tabBarLabel: (props) => (
-              <Text fontFamily={props.focused ? fonts.bold : fonts.regular}>
+              <Text color={props.focused ? Colors.yellow : Colors.white}>
                 {BaseTabRoutes.BULLETIN}
               </Text>
             ),
@@ -117,32 +78,19 @@ const BaseNavigation = () => {
           options={{
             tabBarIcon: (props) => ((props.focused) ? <HammerIconFilled /> : <HammerIcon />),
             tabBarLabel: (props) => (
-              <Text fontFamily={props.focused ? fonts.bold : fonts.regular}>
+              <Text color={props.focused ? Colors.yellow : Colors.white}>
                 {BaseTabRoutes.PAYMENT}
               </Text>
             ),
           }}
         />
-
-        {/* <BaseTab.Screen
-          name={BaseTabRoutes.CURRJOB}
-          component={CurrentJobController}
-          options={{ 
-            tabBarIcon: (props) => ((props.focused) ? <HammerIconFilled /> : <HammerIcon />),
-            tabBarLabel: (props) => (
-              <Text fontFamily={props.focused ? fonts.bold : fonts.regular}>
-                {BaseTabRoutes.CURRJOB}
-              </Text>
-            ),
-          }}
-        /> */}
         <BaseTab.Screen
           name={BaseTabRoutes.PROFILE}
           component={ProfileController}
           options={{
             tabBarIcon: (props) => ((props.focused) ? <PersonIconFilled /> : <PersonIcon />),
             tabBarLabel: (props) => (
-              <Text fontFamily={props.focused ? fonts.bold : fonts.regular}>
+              <Text color={props.focused ? Colors.yellow : Colors.white}>
                 {BaseTabRoutes.PROFILE}
               </Text>
             ),
