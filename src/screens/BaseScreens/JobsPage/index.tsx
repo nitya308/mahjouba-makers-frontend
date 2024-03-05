@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import BaseView from 'components/BaseView';
 import JobCard from 'components/JobCard';
-import { Animated, StyleSheet, FlatList, ScrollView } from 'react-native';
+import { Animated, StyleSheet, FlatList, ScrollView, SafeAreaView } from 'react-native';
 import { Text, VStack, Button, IconButton, Spinner } from 'native-base';
 import useAppSelector from 'hooks/useAppSelector';
 import { fonts } from 'utils/constants';
@@ -25,6 +25,8 @@ import { PartType } from 'types/part_type';
 import { ScreenWidth } from 'react-native-elements/dist/helpers';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ItemClick } from 'native-base/lib/typescript/components/composites/Typeahead/useTypeahead/types';
+import AppStyles from 'styles/commonstyles';
+import TextHighlighter from 'components/SpeechHighlighter';
 
 const JobsPage = ({
   setSortField,
@@ -47,7 +49,7 @@ const JobsPage = ({
   const materialNames = Object.values(materialsMap).map(material => material.name);
   const [selectedMaterialIds, setSelectedMaterialIds] = useState<string[]>([]);
   const [scrollViewWidth, setScrollViewWidth] = React.useState(0);
-  const boxWidth = scrollViewWidth * 0.8;
+  const boxWidth = scrollViewWidth * 0.7;
   const boxDistance = scrollViewWidth - boxWidth;
   const halfBoxDistance = boxDistance / 2;
   const pan = React.useRef(new Animated.ValueXY()).current;
@@ -96,19 +98,11 @@ const JobsPage = ({
 
   }, []);
 
-  const customCheckedIcon = (
-    <View
-      style={{
-        width: 20,
-        height: 20,
-        borderRadius: 0,
-        backgroundColor: '#D1963A', // Change this to the desired color
-      }}
-    />
-  );
-
-  const renderItem = ({ item, index }: { item: { job: Job, part: PartType, materials: string[]
-  }, index: number }) => (
+  const renderItem = ({ item, index }: {
+    item: {
+      job: Job, part: PartType, materials: string[]
+    }, index: number
+  }) => (
     <Animated.View
       style={{
         transform: [
@@ -125,7 +119,7 @@ const JobsPage = ({
           },
         ],
       }}>
-      <View style={{ alignContent:'center', alignItems:'center' }}>
+      <View style={{ alignContent: 'center', alignItems: 'center' }}>
         <Pressable style={styles.jobCard} key={item.job._id} onPress={() => handleSelect(item.job)}>
           <JobCard job={item.job} part={item.part} materials={item.materials} />
         </Pressable>
@@ -138,109 +132,90 @@ const JobsPage = ({
       <Text>No Jobs Available with your Selected Materials</Text>
     </View>
   );
-  
-  
+
+  const [pressed, setPressed] = useState(false);
+
   if (loading) {
     return <Spinner />;
   }
 
   return (
-    <GestureHandlerRootView>
-    
-      <View style={{ width:'100%' } }>
-        <ScrollView>
-          <BaseView smallLogo showTopRightIcon>
-            <VStack height="100%" width="90%" marginTop={'150px'} paddingBottom={100}>
-              <Text fontSize={24} fontFamily={fonts.regular} color={'#ffffff'}>{t('Job Search')}
-                <IconButton
-                  icon={<AudioIcon />}
-                  onPress={() => {
-                    Speech.speak(t('Job Search'), { language: i18next.language });
-                  }}
+    <SafeAreaView>
+      <ScrollView>
+        <IconButton
+          style={AppStyles.audioStyle}
+          icon={<AudioIcon />}
+          onPress={() => {
+            setPressed(true);
+          }}
+        />
+        <VStack width="100%" mt='20px' alignItems='center'>
+          <TextHighlighter style={AppStyles.center_heading} text={t('Job Search')} pressed={pressed} setPressed={setPressed} />
+
+          <TouchableOpacity onPress={toggleModal} style={styles.button}>
+            <Text> Materials <Text style={styles.plusSign}>+</Text> </Text>
+          </TouchableOpacity>
+
+          <Modal visible={isModalVisible} animationType="fade" transparent={true}  >
+            <View style={styles.modalContainer}>
+              <View style={styles.modalContent}>
+                <Text style={[styles.modalFont, { marginTop: 10, marginBottom: 20 }]}>Select Materials</Text>
+                <MaterialSelector
+                  selectedMaterialIds={selectedMaterialIds}
+                  setSelectedMaterialIds={setSelectedMaterialIds}
                 />
-              </Text>
-              <View>
-                <TouchableOpacity onPress={toggleModal} style={styles.button}>
-                  {
-                    Object.values(materialsMap)?.map((material: IMaterial) => {
-                      if (material) {
-                        <Text>{material.name}</Text>;
-                      }
-
-                      return <></>;
-                    })
-                  }
-
-                  <Text style={styles.plusSign}>+</Text>
+                <TouchableOpacity onPress={toggleModal}>
+                  <Text style={styles.modalFont}>Close</Text>
                 </TouchableOpacity>
-                <Modal visible={isModalVisible} animationType="fade" transparent={true}  >
-                  <View style={styles.modalContainer}>
-                    <View style={styles.modalContent}>
-                      <Text>Select Materials</Text>
-                      <MaterialSelector
-                        selectedMaterialIds={selectedMaterialIds}
-                        setSelectedMaterialIds={setSelectedMaterialIds}
-
-                      />
-                      <TouchableOpacity onPress={toggleModal}>
-                        <Text>Close</Text>
-                      </TouchableOpacity>
-                    </View>
-                  </View>
-                </Modal>
               </View>
-              <FlatList
-                horizontal
-                data={resultArray}
-                style={{ height: 250,  marginTop:30, paddingBottom: 500 }}
-                contentContainerStyle={{ paddingVertical: 16 }}
-                contentInsetAdjustmentBehavior="never"
-                snapToAlignment="center"
-                decelerationRate="fast"
-                automaticallyAdjustContentInsets={false}
-                showsHorizontalScrollIndicator={false}
-                showsVerticalScrollIndicator={false}
-                scrollEventThrottle={1}
-                snapToInterval={(boxWidth * 2.4)}
-                ListEmptyComponent={renderListEmpty} 
-                contentInset={{
-                  left: halfBoxDistance,
-                  right: halfBoxDistance,
-                }}
-                contentOffset={{ x: halfBoxDistance * -1, y: 0 }}
-                onLayout={(e) => {
-                  setScrollViewWidth(e.nativeEvent.layout.width);
-                  console.log(scrollViewWidth);
-                }}
-                onScroll={Animated.event(
-                  [{ nativeEvent: { contentOffset: { x: pan.x } } }],
-                  {
-                    useNativeDriver: false,
-                  },
-                )}
-                renderItem={renderItem}
-                keyExtractor={(item) => item.job._id} // assuming jobId is a unique identifier
-              />
-              
-              {cursor && (
-                <Button onPress={pullNextPage} m='5px'>
-            pull next page
-                </Button>
-              )}
-              <Button onPress={reloadJobs} m='5px'>
-          reload
-              </Button>
-              <Button onPress={() => setSortField('price')} m='5px'>
-          sort by price
-              </Button>
-              <Button onPress={() => setSortField(undefined)} m='5px'>
-          unsort
-              </Button>
-            </VStack>
-          </BaseView>
-        </ScrollView>
-      </View>
-    </GestureHandlerRootView>
+            </View>
+          </Modal>
+
+          <FlatList
+            horizontal
+            data={resultArray}
+            style={{ height: 500, marginTop: 30 }}
+            contentContainerStyle={{ paddingVertical: 16 }}
+            contentInsetAdjustmentBehavior="never"
+            snapToAlignment="center"
+            decelerationRate="fast"
+            automaticallyAdjustContentInsets={false}
+            showsHorizontalScrollIndicator={false}
+            showsVerticalScrollIndicator={false}
+            scrollEventThrottle={1}
+            snapToInterval={(boxWidth)}
+            ListEmptyComponent={renderListEmpty}
+            contentInset={{
+              left: halfBoxDistance,
+              right: halfBoxDistance,
+            }}
+            contentOffset={{ x: halfBoxDistance * -1, y: 0 }}
+            onLayout={(e) => {
+              setScrollViewWidth(e.nativeEvent.layout.width);
+              console.log(scrollViewWidth);
+            }}
+            onScroll={Animated.event(
+              [{ nativeEvent: { contentOffset: { x: pan.x } } }],
+              {
+                useNativeDriver: false,
+              },
+            )}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.job._id} // assuming jobId is a unique identifier
+          />
+
+          {cursor && (
+            <Button onPress={pullNextPage} m='5px'>
+              pull next page
+            </Button>
+          )}
+          <Button onPress={reloadJobs} m='5px'>
+            reload
+          </Button>
+        </VStack>
+      </ScrollView>
+    </SafeAreaView>
+
   );
 };
 
@@ -255,12 +230,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#080026',
     backgroundColor: '#FFFDF6',
-    width: 28,
-    height: 29,
     flexShrink: 0,
-    alignItems: 'center',
-    justifyContent: 'center',
-    alignSelf: 'flex-end',
+    marginTop: 15,
+    padding: 5,
   },
   plusSign: {
     fontSize: 18,
@@ -273,11 +245,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalContent: {
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    backgroundColor: 'rgba(0, 0, 0, 1)',
     padding: 20,
     borderRadius: 10,
     width: 370,
     alignItems: 'center',
+    borderColor: 'white',
+    borderWidth: 1,
+  },
+  modalFont: {
+    fontSize: 20,
+    color: 'white',
   },
 
 });

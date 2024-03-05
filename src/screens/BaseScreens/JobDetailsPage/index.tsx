@@ -1,25 +1,28 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { View, Text, Image, Spinner } from 'native-base';
-import { StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, Image, Spinner, IconButton, VStack } from 'native-base';
+import { ScrollView, StyleSheet } from 'react-native';
 import useAppSelector from 'hooks/useAppSelector';
 import useAppDispatch from 'hooks/useAppDispatch';
 import { authSelector } from 'redux/slices/authSlice';
 import { jobsSelector, acceptJob, unacceptJob } from 'redux/slices/jobsSlice';
-import { getUser, updateUser, userDataSelector } from 'redux/slices/userDataSlice';
+import HammerIcon from '../../../assets/hammer2.svg';
+import { userDataSelector } from 'redux/slices/userDataSlice';
 import { JOB_STATUS_ENUM } from 'types/job';
 import SharpButton from 'components/SharpButton';
+import AudioIcon from '../../../assets/audio_icon.svg';
 import { fonts } from 'utils/constants';
-import { Job } from 'types/job';
-import { PartType } from 'types/part_type';
-import Address from 'types/address';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import XIcon from 'assets/x.svg';
 import { TouchableOpacity } from 'react-native';
+import Money1 from '../../../assets/money1.svg';
 import Placeholder from 'assets/no_image_placeholder.png';
 import TimeRemainingIcon from '../../../assets/time-remaining.svg';
 import MapPinIcon from '../../../assets/map_pin.svg';
 import MADIcon from '../../../assets/MADIcon.png';
 import Colors from 'utils/Colors';
+import AppStyles from 'styles/commonstyles';
+import TextHighlighter from 'components/SpeechHighlighter';
+import { useTranslation } from 'react-i18next';
 
 const JobDetailsPage = ({
   jobId,
@@ -30,14 +33,10 @@ const JobDetailsPage = ({
 }): JSX.Element => {
   const dispatch = useAppDispatch();
   const { fbUserRef } = useAppSelector(authSelector);
-  const { userData } = useAppSelector(userDataSelector);
   const { jobsMap, partsMap, materialsMap, loading, currentJobId } = useAppSelector(jobsSelector);
   const addressMap = useAppSelector((state) => state.addresses.addressMap);
   const photoMap = useAppSelector((state) => state.photos.photosMap);
 
-  if (loading) {
-    return <Spinner />;
-  }
 
   const job = jobsMap[jobId];
   const part = partsMap[job.partTypeId];
@@ -46,87 +45,118 @@ const JobDetailsPage = ({
     return material ? material.name : ''; // Return the name if available, otherwise an empty string
   });
   const address = addressMap?.[job?.dropoffAddressId];
-  
+
   // Display different image depending on current jobStatus
   const imageUrl = (job?.jobStatus === JOB_STATUS_ENUM.COMPLETE || job?.jobStatus === JOB_STATUS_ENUM.PENDING_REVIEW)
     ? (photoMap?.[job?.imageIds[0]]?.fullUrl)
     : (photoMap?.[part?.imageIds[0]]?.fullUrl);
 
+  const [pressed, setPressed] = useState(false);
+
+  const { t } = useTranslation();
+
+  if (loading) {
+    return <Spinner />;
+  }
+
   return (
-    <SafeAreaView style={styles.container}>
-      {part && job ? (
-        <>
-          <TouchableOpacity style={styles.exit} onPress={exit}>
-            <XIcon width={30} height={30} />
-          </TouchableOpacity>
-          {!part.imageIds.length ? <Image alt='placeholder' source={Placeholder} style={styles.image} /> : <Image alt='part' source={{ uri: imageUrl }} style={styles.image} />}
-          <View style={styles.infoContainer}>
-            <View style={styles.infoHeader}>
-              <Text style={styles.name}>{part.name}</Text>
-            </View>
-            <View style={styles.infoBody}>
-              <View style={styles.textAndIcon}>
-                <TimeRemainingIcon />
-                <Text style={styles.text}>{`${part.completionTime} hours`}</Text>
+    <SafeAreaView>
+      <ScrollView>
+        <IconButton
+          style={AppStyles.audioStyle}
+          icon={<AudioIcon />}
+          onPress={() => {
+            setPressed(true);
+          }}
+        />
+        <TouchableOpacity style={styles.exit} onPress={exit}>
+          <XIcon width={40} height={40} />
+        </TouchableOpacity>
+
+        <VStack width="100%" mt='20px' alignItems='center'>
+          {part && job ? (
+            <>
+              {!part.imageIds.length ? <Image alt='placeholder' source={Placeholder} style={styles.image} /> : <Image alt='part' source={{ uri: imageUrl }} style={styles.image} />}
+              <View style={styles.infoContainer}>
+                <TextHighlighter style={styles.name} text={t(part.name)} pressed={pressed} setPressed={setPressed} />
               </View>
-              <View style={styles.textAndIcon}>
-                <MapPinIcon width={28} height={28} />
-                <Text style={[styles.text, { maxWidth: '90%' }]}>{address?.description}</Text>
+              <View style={styles.infoContainer}>
+                <View style={styles.textAndIcon}>
+                  <TimeRemainingIcon />
+                  <TextHighlighter style={styles.text} text={t('Due in ') + t(part.completionTime.toString()) + t(' hours')} pressed={pressed} setPressed={setPressed} />
+                </View>
               </View>
 
-              <View style={styles.textAndIcon}>
-                <Image alt='MAD icon' source={MADIcon} style={{ width: 28, height: 28 }} />
-                <Text style={styles.text}>{`${job.price} MAD`}</Text>
+              <View style={styles.infoContainer}>
+                <View style={styles.textAndIcon}>
+                  <MapPinIcon width={28} height={28} />
+                  <TextHighlighter style={styles.text} text={t(address?.description)} pressed={pressed} setPressed={setPressed} />
+                </View>
+                <View style={styles.textAndIcon}>
+                  <Money1 width={28} height={28} />
+                  <TextHighlighter style={styles.text} text={t(job?.price.toString()) + t(' MAD')} pressed={pressed} setPressed={setPressed} />
+                </View>
               </View>
-            </View>
-          </View>
-          <View style={styles.materialContainer}>
-            {materials.map((material) => (
-              <View key={material}>
-                <Text style={styles.text}>{material}</Text>
+
+              <View style={styles.infoContainer}>
+                <View style={styles.textAndIcon}>
+                  <HammerIcon />
+                  {materials.map((material, index) => (
+                    <Text key={material}>
+                      {index < materials.length - 1 &&
+                        <TextHighlighter style={styles.text} text={t(material + ',')} pressed={pressed} setPressed={setPressed} />
+                      }
+                      {index == materials.length - 1 &&
+                        <TextHighlighter style={styles.text} text={t(material)} pressed={pressed} setPressed={setPressed} />
+                      }
+                    </Text>
+                  ))}
+                </View>
               </View>
-            ))}
-          </View>
-          {jobId !== currentJobId ?
-            <View style={styles.acceptButton}>
-              <SharpButton
-                width={'120px'}
-                backgroundColor={Colors.yellow}
-                my='2px'
-                size='sm'
-                onPress={() => {
-                  dispatch(acceptJob({ jobId: jobId ?? '', fbUserRef }));
-                }}
-                marginTop={'10px'}
-              >
-                <Text fontFamily={fonts.regular}>
-                  Accept Job
-                </Text>
-              </SharpButton>
-            </View>
-            :
-            <View style={styles.acceptButton}>
-              <Text>You have accepted this job.</Text>
-              <SharpButton
-                width={'120px'}
-                backgroundColor={Colors.yellow}
-                my='2px'
-                size='sm'
-                onPress={() => {
-                  dispatch(unacceptJob({ jobId: currentJobId ?? '', fbUserRef }));
-                }}
-                marginTop={'10px'}
-              >
-                <Text fontFamily={fonts.regular}>
-                  UnAccept Job
-                </Text>
-              </SharpButton>
-            </View>
-          }
-        </>
-      ) : (
-        <Text style={styles.text}>Loading{job?.partTypeId}</Text>
-      )}
+              {jobId !== currentJobId ?
+                <View style={styles.acceptButton}>
+                  <SharpButton
+                    width={'200px'}
+                    borderColor={Colors.yellow}
+                    borderWidth={'1px'}
+                    backgroundColor={'rgba(255, 192, 29, 0.5)'}
+                    my='2px'
+                    size='sm'
+                    onPress={() => {
+                      dispatch(acceptJob({ jobId: jobId ?? '', fbUserRef }));
+                    }}
+                    marginTop={'10px'}
+                  >
+                    <TextHighlighter style={styles.name} text={t('Accept Job')} pressed={pressed} setPressed={setPressed} />
+                  </SharpButton>
+                </View>
+                :
+                <View style={styles.acceptButton}>
+                  <Text>You have accepted this job.</Text>
+                  <SharpButton
+                    width={'120px'}
+                    borderColor={Colors.yellow}
+                    borderWidth={'1px'}
+                    backgroundColor={'rgb(255, 192, 29, 0.5)'}
+                    my='2px'
+                    size='sm'
+                    onPress={() => {
+                      dispatch(unacceptJob({ jobId: currentJobId ?? '', fbUserRef }));
+                    }}
+                    marginTop={'10px'}
+                  >
+                    <Text fontFamily={fonts.regular}>
+                      UnAccept Job
+                    </Text>
+                  </SharpButton>
+                </View>
+              }
+            </>
+          ) : (
+            <Text style={styles.text}>Loading{job?.partTypeId}</Text>
+          )}
+        </VStack>
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -137,19 +167,7 @@ const styles = StyleSheet.create({
   },
   acceptButton: {
     alignSelf: 'center',
-  },
-  container: {
-    flex: 1,
-    alignItems: 'flex-start',
-    justifyContent: 'flex-start',
-    backgroundColor: Colors.backgroundBlack,
-  },
-  infoContainer: {
-    width: '90%',
-    alignSelf: 'center',
-    borderColor: '#000000',
-    borderWidth: 1,
-    marginBottom: 15,
+    marginBottom: 150,
   },
   materialContainer: {
     width: '90%',
@@ -163,12 +181,22 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
+    marginVertical: 5,
   },
   infoHeader: {
     backgroundColor: '#FFF4D8',
     padding: 10,
     borderBottomColor: '#000000',
     borderBottomWidth: 1,
+  },
+  infoContainer: {
+    width: '90%',
+    borderColor: Colors.yellow,
+    borderWidth: 1,
+    alignSelf: 'center',
+    paddingHorizontal: 15,
+    paddingVertical: 12,
+    marginBottom: 15,
   },
   infoBody: {
     padding: 10,
@@ -178,18 +206,18 @@ const styles = StyleSheet.create({
     lineHeight: 24,
   },
   image: {
-    width: '200%',
+    width: '90%',
     height: 200,
     marginBottom: 20,
   },
   name: {
     fontSize: 30,
-    lineHeight: 30,
+    fontFamily: fonts.bold,
   },
   text: {
+    lineHeight: 25,
     fontSize: 20,
-    marginTop: 5,
-    marginBottom: 5,
+    maxWidth: '90%',
   },
   button: {
     marginTop: 10,
