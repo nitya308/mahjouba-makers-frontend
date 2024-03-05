@@ -151,7 +151,7 @@ const JobsPage = ({
         <ScrollView>
           <BaseView smallLogo showTopRightIcon>
             <VStack height="100%" width="90%" marginTop={'150px'} paddingBottom={100}>
-              <Text fontSize={24} fontFamily={fonts.regular}>{t('Job Search')}
+              <Text fontSize={24} fontFamily={fonts.regular} color={'#ffffff'}>{t('Job Search')}
                 <IconButton
                   icon={<AudioIcon />}
                   onPress={() => {
