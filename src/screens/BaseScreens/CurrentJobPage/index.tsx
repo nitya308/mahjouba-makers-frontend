@@ -11,6 +11,7 @@ import Placeholder from 'assets/no_image_placeholder.png';
 import { StyleSheet } from 'react-native';
 import Address from 'types/address';
 import SharpButton from 'components/SharpButton';
+import HammerIcon from '../../../assets/hammer2.svg';
 import BaseView from 'components/BaseView';
 import { fonts } from 'utils/constants';
 import Colors from 'utils/Colors';
@@ -166,37 +167,16 @@ export default function CurrentJobPage(
                     <Text style={styles.text}>{`${currentJob?.price} MAD`}</Text>
                   </View>
                 </View>
-              
-                <IconButton
-                  style={styles.audioIcon}
-                  icon={<AudioIcon />}
-                  onPress={() => {
-                    const toSpeak = t(currentPart?.name + ',') +
-                  t('has') + `${currentPart?.completionTime}` + t('hours remaining')
-                  + t('ship to address') + currentAddress?.description
-                  + ',' + t('for price') + `${currentJob?.price}` + t('MAD');
-                    Speech.speak(t(toSpeak), { language: i18next.language });
-                  }}
-                />
               </View>
             </View>
             <View style={styles.infoContainer}>
               <View style={styles.materialContainer}>
+                <HammerIcon />
                 {currentPart?.materialIds?.map((materialId, index) => (
                   <View key={index}>
                     <Text style={styles.text}>{materialsMap?.[materialId]?.name ?? ''}</Text>
                   </View>
                 ))}
-                <IconButton
-                  style={styles.audioIcon}
-                  icon={<AudioIcon />}
-                  onPress={() => {
-                    const materialsString = currentPart?.materialIds
-                      .map((materialId) => t(materialsMap?.[materialId]?.name) ?? '')
-                      .join(', ');
-                    Speech.speak(materialsString, { language: i18next.language });
-                  }}
-                />
               </View>
             </View>
             <Center marginTop={'10px'}>
@@ -215,13 +195,6 @@ export default function CurrentJobPage(
                 Unaccept Job
                 </Text>
               </SharpButton>
-              <IconButton
-                style={styles.buttonAudioIcon}
-                icon={<AudioIcon />}
-                onPress={() => {
-                  Speech.speak(t('Unaccept Job'), { language: i18next.language });
-                }}
-              />
             </Center>
             <Center marginTop={'10px'}>
               <AppModal
@@ -249,12 +222,6 @@ export default function CurrentJobPage(
                   <Text fontStyle={fonts.regular} marginTop={'20px'} maxWidth={'220px'}>
                   Please upload at least 1 image of the completed part.
                   </Text>
-                  <IconButton
-                    icon={<AudioIcon />}
-                    onPress={() => {
-                      Speech.speak(t('My Profile'), { language: i18next.language });
-                    }}
-                  />
                 </HStack>
                 <Center marginTop={'10px'}>
                   <CameraButton
@@ -277,13 +244,6 @@ export default function CurrentJobPage(
                   </SharpButton>
                 </Center>
               </AppModal>
-              <IconButton
-                style={styles.buttonAudioIcon}
-                icon={<AudioIcon />}
-                onPress={() => {
-                  Speech.speak(t('Complete Job'), { language: i18next.language });
-                }}
-              />
             </Center>
           </BaseView>
         )
@@ -305,6 +265,7 @@ export default function CurrentJobPage(
 
 const styles = StyleSheet.create({
   infoContainer: {
+    flexDirection: 'row',
     width: ScreenWidth,
     borderColor: Colors.yellow,
     borderWidth: 1,
@@ -315,10 +276,11 @@ const styles = StyleSheet.create({
   },
   materialContainer: {
     width: '90%',
-    alignSelf: 'auto',
+    alignSelf: 'center',
     borderColor: '#000000',
     borderWidth: 1,
     marginBottom: 15,
+    padding: 10,
   },
   timeRemaining: {
     marginLeft: 15,
