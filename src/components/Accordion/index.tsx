@@ -16,6 +16,7 @@ const Accordion = ({ title, children }: AccordionProps) => {
   const toggleExpand = () => {
     setExpanded(!expanded);
   };
+
   return (
     <View style={styles.outer}>
       <TouchableOpacity style={styles.row} onPress={() => toggleExpand()}>

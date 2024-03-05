@@ -19,6 +19,8 @@ PODS:
   - EXFirebaseCore (6.0.0):
     - ExpoModulesCore
     - Firebase/Core (= 9.5.0)
+  - EXFont (11.6.0):
+    - ExpoModulesCore
   - EXJSONUtils (0.5.1)
   - EXManifests (0.5.2):
     - EXJSONUtils
@@ -591,9 +593,6 @@ PODS:
     - TOCropViewController
   - RNSVG (13.4.0):
     - React-Core
-  - RNVectorIcons (10.0.3):
-    - RCT-Folly (= 2021.07.22.00)
-    - React-Core
   - SDWebImage (5.17.0):
     - SDWebImage/Core (= 5.17.0)
   - SDWebImage/Core (5.17.0)
@@ -616,6 +615,7 @@ DEPENDENCIES:
   - EXConstants (from `../node_modules/expo-constants/ios`)
   - EXFileSystem (from `../node_modules/expo-file-system/ios`)
   - EXFirebaseCore (from `../node_modules/expo-firebase-core/ios`)
+  - EXFont (from `../node_modules/expo-font/ios`)
   - EXJSONUtils (from `../node_modules/expo-json-utils/ios`)
   - EXManifests (from `../node_modules/expo-manifests/ios`)
   - Expo (from `../node_modules/expo`)
@@ -673,7 +673,6 @@ DEPENDENCIES:
   - "RNGoogleSignin (from `../node_modules/@react-native-google-signin/google-signin`)"
   - RNImageCropPicker (from `../node_modules/react-native-image-crop-picker`)
   - RNSVG (from `../node_modules/react-native-svg`)
-  - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -720,6 +719,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-file-system/ios"
   EXFirebaseCore:
     :path: "../node_modules/expo-firebase-core/ios"
+  EXFont:
+    :path: "../node_modules/expo-font/ios"
   EXJSONUtils:
     :path: "../node_modules/expo-json-utils/ios"
   EXManifests:
@@ -832,8 +833,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-image-crop-picker"
   RNSVG:
     :path: "../node_modules/react-native-svg"
-  RNVectorIcons:
-    :path: "../node_modules/react-native-vector-icons"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -847,6 +846,7 @@ SPEC CHECKSUMS:
   EXConstants: f348da07e21b23d2b085e270d7b74f282df1a7d9
   EXFileSystem: 844e86ca9b5375486ecc4ef06d3838d5597d895d
   EXFirebaseCore: d0d88cb904e893af07f809ab08c0892489bc6956
+  EXFont: b3ca70589cdbdfd725b154f280dc507c3b56749a
   EXJSONUtils: 48b1e764ac35160e6f54d21ab60d7d9501f3e473
   EXManifests: 500666d48e8dd7ca5a482c9e729e4a7a6c34081b
   Expo: 0d9f112757acc6bf32103eabccf91267780bd580
@@ -922,7 +922,6 @@ SPEC CHECKSUMS:
   RNGoogleSignin: a6a612cce56a45ab701c5c5c6e36f5390522d100
   RNImageCropPicker: 521d8ef2dcf0549f141dbf82d086c75e3a9fbe65
   RNSVG: 07dbd870b0dcdecc99b3a202fa37c8ca163caec2
-  RNVectorIcons: 64e6a523ac30a3241efa9baf1ffbcc5e76ff747a
   SDWebImage: 750adf017a315a280c60fde706ab1e552a3ae4e9
   SDWebImageAVIFCoder: 8348fef6d0ec69e129c66c9fe4d74fbfbf366112
   SDWebImageSVGCoder: 15a300a97ec1c8ac958f009c02220ac0402e936c

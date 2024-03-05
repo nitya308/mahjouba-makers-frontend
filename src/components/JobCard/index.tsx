@@ -6,13 +6,9 @@ import { JOB_STATUS_ENUM, Job } from 'types/job';
 import { PartType } from 'types/part_type';
 import Placeholder from 'assets/no_image_placeholder.png';
 import AudioIcon from '../../assets/audio_icon.svg';
-import HammerIcon from '../../assets/hammer2.svg';
-import Money1 from '../../assets/money1.svg';
 import * as Speech from 'expo-speech';
 import i18next from 'i18next';
 import { useTranslation } from 'react-i18next';
-import { Icon } from 'react-native-elements';
-
 
 const JobCard = ({ job, part, materials }: { job: Job, part: PartType, materials: string[] }) => {
 
@@ -32,36 +28,37 @@ const JobCard = ({ job, part, materials }: { job: Job, part: PartType, materials
           ? <Image source={{ uri: imageUrl }} style={styles.image} alt="part image" />
           : <Image source={Placeholder} style={styles.image} alt="image not found" />
         }
+        <IconButton
+          style={styles.audioIcon}
+          icon={<AudioIcon />}
+          onPress={() => {
+            const toSpeak = t(part?.name) + t('for price') + job?.price + 'MAD';
+            Speech.speak(toSpeak, { language: i18next.language });
+          }}
+        />
       </View>
       <View style={styles.cardContent}>
         <View style={styles.namePriceContainer}>
           <Text style={styles.name}>{part?.name}</Text>
+          <Text style={styles.price}>{job?.price} MAD</Text>
         </View>
-        
         <View>
           {
             // TODO: TBH we probably should be displaying jobId, it's hard to distinguish between jobs
             // just off of the part name - Eric
           }
+          <Text>{job._id}</Text>
         </View>
-        
         {materials && materials?.length > 0 && (
           <View style={styles.materialContainer}>
-            <HammerIcon/>
-            {materials.map((material, index) => (
-              <View key={material}>
-                <Text style={styles.materialChip}>
-                  {material}
-                  {index < materials.length - 1 && ','}
-                </Text>
+            {materials.map((material) => (
+              <View key={material} style={styles.materialChip}>
+                <Text>{material}</Text>
               </View>
             ))}
           </View>
-        )}
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Money1/>
-          <Text style={styles.price}>{job?.price}</Text>
-        </View>
+        )
+        }
         {job?.completionDate && (
           <Text style={styles.completionDate}>
             Completed {new Date(job.completionDate).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' })}
@@ -74,16 +71,15 @@ const JobCard = ({ job, part, materials }: { job: Job, part: PartType, materials
 
 const styles = StyleSheet.create({
   jobCardContainer: {
-    backgroundColor: '#333333', //weird error with: #ffffff1a
-    borderWidth: 1,
-    borderColor: '#FFC01D',
-    borderRadius: 10,
-    borderBottomLeftRadius: 10,
+    backgroundColor: '#FFF4D8',
+    borderWidth: 3,
+    borderColor: '#000000',
+    borderRadius: 2,
     marginBottom: 10,
-    shadowColor: '#FFC01D',
+    shadowColor: '#000000',
     shadowOpacity: 1,
-    shadowOffset: { width: -17, height: 0 },
-    paddingBottom: 70,
+    shadowOffset: { width: -3, height: 3 },
+    shadowRadius: 0,
   },
   completionDate: {
     fontSize: 18,
@@ -91,12 +87,12 @@ const styles = StyleSheet.create({
     textAlign: 'right',
   },
   image: {
-    height: 400 / 2,
-    borderTopRightRadius: 8,
+    width: '100%',
+    height: 270,
   },
   imageWrapper: {
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
+    borderBottomWidth: 3,
+    borderBottomColor: '#000000',
   },
   materialContainer: {
     paddingTop: 10,
@@ -105,30 +101,27 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   materialChip: {
-    fontSize: 20,
-    color: 'white',
+    backgroundColor: '#D1963A',
+    borderRadius: 2,
+    padding: 5,
+    borderColor: '#000000',
+    borderWidth: 1,
   },
   cardContent: {
-    paddingLeft: 10,
-    paddingRight: 10,
-    paddingTop: 40, 
-    paddingBottom: 40,
+    padding: 10,
   },
   namePriceContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingTop: 40,
   },
   name: {
-    paddingTop: 20,
-    fontSize: 30,
-    color: '#FFFFFF',
+    fontSize: 20,
+    color: '#000000',
   },
   price: {
-    paddingTop: 20,
-    fontSize: 20,
-    color: 'white',
+    fontSize: 18,
+    color: '#000000',
   },
   audioIcon: {
     position: 'absolute',
