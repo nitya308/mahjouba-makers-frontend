@@ -25,7 +25,7 @@ export default {
   // Specified by style guide
   yellow: '#FFC01D',
   beige: '#FFF4D8',
-  backgroundWhite: '#FFFFFF',
+  backgroundBlack: '#000000',
   lightBrown: '#B78333',
   darkBrown: '#573E17',
   darkPurple: '#Q80026',

@@ -20,7 +20,7 @@ export default function ProfileController(): JSX.Element {
     }
   }, [settingsOpen, setSettingsOpen, profileEditing]);
 
-  return <View flex={1} backgroundColor={Colors.backgroundWhite}>
+  return <View flex={1} backgroundColor={Colors.backgroundBlack}>
     {
       settingsOpen ? 
         <AccountSettingsPage exit={() => toggleSettingsOpen()} /> :

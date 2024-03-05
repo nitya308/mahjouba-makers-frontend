@@ -14,7 +14,7 @@ import { PartType } from 'types/part_type';
 import Address from 'types/address';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import XIcon from 'assets/x.svg';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { TouchableOpacity } from 'react-native';
 import Placeholder from 'assets/no_image_placeholder.png';
 import TimeRemainingIcon from '../../../assets/time-remaining.svg';
 import MapPinIcon from '../../../assets/map_pin.svg';
@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'flex-start',
     justifyContent: 'flex-start',
-    backgroundColor: Colors.backgroundWhite,
+    backgroundColor: Colors.backgroundBlack,
   },
   infoContainer: {
     width: '90%',

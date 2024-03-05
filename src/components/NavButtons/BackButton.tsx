@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { TouchableHighlight } from 'react-native-gesture-handler';
+import { TouchableHighlight } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 
 const BackButton = ({ onPress }: { onPress?: () => void }) => {
