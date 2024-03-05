@@ -1,21 +1,30 @@
 import React, { useState } from 'react';
-import { View, Box, HStack, Heading, Icon, Text } from 'native-base';
+import { View, Box, HStack, Heading, Icon, Text, IconButton } from 'native-base';
 import SharpButton from 'components/SharpButton';
+import AudioIcon from '../../assets/audio_icon.svg';
 import DotProgress from 'components/DotProgress';
 import { AntDesign } from '@expo/vector-icons';
 import Colors from 'utils/Colors';
 import { useTranslation } from 'react-i18next';
+import TextHighlighter from 'components/SpeechHighlighter';
+import styles from 'styles/onboarding';
 
 export default function BankingSetup({ navigation, route }): JSX.Element {
   const { name, selectedImage, idNo, idPicBack, idPicFront, iceNo, icePicBack, icePicFront } = route.params;
   const { t } = useTranslation();
+  const [pressed, setPressed] = useState(false);
 
   return (
     <View style={{ flex: 1, position: 'relative' }}>
-      <Box w='100%' minH='60px' alignItems='center'>
-        <Heading fontSize='30' color='white' mt='150px' textAlign='center'>
-          {t('Enter your Banking \n Information')}
-        </Heading>
+      <IconButton
+        style={styles.audioStyle}
+        icon={<AudioIcon />}
+        onPress={() => {
+          setPressed(true);
+        }}
+      />
+      <Box w='100%' minH='60px' mt='150px' alignItems='center'>
+        <TextHighlighter style={styles.heading} text={t('Enter your Banking \n Information')} pressed={pressed} setPressed={setPressed} />
       </Box>
       <View style={{ position: 'absolute', bottom: 0, left: 0, right: 0, marginBottom: 50 }}>
         <HStack

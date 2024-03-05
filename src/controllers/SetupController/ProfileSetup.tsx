@@ -11,13 +11,17 @@ import { StyleSheet } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import { Alert } from 'react-native';
 import DotProgress from 'components/DotProgress';
-
+import styles from 'styles/onboarding';
+import TextHighlighter from 'components/SpeechHighlighter';
+import { useTranslation } from 'react-i18next';
 
 export default function ProfileSetup({ navigation }): JSX.Element {
+  const [pressed, setPressed] = useState(false);
   const [selectedImage, setSelectedImage] = useState<Image | undefined>();
   const dispatch = useAppDispatch();
   const { name } = useAppSelector(authSelector);
   const [showNameInput, setShowNameInput] = useState(false);
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (!name || name.length < 1) {
@@ -38,7 +42,7 @@ export default function ProfileSetup({ navigation }): JSX.Element {
         />
         {showNameInput && (
           <View style={{ alignItems: 'center' }}>
-            <Text fontSize='md'>Name</Text>
+            <TextHighlighter style={styles.subheading} text={t('Name')} pressed={pressed} setPressed={setPressed} />
             <Input
               w='190px'
               borderRadius='2px'

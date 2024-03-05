@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, HStack, Icon, Text, View } from 'native-base';
+import { Box, HStack, Icon, Text, View, IconButton, Spacer } from 'native-base';
 import MaterialSelector from 'components/MaterialSelector';
 import { Alert } from 'react-native';
 import SharpButton from 'components/SharpButton';
@@ -7,18 +7,27 @@ import DotProgress from 'components/DotProgress';
 import { AntDesign } from '@expo/vector-icons';
 import Colors from 'utils/Colors';
 import { useTranslation } from 'react-i18next';
+import TextHighlighter from 'components/SpeechHighlighter';
+import AudioIcon from '../../assets/audio_icon.svg';
+import styles from 'styles/onboarding';
 
 export default function MaterialSetup({ navigation, route }): JSX.Element {
   const { name, selectedImage, idNo, idPicBack, idPicFront, iceNo, icePicBack, icePicFront } = route.params;
   const [selectedMaterialIds, setSelectedMaterialIds] = useState<string[]>([]);
   const { t } = useTranslation();
+  const [pressed, setPressed] = useState(false);
 
   return (
     <View flex='1' alignItems='center'>
+      <IconButton
+        style={styles.audioStyle}
+        icon={<AudioIcon />}
+        onPress={() => {
+          setPressed(true);
+        }}
+      />
       <Box minH='200px' mt='120' alignItems='flex-start'>
-        <Text fontSize='30' color='white' textAlign='center' mb='5'>
-          {t('What materials do \n you work with?')}
-        </Text>
+        <TextHighlighter style={styles.heading} text={t('What materials do \n you work with?')} pressed={pressed} setPressed={setPressed} />
         <MaterialSelector
           selectedMaterialIds={selectedMaterialIds}
           setSelectedMaterialIds={setSelectedMaterialIds}
@@ -38,7 +47,7 @@ export default function MaterialSetup({ navigation, route }): JSX.Element {
             leftIcon={<Icon as={AntDesign} name='arrowright' color='white' size='lg' />}
             p='10px'
             mr='30px'
-            onPress={() => (selectedMaterialIds ? navigation.navigate('AddressSetup', 
+            onPress={() => (selectedMaterialIds ? navigation.navigate('AddressSetup',
               { name, selectedProfileImage: selectedImage, idNo, idPicBack, idPicFront, iceNo, icePicBack, icePicFront, selectedMaterialIds }) : Alert.alert('Please complete all fields'))}
           />
         </HStack>
