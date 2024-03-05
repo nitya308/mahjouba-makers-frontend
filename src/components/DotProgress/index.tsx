@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import { HStack, Box, Spacer } from 'native-base';
+import Colors from 'utils/Colors';
 
 export default function DotProgress({
   progress,
@@ -24,7 +25,7 @@ export default function DotProgress({
     <Spacer />
     {
       dots.map((dot, i) => (
-        <Box key={i} w='10px' h='10px' borderColor='black' bgColor={dot === 1 ? 'black' : 'transparent' } borderWidth='1px'  borderRadius='full' />
+        <Box key={i} w='10px' h='10px' borderColor={Colors.outline} bgColor={dot === 1 ? '#FFC01D' : 'transparent' } borderWidth='1px'  borderRadius='full' />
       ))
     }
     <Spacer />

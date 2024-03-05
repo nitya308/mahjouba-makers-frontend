@@ -1,7 +1,7 @@
 {
   "Job Search": "البحث عن الوظائف",
   "Wood": "خشب",
-  "Log In": "Se connecter",
+  "Sign In": "Se connecter",
   "Sign Up": "اشتراك",
   "Hello world": "مرحبا بالعالم",
   "for price": "for price",
@@ -13,7 +13,9 @@
   "MAD": "",
   "Unaccept Job": "",
   "Please upload at least 1 image of the completed part.": "",
-  "Complete Job": ""
+  "Complete Job": "",
+  "This is a welcome to my app": "هذا هو موضع ترحيب في التطبيق الخاص بي",
+  "here is some different stuff": "وهنا بعض الاشياء المختلفة"
 }
 
 

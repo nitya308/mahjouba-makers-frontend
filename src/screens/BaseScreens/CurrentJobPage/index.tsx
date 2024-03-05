@@ -28,9 +28,11 @@ import { uploadMedia } from 'utils/mediaUtils';
 import Photo from 'types/photo';
 import { createPhoto } from 'redux/slices/photosSlice';
 import { completeJob } from 'redux/slices/jobsSlice';
-import MaterialSelector from 'components/MaterialSelector';
 import i18next from 'i18next';
-export default function CurrentJobPage(): JSX.Element {
+
+export default function CurrentJobPage(
+  { setDetailsPageOpen }: { setDetailsPageOpen: React.Dispatch<React.SetStateAction<any>> },
+): JSX.Element {
   const { userData } = useAppSelector(userDataSelector);
   const fbUserRef = useAppSelector(authSelector).fbUserRef;
   const addressMap = useAppSelector((state) => state.addresses.addressMap);
@@ -193,6 +195,7 @@ export default function CurrentJobPage(): JSX.Element {
               size='sm'
               onPress={() => {
                 dispatch(unacceptJob({ jobId: currentJobId ?? '', fbUserRef }));
+                setDetailsPageOpen(false);
               }}
               marginBottom={'10px'}
             >

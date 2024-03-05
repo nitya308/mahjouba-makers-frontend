@@ -25,6 +25,7 @@ export default function SharpButton({
       shadowOpacity: 1,
     }}
     outlineColor='black'
+    borderColor={Colors.outline}
     borderRadius={2}
     borderWidth={1}
     leftIcon={leftIcon}
