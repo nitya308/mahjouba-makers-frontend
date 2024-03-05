@@ -136,7 +136,7 @@ const Login = () => {
                 />
                 <Box height='30px' />
                 <SharpButton w='90px' h='42px' size='sm' onPress={handlePhoneConfirm}>
-                  <TextHighlighter style={styles.buttonText} text={t('Name')} pressed={pressed} setPressed={setPressed} />
+                  <TextHighlighter style={styles.buttonText} text={t('Enter')} pressed={pressed} setPressed={setPressed} />
                 </SharpButton>
               </VStack>
           }
