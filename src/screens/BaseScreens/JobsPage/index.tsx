@@ -22,7 +22,7 @@ import * as Speech from 'expo-speech';
 import i18next from 'i18next';
 import { integer } from 'aws-sdk/clients/cloudfront';
 import { PartType } from 'types/part_type';
-import { ScreenWidth } from 'react-native-elements/dist/helpers';
+import { ScreenHeight, ScreenWidth } from 'react-native-elements/dist/helpers';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ItemClick } from 'native-base/lib/typescript/components/composites/Typeahead/useTypeahead/types';
 
@@ -47,7 +47,7 @@ const JobsPage = ({
   const materialNames = Object.values(materialsMap).map(material => material.name);
   const [selectedMaterialIds, setSelectedMaterialIds] = useState<string[]>([]);
   const [scrollViewWidth, setScrollViewWidth] = React.useState(0);
-  const boxWidth = scrollViewWidth * 0.8;
+  const boxWidth = scrollViewWidth * .8;
   const boxDistance = scrollViewWidth - boxWidth;
   const halfBoxDistance = boxDistance / 2;
   const pan = React.useRef(new Animated.ValueXY()).current;
@@ -55,7 +55,6 @@ const JobsPage = ({
     setModalVisible(!isModalVisible);
   };
   const updateResultArray = () => {
-    console.log('darawuzhere', jobFeedIds);
     const transformedArray = jobFeedIds.flatMap((jobId) => {
       const job = jobsMap[jobId];
       const part = partsMap[job.partTypeId];
@@ -83,7 +82,7 @@ const JobsPage = ({
   useEffect(() => {
     updateResultArray();
 
-  }, [selectedMaterialIds]);
+  }, [selectedMaterialIds, materialsMap, jobFeedIds, jobsMap, partsMap]);
 
   useEffect(() => {
     if (resultArray.length == 0) {
@@ -125,7 +124,7 @@ const JobsPage = ({
           },
         ],
       }}>
-      <View style={{alignContent:'center', alignItems:'center'}}>
+      <View style={{ alignContent:'center', alignItems:'center' }}>
         <Pressable style={styles.jobCard} key={item.job._id} onPress={() => handleSelect(item.job)}>
           <JobCard job={item.job} part={item.part} materials={item.materials} />
         </Pressable>
@@ -192,7 +191,7 @@ const JobsPage = ({
               <FlatList
                 horizontal
                 data={resultArray}
-                style={{ height: 250,  marginTop:30, paddingBottom: 210 }}
+                style={{ height: 250,  marginTop:30, paddingBottom: 500 }}
                 contentContainerStyle={{ paddingVertical: 16 }}
                 contentInsetAdjustmentBehavior="never"
                 snapToAlignment="center"
@@ -201,7 +200,7 @@ const JobsPage = ({
                 showsHorizontalScrollIndicator={false}
                 showsVerticalScrollIndicator={false}
                 scrollEventThrottle={1}
-                snapToInterval={boxWidth}
+                snapToInterval={(boxWidth * 2.4)}
                 ListEmptyComponent={renderListEmpty} 
                 contentInset={{
                   left: halfBoxDistance,

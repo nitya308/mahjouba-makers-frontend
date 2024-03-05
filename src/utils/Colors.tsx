@@ -23,7 +23,13 @@ export default {
   // Specified by style guide
   yellow: '#FFC01D',
   beige: '#FFF4D8',
-  backgroundWhite: '#FFFFFF',
+  backgroundBlack: '#000000',
+  get backgroundWhite() {
+    return this.backgroundBlack;
+  },
+  set backgroundWhite(value) {
+    this.backgroundBlack = value;
+  },
   lightBrown: '#B78333',
   darkBrown: '#573E17',
   darkPurple: '#Q80026',
