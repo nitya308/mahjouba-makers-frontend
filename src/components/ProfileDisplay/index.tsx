@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { userDataSelector } from 'redux/slices/userDataSlice';
 import useAppDispatch from 'hooks/useAppDispatch';
 import useAppSelector from 'hooks/useAppSelector';
-import { Box, HStack, Spacer, IconButton, Icon, Button, Center, Text, Heading, ScrollView, View, Pressable } from 'native-base';
+import { Box, HStack, Spacer, IconButton, Icon, Button, Center, Text, Heading, ScrollView, View, Pressable, VStack } from 'native-base';
 import { Image as ExpoImage } from 'expo-image';
 import { AntDesign } from '@expo/vector-icons';
 import { DEFAULT_PROFILE_URI } from 'utils/constants';
@@ -21,6 +21,10 @@ import JobCard from 'components/JobCard';
 import * as Speech from 'expo-speech';
 import { getAddress } from 'redux/slices/addressSlice';
 import i18next from 'i18next';
+import { SafeAreaView } from 'react-native';
+import AppStyles from 'styles/commonstyles';
+import TextHighlighter from 'components/SpeechHighlighter';
+import JobHistoryCard from 'components/JobHistoryCard';
 
 export default function ProfileDisplay({
   toggleEditing,
@@ -34,6 +38,7 @@ export default function ProfileDisplay({
   const { fbUserRef } = useAppSelector(authSelector);
   const { userData } = useAppSelector(userDataSelector);
   const { jobsMap, partsMap, materialsMap, jobHistoryIds } = useAppSelector(jobsSelector);
+  console.log('jobhistoryids', jobHistoryIds);
   const addressMap = useAppSelector((state) => state.addresses.addressMap);
   const photoMap = useAppSelector((state) => state.photos.photosMap);
   const { t } = useTranslation();
@@ -48,35 +53,31 @@ export default function ProfileDisplay({
     }
   }, [fbUserRef]);
 
-  // <Button mr='auto' onPress={toggleSettingsOpen}>
-  // Account Settings
-  // </Button>
+  const [pressed, setPressed] = useState(false);
 
   return (
-    <Box pt='75px' width={'100%'}>
+    <SafeAreaView>
       <HStack justifyContent={'space-between'}>
-        <HStack alignItems={'center'}>
-          <Heading marginLeft={'20px'} marginRight={'10px'} fontFamily={fonts.bold}>
-            My Profile
-          </Heading>
-          <IconButton
-            icon={<AudioIcon />}
-            onPress={() => {
-              Speech.speak(t('My Profile'), { language: i18next.language });
-            }}
-          />
-        </HStack>
         <IconButton
           icon={<EditIcon />}
           onPress={toggleEditing}
-          marginRight={'20px'}
+        />
+        <HStack alignItems={'center'}>
+          <TextHighlighter style={AppStyles.center_heading} text={t('My Profile')} pressed={pressed} setPressed={setPressed} />
+        </HStack>
+        <IconButton
+          icon={<AudioIcon />}
+          onPress={() => {
+            setPressed(true);
+          }}
         />
       </HStack>
+
       <ScrollView
         width={'100%'}
         marginBottom={'180px'}
       >
-        <Center my='20px'>
+        <VStack space={2} alignItems='center' marginTop={10}>
           <ExpoImage
             source={{
               uri: photoMap?.[userData?.profilePicId ?? '']?.fullUrl ?? DEFAULT_PROFILE_URI,
@@ -86,21 +87,20 @@ export default function ProfileDisplay({
               height: 120,
               borderRadius: 100,
               borderWidth: 3,
+              borderColor: Colors.beige,
             }}
           />
-          <Heading fontFamily={fonts.bold} marginTop={'10px'}>
-            {userData?.name}
-          </Heading>
+          {userData?.name &&
+            <TextHighlighter style={AppStyles.center_heading} text={userData.name} pressed={pressed} setPressed={setPressed} />
+          }
           {
             addressString &&
-            <HStack marginBottom={'10px'}>
+            <HStack marginBottom={'10px'} space={2}>
               <MapPinIcon />
-              <Text maxW='300px' numberOfLines={1} fontSize='sm' marginLeft={'5px'} fontFamily={fonts.regular}>
-                {addressString ? addressString : null}
-              </Text>
+              <TextHighlighter style={{ maxWidth: '100%' }} text={t(addressString)} pressed={pressed} setPressed={setPressed} />
             </HStack>
           }
-          <HStack>
+          <HStack space={2}>
             {
               userData?.materialIds?.map((materialId: string) => {
                 const material = materialsMap[materialId];
@@ -111,51 +111,34 @@ export default function ProfileDisplay({
               })
             }
           </HStack>
-          <View
+          <Box
+            height={0.2}
+            width="100%"
             backgroundColor={Colors.beige}
-            width={'100%'}
-            position={'relative'}
-            marginTop={'20px'}
-            alignItems={'center'}
-            justifyContent={'center'}
-            height={'60px'}
-            borderTopWidth={'1px'}
-            borderBottomWidth={'1px'}
-          >
-            <HStack alignItems={'center'}>
-              <Heading fontFamily={fonts.bold} marginRight={'10px'}>
-                Past Projects
-              </Heading>
-              <IconButton
-                icon={<AudioIcon />}
-                onPress={() => {
-                  Speech.speak(t('Past Projects'), { language: i18next.language });
-                }}
-              />
-            </HStack>
-          </View>
-        </Center>
-        {jobHistoryIds.map((jobId: string) => {
-          const job = jobsMap[jobId];
-          const part = partsMap[job.partTypeId];
-          const materials = part?.materialIds?.map((materialId: string) => {
-            const material = materialsMap[materialId];
-            return material ? material.name : ''; // Return the name if available, otherwise an empty string
-          });
-
-          return (
-            <Pressable
-              marginBottom={'15px'}
-              marginLeft={'15px'}
-              marginRight={'15px'}
-              key={job._id}
-              onPress={() => console.log('TODO')}
-            >
-              <JobCard job={job} part={part} materials={materials} />
-            </Pressable>
-          );
-        })}
+            marginTop={5}
+            marginBottom={5}
+          />
+          <TextHighlighter style={AppStyles.center_heading} text={t('Past Projects')} pressed={pressed} setPressed={setPressed} />
+          {jobHistoryIds.map((jobId: string) => {
+            const job = jobsMap[jobId];
+            const part = partsMap[job.partTypeId];
+            const materials = part?.materialIds?.map((materialId: string) => {
+              const material = materialsMap[materialId];
+              return material ? material.name : ''; // Return the name if available, otherwise an empty string
+            });
+            return (
+              <Pressable
+                marginBottom={'15px'}
+                marginTop={'15px'}
+                key={job._id}
+                onPress={() => console.log('TODO')}
+              >
+                <JobHistoryCard job={job} part={part} materials={materials}/>
+              </Pressable>
+            );
+          })}
+        </VStack>
       </ScrollView>
-    </Box>
+    </SafeAreaView>
   );
 }

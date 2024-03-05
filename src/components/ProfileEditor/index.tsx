@@ -37,6 +37,9 @@ import SelectLanguage from 'components/SelectLanguage';
 import { createAddress } from 'redux/slices/addressSlice';
 import { createPhoto } from 'redux/slices/photosSlice';
 import { DEFAULT_PROFILE_URI } from 'utils/constants';
+import AppStyles from 'styles/commonstyles';
+import AudioIcon from '../../assets/audio_icon.svg';
+import { SafeAreaView, ScrollView } from 'react-native';
 
 export default function ProfileEditor({
   toggleEditing,
@@ -126,53 +129,64 @@ export default function ProfileEditor({
 
   const { t } = useTranslation();
 
+  const [pressed, setPressed] = useState(false);
+
   return (
-    <Box pt='75px' width={'100%'}>
-      <HStack alignItems={'center'} justifyContent={'center'} width={'100%'}>
-        <IconButton
-          icon={<BackArrowIcon />}
-          onPress={toggleEditing}
-          position={'absolute'}
-          left={0}
-        />
-        <Heading marginLeft={'20px'} marginRight={'10px'} fontFamily={fonts.bold}>
-          Edit Profile
-        </Heading>
-      </HStack>
-      <Center
-        marginTop={'10px'}
-      >
-        <ProfileImageSelector
-          selectedProfile={selectedImage}
-          setSelectedProfile={setSelectedImage}
-          defaultImageUri={photoMap?.[userData?.profilePicId ?? '']?.fullUrl ?? DEFAULT_PROFILE_URI}
-          width={120}
-          height={120}
-        />
-        <Input
-          placeholder={userData?.name || 'Name'}
-          value={newName}
-          onChangeText={setNewName}
-          w='60%'
-          borderRadius='2px'
-          paddingY='10px'
-          paddingX='16px'
-          borderColor='black'
-          borderWidth='1px'
-          autoCapitalize='none'
-          size='sm'
-          type='text'
-          backgroundColor='#ffffff'
-        />
-        <AddressInput
-          setAddress={setNewAddress}
-          // TODO: Make this defaultValue instead of placeholder (so that the text isn't light grey)
-          placeholder={addressMap?.[userData?.homeAddressId ?? '']?.description ?? 'Address'}
-        />
-        {
-          // TODO: Need to figure out why can't put MaterialSelector in AppModal - Eric
-        }
-        {/* <HStack
+    <SafeAreaView>
+      <ScrollView>
+        <Box pt='75px' width={'100%'}>
+          <IconButton
+            style={AppStyles.audioStyle}
+            icon={<AudioIcon />}
+            onPress={() => {
+              setPressed(true);
+            }}
+          />
+          <HStack alignItems={'center'} justifyContent={'center'} width={'100%'}>
+            <IconButton
+              icon={<BackArrowIcon />}
+              onPress={toggleEditing}
+              position={'absolute'}
+              left={0}
+            />
+            <Heading marginLeft={'20px'} marginRight={'10px'} fontFamily={fonts.bold}>
+              Edit Profile
+            </Heading>
+          </HStack>
+          <Center
+            marginTop={'10px'}
+          >
+            <ProfileImageSelector
+              selectedProfile={selectedImage}
+              setSelectedProfile={setSelectedImage}
+              defaultImageUri={photoMap?.[userData?.profilePicId ?? '']?.fullUrl ?? DEFAULT_PROFILE_URI}
+              width={120}
+              height={120}
+            />
+            <Input
+              placeholder={userData?.name || 'Name'}
+              value={newName}
+              onChangeText={setNewName}
+              w='60%'
+              borderRadius='2px'
+              paddingY='10px'
+              paddingX='16px'
+              borderColor='black'
+              borderWidth='1px'
+              autoCapitalize='none'
+              size='sm'
+              type='text'
+              backgroundColor='#ffffff'
+            />
+            <AddressInput
+              setAddress={setNewAddress}
+              // TODO: Make this defaultValue instead of placeholder (so that the text isn't light grey)
+              placeholder={addressMap?.[userData?.homeAddressId ?? '']?.description ?? 'Address'}
+            />
+            {
+              // TODO: Need to figure out why can't put MaterialSelector in AppModal - Eric
+            }
+            {/* <HStack
           alignItems={'center'}
         >
           {
@@ -197,41 +211,43 @@ export default function ProfileEditor({
             }
           >
             {/* TODO: Put MaterialSelector here */}
-        {/* </AppModal> */}
-        {/* </HStack> */}
-        <MaterialSelector
-          selectedMaterialIds={selectedMaterialIds}
-          setSelectedMaterialIds={setSelectedMaterialIds}
-        />
-      </Center>
-      <Center>
-        <SharpButton
-          width={'80px'}
-          backgroundColor={Colors.yellow}
-          my='2px'
-          size='sm'
-          onPress={saveChanges}
-          marginTop={'10px'}
-        >
-          <Text fontFamily={fonts.regular}>
-            Save
-          </Text>
-        </SharpButton>
-      </Center>
-      {
-        // demo translation functionality
-      }
-      <Center>
-        <Text>
+            {/* </AppModal> */}
+            {/* </HStack> */}
+            <MaterialSelector
+              selectedMaterialIds={selectedMaterialIds}
+              setSelectedMaterialIds={setSelectedMaterialIds}
+            />
+          </Center>
+          <Center>
+            <SharpButton
+              width={'80px'}
+              backgroundColor={Colors.yellow}
+              my='2px'
+              size='sm'
+              onPress={saveChanges}
+              marginTop={'10px'}
+            >
+              <Text fontFamily={fonts.regular}>
+                Save
+              </Text>
+            </SharpButton>
+          </Center>
           {
-            'demo translation functionality: '
+            // demo translation functionality
           }
-          {
-            t('Hello world')
-          }
-        </Text>
-        <SelectLanguage />
-      </Center>
-    </Box>
+          <Center>
+            <Text>
+              {
+                'demo translation functionality: '
+              }
+              {
+                t('Hello world')
+              }
+            </Text>
+            <SelectLanguage />
+          </Center>
+        </Box>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
