@@ -174,7 +174,7 @@ const JobsPage = ({
           <FlatList
             horizontal
             data={resultArray}
-            style={{ height: 500, marginTop: 30 }}
+            style={{ height: 500, marginTop: 30, width: '100%' }}
             contentContainerStyle={{ paddingVertical: 16 }}
             contentInsetAdjustmentBehavior="never"
             snapToAlignment="center"
