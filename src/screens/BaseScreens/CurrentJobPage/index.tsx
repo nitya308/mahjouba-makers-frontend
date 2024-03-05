@@ -30,6 +30,8 @@ import Photo from 'types/photo';
 import { createPhoto } from 'redux/slices/photosSlice';
 import { completeJob } from 'redux/slices/jobsSlice';
 import i18next from 'i18next';
+import { Dimensions } from 'react-native';
+import { ScreenWidth } from 'react-native-elements/dist/helpers';
 
 export default function CurrentJobPage(
   { setDetailsPageOpen }: { setDetailsPageOpen: React.Dispatch<React.SetStateAction<any>> },
@@ -44,6 +46,7 @@ export default function CurrentJobPage(
   const currentPart = partsMap?.[currentJob?.partTypeId];
   const currentAddress = addressMap?.[currentJob?.dropoffAddressId];
   const { t } = useTranslation();
+  const screenWidth = Dimensions.get('window').width;
 
   const currentDate = new Date();
 
@@ -135,14 +138,13 @@ export default function CurrentJobPage(
 
   return (
     <ScrollView>
-      <VStack width="100%" mt='20px' alignItems='center'>
+      <VStack width="100%" mt='20px' alignItems='flex-start'>
         {currentJob ? (
           <BaseView>
             {currentPart?.imageIds.length
               ? <Image alt='part' source={{ uri: photoMap?.[currentPart?.imageIds[0]]?.fullUrl ?? '' }} style={styles.image} />
               : <Image alt='placeholder' source={Placeholder} style={styles.image} />}
             <View>
-{/* {!part.imageIds.length ? <Image alt='placeholder' source={Placeholder} style={styles.image} /> : <Image alt='part' source={{ uri: imageUrl }} style={styles.image} />} */}
               <View style={styles.infoContainer}>
                 <Text style={styles.name}>{currentPart?.name}</Text>
                 <Text>{`Current Date: ${currentDate.toDateString()}`}</Text>
@@ -302,57 +304,43 @@ export default function CurrentJobPage(
 }
 
 const styles = StyleSheet.create({
-  // container: {
-  //   alignItems: 'flex-start',
-  //   justifyContent: 'flex-start',
-  // },
   infoContainer: {
-    width: '90%',
+    width: ScreenWidth,
     borderColor: Colors.yellow,
     borderWidth: 1,
-    alignSelf: 'center',
+    alignSelf: 'flex-start',
     paddingHorizontal: 5,
     paddingVertical: 10,
     marginBottom: 10,
   },
   materialContainer: {
     width: '90%',
-    alignSelf: 'center',
+    alignSelf: 'auto',
     borderColor: '#000000',
     borderWidth: 1,
     marginBottom: 15,
   },
   timeRemaining: {
+    marginLeft: 15,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
-    // backgroundColor: '#FFC01D',
-    // borderBottomColor: '#000000',
     color: 'white',
     borderBottomWidth: 1,
   },
   textAndIcon: {
+    marginLeft: 15,
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     gap: 10,
   },
-  // infoHeader: {
-  //   backgroundColor: '#FFF4D8',
-  //   paddingTop: 10,
-  //   paddingHorizontal: 10,
-  //   borderBottomColor: '#000000',
-  //   borderBottomWidth: 1,
-  // },
-  // infoBody: {
-  //   padding: 10,
-  // },
   image: {
-    // width: '200%',
-    marginTop: 200,
-    height: '40%',
+    marginTop: 20,
+    height: '60%',
     marginBottom: 20,
   },
   name: {
+    marginLeft: 15,
     color: 'white',
     fontSize: 40,
     lineHeight: 40,
@@ -378,6 +366,6 @@ const styles = StyleSheet.create({
   },
   buttonAudioIcon: {
     position: 'absolute',
-    right: -50,
+    right: -70,
   },
 });
