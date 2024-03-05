@@ -4,7 +4,7 @@ import { authSelector } from 'redux/slices/authSlice';
 import { IMaterial } from 'types/material';
 import { Box, Checkbox, FlatList, HStack, Spacer, Text } from 'native-base';
 import materialsApi from 'requests/materialsApi';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { TouchableOpacity } from 'react-native';
 import Colors from 'utils/Colors';
 import { useTranslation } from 'react-i18next';
 

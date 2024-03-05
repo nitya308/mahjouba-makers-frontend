@@ -11,6 +11,7 @@ import {
 import { Icon, Text, View } from 'native-base';
 import React from 'react';
 import Colors from 'utils/Colors';
+import { DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { fonts } from 'utils/constants';
 import HammerIcon from '../../assets/hammer.svg';
 import HammerIconFilled from '../../assets/hammer_filled.svg';
@@ -23,9 +24,19 @@ import { BaseNavigationList, BaseTabRoutes } from '../routeTypes';
 const BaseTab = createBottomTabNavigator<BaseNavigationList>();
 const BaseStack = createStackNavigator<BaseNavigationList>();
 
+const MyTheme = {
+  ...DarkTheme,
+  colors: {
+    ...DarkTheme.colors,
+    background: 'black',
+    card: 'black',
+    text: 'white',
+  },
+};
+
 const BaseNavigation = () => {
   return (
-    <NavigationContainer>
+    <NavigationContainer theme={MyTheme}>
       <BaseTab.Navigator
         screenOptions={{
           header: () => null,

@@ -18,7 +18,7 @@ import { useTranslation } from 'react-i18next';
 
 const Signup = () => {
   const dispatch = useAppDispatch();
-  
+
 
   const recaptchaVerifier = useRef<any>(null);
   const [name, setName] = useState<string | undefined>();
@@ -29,7 +29,7 @@ const Signup = () => {
   const [error, setError] = useState<string | undefined>();
   const [phoneVerify, setPhoneVerify] = useState(false);
   const [confirmResult, setConfirmResult] = useState<string | undefined>();
-  const [ pressed, setPressed] = useState(false);
+  const [pressed, setPressed] = useState(false);
 
   useEffect(() => {
     // Fetch country code
@@ -92,7 +92,7 @@ const Signup = () => {
           }}
         />
         <VStack space={2}>
-          
+
 
           <FirebaseRecaptchaVerifierModal
             ref={recaptchaVerifier}
@@ -102,8 +102,8 @@ const Signup = () => {
           {
             !phoneVerify ?
               <VStack space={2} mb='10px' alignItems='center' mt='73px'>
-                <TextHighlighter style={[styles.heading, styles.underline]} text={t('Enter your name')} pressed={pressed} setPressed={setPressed}/>
-                <TextHighlighter style={[styles.heading, styles.underline]} text={t('and phone number')} pressed={pressed} setPressed={setPressed}/>
+                <TextHighlighter style={[styles.heading, styles.underline]} text={t('Enter your name')} pressed={pressed} setPressed={setPressed} />
+                <TextHighlighter style={[styles.heading, styles.underline]} text={t('and phone number')} pressed={pressed} setPressed={setPressed} />
                 <Box height='100px' />
                 {/* <TextHighlighter fontSize='24px'>
                   Name
@@ -187,7 +187,7 @@ const Signup = () => {
                   <Text fontSize='24px' mx='auto' color='white' textAlign='center' >
                     Enter Verification code
                   </Text>
-                  <Box height='20px'/>
+                  <Box height='20px' />
                   <Input
                     w='190px'
                     borderRadius='2px'
