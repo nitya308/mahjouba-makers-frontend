@@ -1,5 +1,5 @@
 import React, { useCallback, useRef, useState, useEffect } from 'react';
-import { Text, Input, VStack, Center, Button, Box, ScrollView } from 'native-base';
+import { Text, Input, VStack, Center, Button, Box, ScrollView, IconButton } from 'native-base';
 import { phonePassSignup, userPassSignUp } from 'utils/auth';
 import SharpButton from 'components/SharpButton';
 import IDSetup from 'controllers/SetupController/IDSetup';
@@ -7,8 +7,11 @@ import { FirebaseRecaptchaVerifierModal, FirebaseRecaptchaBanner } from 'expo-fi
 import { app, auth } from '../../../firebase';
 import { ConfirmationResult, PhoneAuthProvider, signInWithCredential } from 'firebase/auth';
 import { SafeAreaView } from 'react-native';
-import { StyleSheet } from 'react-native';
+import { useTranslation } from 'react-i18next';
+import styles from 'styles/onboarding';
 import Colors from 'utils/Colors';
+import AudioIcon from '../../assets/audio_icon.svg';
+import TextHighlighter from 'components/SpeechHighlighter';
 
 const Login = () => {
   const recaptchaVerifier = useRef<any>(null);
@@ -18,6 +21,8 @@ const Login = () => {
   const [error, setError] = useState<string | undefined>();
   const [phoneVerify, setPhoneVerify] = useState(false);
   const [confirmResult, setConfirmResult] = useState<string | undefined>();
+  const { t } = useTranslation();
+  const [pressed, setPressed] = useState(false);
 
   useEffect(() => {
     // Fetch country code
@@ -64,6 +69,13 @@ const Login = () => {
 
   return (
     <SafeAreaView>
+      <IconButton
+        style={styles.audioStyle}
+        icon={<AudioIcon />}
+        onPress={() => {
+          setPressed(true);
+        }}
+      />
       <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}>
         <VStack space={4} alignItems='center'>
           <FirebaseRecaptchaVerifierModal
@@ -75,17 +87,11 @@ const Login = () => {
             !phoneVerify ?
               <VStack space={2} alignItems="center">
                 <Box height='30px' />
-                <Text color='white' fontSize='30px' style={styles.italic}>
-                  Hey again!
-                </Text>
+                <TextHighlighter style={styles.heading} text={t('Hey again!')} pressed={pressed} setPressed={setPressed} />
                 <Box height='10px' />
-                <Text color='white' fontSize='30px'>
-                Enter your phone{'\n'}number to sign in
-                </Text>
+                <TextHighlighter style={styles.heading} text={t('Enter your phone \n number to sign in')} pressed={pressed} setPressed={setPressed} />
                 <Box height='20px' />
-                <Text color='white' fontSize='30px' style={styles.underline}>
-                  Phone Number
-                </Text>
+                <TextHighlighter style={styles.subheading} text={t('Phone Number')} pressed={pressed} setPressed={setPressed} />
                 <Input
                   w="204px"
                   h="42px"
@@ -104,14 +110,13 @@ const Login = () => {
                 />
                 <Box height='50px' />
                 <SharpButton w='90px' h='42px' size='sm' onPress={handleSubmit}>
-                  <Text color='white' fontWeight='medium'>Send</Text>
+                  <TextHighlighter style={styles.buttonText} text={t('Send')} pressed={pressed} setPressed={setPressed} />
                 </SharpButton>
               </VStack>
               :
               <VStack space={2} alignItems='center'>
-                <Text color='white' fontSize='30px' style={{ textAlign: 'center' }} >
-                  Confirmation {'\n'} Code
-                </Text>
+                <TextHighlighter style={styles.heading} text={t('Confirmation')} pressed={pressed} setPressed={setPressed} />
+                <TextHighlighter style={styles.subheading} text={t('Code')} pressed={pressed} setPressed={setPressed} />
                 <Box height='30px' />
                 <Input
                   w="204px"
@@ -131,7 +136,7 @@ const Login = () => {
                 />
                 <Box height='30px' />
                 <SharpButton w='90px' h='42px' size='sm' onPress={handlePhoneConfirm}>
-                  <Text color='white' fontWeight='medium' >Enter</Text>
+                  <TextHighlighter style={styles.buttonText} text={t('Name')} pressed={pressed} setPressed={setPressed} />
                 </SharpButton>
               </VStack>
           }
@@ -145,10 +150,5 @@ const Login = () => {
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  italic: { fontStyle: 'italic' },
-  underline: { textDecorationLine: 'underline' },
-});
 
 export default Login;

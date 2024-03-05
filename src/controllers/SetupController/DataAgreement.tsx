@@ -1,30 +1,46 @@
 import React, { useState } from 'react';
-import { View, Box, HStack, Heading, Icon, Text } from 'native-base';
+import { View, Box, HStack, Heading, Icon, Text, Spacer, IconButton } from 'native-base';
 import SharpButton from 'components/SharpButton';
 import DotProgress from 'components/DotProgress';
 import { AntDesign } from '@expo/vector-icons';
 import Colors from 'utils/Colors';
 import { useTranslation } from 'react-i18next';
+import TextHighlighter from 'components/SpeechHighlighter';
+import styles from 'styles/onboarding';
+import AudioIcon from '../../assets/audio_icon.svg';
 
 export default function DataAgreement({ navigation, route }): JSX.Element {
+  const [pressed, setPressed] = useState(false);
   const { name, selectedImage } = route.params;
   const { t } = useTranslation();
 
   return (
     <View style={{ flex: 1, position: 'relative' }}>
-      <Box w='100%' minH='60px' alignItems='center'>
-        <Heading fontSize='30' color='white' mt='150px' textAlign='center'>
-          {t('Data Protection Agreement')}
-        </Heading>
-        <Text fontSize='20' color='white' mt='20px' textAlign='center'>
-          Lorem ipsum dolor sit , proctection adipiscing elit,
-          sed do eiusmod tempor incididunt ut labore et dolore
-          magna aliqua. Ut enim ad minim veniam, quis nostrud
-          exercitation ullamco laboris nisi ut aliquip ex ea commodo
-          consequat. Duis aute irure dolor in reprehenderit in voluptate
-          velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
-          occaecat cupidatat non proident, sunt.
-        </Text>
+      <IconButton
+        style={styles.audioStyle}
+        icon={<AudioIcon />}
+        onPress={() => {
+          setPressed(true);
+        }}
+      />
+      <Box w='100%' minH='60px' mt='150px' alignItems='center'>
+        
+        <TextHighlighter style={styles.heading} text={t('Data Protection')} pressed={pressed} setPressed={setPressed} />
+        <TextHighlighter style={styles.heading} text={t('Agreement')} pressed={pressed} setPressed={setPressed} />
+        <Spacer size='20' />
+        <TextHighlighter
+          style={styles.body}
+          text={t(
+            'Lorem ipsum dolor sit, consectetur adipiscing elit, ' +
+            'sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ' +
+            'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ' +
+            'ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit ' +
+            'in voluptate velit esse cillum dolore eu fugiat nulla pariatur. ' +
+            'Excepteur sint occaecat cupidatat non proident, sunt.')
+          }
+          pressed={pressed}
+          setPressed={setPressed}
+        />
       </Box>
       <View style={{ position: 'absolute', bottom: 0, left: 0, right: 0, marginBottom: 50 }}>
         <HStack

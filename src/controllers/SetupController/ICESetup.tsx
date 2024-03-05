@@ -1,5 +1,5 @@
 import SharpButton from 'components/SharpButton';
-import { Center, Heading, Input, VStack, HStack, Box, Text, Icon, View } from 'native-base';
+import { Center, Heading, Input, VStack, HStack, Box, Text, Icon, View, IconButton } from 'native-base';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import CameraButton from 'components/CameraButton';
@@ -8,6 +8,9 @@ import Colors from 'utils/Colors';
 import { AntDesign } from '@expo/vector-icons';
 import DotProgress from 'components/DotProgress';
 import { useTranslation } from 'react-i18next';
+import TextHighlighter from 'components/SpeechHighlighter';
+import styles from 'styles/onboarding';
+import AudioIcon from '../../assets/audio_icon.svg';
 
 export default function IDSetup({ navigation, route }): JSX.Element {
   const { name, selectedImage, idNo, idPicBack, idPicFront } = route.params;
@@ -15,17 +18,21 @@ export default function IDSetup({ navigation, route }): JSX.Element {
   const [icePicFront, setIcePicFront] = useState<Asset | undefined>();
   const [icePicBack, setIcePicBack] = useState<Asset | undefined>();
   const { t } = useTranslation();
+  const [pressed, setPressed] = useState(false);
 
   return (
     <View style={{ flex: 1 }}>
+      <IconButton
+        style={styles.audioStyle}
+        icon={<AudioIcon />}
+        onPress={() => {
+          setPressed(true);
+        }}
+      />
       <VStack flex={1} justifyContent="center" alignItems="center">
         <VStack space={2} alignItems="center">
-          <Heading fontSize='30' color='white' textAlign='center'>
-            {t('Enter your ICE Info')}
-          </Heading>
-          <Heading fontSize='24' color='white' mt='40px' textAlign='center' textDecorationLine='underline'>
-            {t('ICE Number')}
-          </Heading>
+          <TextHighlighter style={styles.heading} text={t('Enter your ICE Info')} pressed={pressed} setPressed={setPressed} />
+          <TextHighlighter style={styles.subheading} text={t('ICE Number')} pressed={pressed} setPressed={setPressed} />
           <Input
             w='195px'
             borderRadius='2px'
@@ -42,19 +49,17 @@ export default function IDSetup({ navigation, route }): JSX.Element {
             onChangeText={setIceNo}
           />
           <Center my='20px'>
-            <Heading fontSize='24' color='white' textDecorationLine='underline'>
-              {t('ICE Photo')}
-            </Heading>
+            <TextHighlighter style={styles.subheading} text={t('ICE Photo')} pressed={pressed} setPressed={setPressed} />
             <HStack space='6'>
               <Box>
-                <Text my='5px' fontSize='20' color='white'>{t('Front:')}</Text>
+                <TextHighlighter style={styles.small} text={t('Front:')} pressed={pressed} setPressed={setPressed} />
                 <CameraButton
                   selectedImageAsset={icePicFront}
                   setSelectedImageAsset={setIcePicFront}
                 />
               </Box>
               <Box>
-                <Text my='5px' fontSize='20' color='white'>{t('Back:')}</Text>
+                <TextHighlighter style={styles.subheading} text={t('Back:')} pressed={pressed} setPressed={setPressed} />
                 <CameraButton
                   selectedImageAsset={icePicBack}
                   setSelectedImageAsset={setIcePicBack}
@@ -78,7 +83,7 @@ export default function IDSetup({ navigation, route }): JSX.Element {
             leftIcon={<Icon as={AntDesign} name='arrowright' color='white' size='lg' />}
             p='10px'
             mr='30px'
-            onPress={() => (iceNo && icePicBack && icePicFront ? navigation.navigate('BankingSetup', 
+            onPress={() => (iceNo && icePicBack && icePicFront ? navigation.navigate('BankingSetup',
               { name, selectedImage, idNo, idPicBack, idPicFront, iceNo, icePicBack, icePicFront }) : alert('Please complete all fields'))}
           />
         </HStack>

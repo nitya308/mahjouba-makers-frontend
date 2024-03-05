@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import AddressInput from 'components/AddressInput';
 import Address from 'types/address';
-import { View, Box, HStack, Heading, Icon, Text, Center, Spinner } from 'native-base';
+import { View, Box, HStack, Heading, Icon, Text, Center, Spinner, IconButton } from 'native-base';
 import Colors from 'utils/Colors';
 import SharpButton from 'components/SharpButton';
 import DotProgress from 'components/DotProgress';
@@ -12,7 +12,9 @@ import { clearUserData, initUser, userDataSelector } from 'redux/slices/userData
 import { useTranslation } from 'react-i18next';
 import useAppDispatch from 'hooks/useAppDispatch';
 import useAppSelector from 'hooks/useAppSelector';
-
+import TextHighlighter from 'components/SpeechHighlighter';
+import styles from 'styles/onboarding';
+import AudioIcon from '../../assets/audio_icon.svg';
 
 export default function AddressSetup({ navigation, route }): JSX.Element {
   const dispatch = useAppDispatch();
@@ -24,6 +26,7 @@ export default function AddressSetup({ navigation, route }): JSX.Element {
 
   const [selectedAddress, setSelectedAddress] = useState<Address | undefined>(undefined);
   const { name, selectedProfileImage, idNo, idPicBack, idPicFront, iceNo, icePicBack, icePicFront, selectedMaterialIds } = route.params;
+  const [pressed, setPressed] = useState(false);
 
   const handleSubmit = useCallback(async () => {
     if (!idNo || !iceNo || !selectedAddress || !idPicBack?.uri || !idPicFront?.uri || !icePicBack?.uri || !icePicFront?.uri || !fbUserRef || !name) return;
@@ -102,14 +105,19 @@ export default function AddressSetup({ navigation, route }): JSX.Element {
         </View>
       ) : (
         <View style={{ flex: 1 }} alignItems='center'>
+          <IconButton
+            style={styles.audioStyle}
+            icon={<AudioIcon />}
+            onPress={() => {
+              setPressed(true);
+            }}
+          />
           <Box w='100%' alignItems='center' justifyContent='center' mt={150}>
-            <Heading fontSize='30' color='white' textAlign='center'>
-              {t('Where do you \n work?')}
-            </Heading>
+            <TextHighlighter style={styles.heading} text={t('Where do you \n work?')} pressed={pressed} setPressed={setPressed} />
             <Box w={200} mt={70} borderColor={Colors.outline} borderRadius='5px' borderWidth={selectedAddress ? '2px' : '0px'}>
               <AddressInput
                 setAddress={setSelectedAddress}
-                placeholder={selectedAddress?.description || 'Address'}
+                placeholder={selectedAddress?.description || t('Address')}
               />
             </Box>
           </Box>
@@ -119,9 +127,7 @@ export default function AddressSetup({ navigation, route }): JSX.Element {
             w='200px'
             onPress={() => selectedAddress ? handleSubmit() : alert('Please complete all fields')}
           >
-            <Text fontSize='20' color='white' textAlign='center'>
-              {t('Create Account')}
-            </Text>
+            <TextHighlighter style={styles.buttonText} text={t('Create Account')} pressed={pressed} setPressed={setPressed} />
           </SharpButton>
           <View style={{ position: 'absolute', bottom: 0, left: 0, right: 0, marginBottom: 50 }}>
             <HStack
@@ -144,5 +150,5 @@ export default function AddressSetup({ navigation, route }): JSX.Element {
       )}
     </>
   );
-  
+
 }
