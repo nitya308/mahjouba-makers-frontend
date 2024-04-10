@@ -14,20 +14,11 @@ export default function SharpButton({
   rightIcon?: JSX.Element,
 } & IButtonProps>): JSX.Element {
   return <Button
-    bgColor={Colors.buttonMain}
-    style={{
-      shadowColor: '#000',
-      shadowOffset: {
-        width: -2,
-        height: 2,
-      },
-      shadowRadius: 0,
-      shadowOpacity: 1,
-    }}
+    bgColor= '#3A3449'
     outlineColor='black'
-    borderColor={Colors.outline}
-    borderRadius={2}
-    borderWidth={1}
+    paddingTop={3}
+    paddingBottom={3}
+    borderRadius={40}
     leftIcon={leftIcon}
     rightIcon={rightIcon}
     _pressed={{

@@ -14,7 +14,7 @@ function App() {
     <RootStack.Navigator  screenOptions={{
       headerTitle: '',
       headerTransparent: true,
-      cardStyle: { backgroundColor: 'black' }, 
+      cardStyle: { backgroundColor: 'white' }, 
     }}
     >
       <RootStack.Screen name="Welcome" component={Welcome} />

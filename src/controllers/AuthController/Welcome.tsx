@@ -34,15 +34,15 @@ export default function Welcome({ navigation }) {
           <VStack space={2} alignItems="center">
             <MahjoubaLogo width='141px' height='104.88px' />
             <Box height='65px' width='100%' />
-            <SharpButton width='188px' height='42px' my='10px'
+            <SharpButton width='188px' my='10px'
               size='sm' onPress={() => handleLanguageSelection(Languages.EN)}>
               <TextHighlighter style={styles.buttonText} text={'Welcome'} pressed={pressed} setPressed={setPressed} />
             </SharpButton>
-            <SharpButton width='188px' height='42px' my='10px'
+            <SharpButton width='188px' my='10px'
               size='sm' onPress={() => handleLanguageSelection(Languages.FR)}>
               <TextHighlighter style={styles.buttonText} text={'Bienvenue'} pressed={pressed} setPressed={setPressed} />
             </SharpButton>
-            <SharpButton width='188px' height='42px' my='10px'
+            <SharpButton width='188px' my='10px'
               size='sm' onPress={() => handleLanguageSelection(Languages.AR)}>
               <TextHighlighter style={styles.buttonText} text={'مرحباً'} pressed={pressed} setPressed={setPressed} />
             </SharpButton>
