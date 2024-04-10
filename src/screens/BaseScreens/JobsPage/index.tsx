@@ -1,32 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import BaseView from 'components/BaseView';
 import JobCard from 'components/JobCard';
 import { Animated, StyleSheet, FlatList, ScrollView, SafeAreaView } from 'react-native';
-import { Text, VStack, Button, IconButton, Spinner } from 'native-base';
+import { Text, VStack, Button, IconButton, Spinner, Spacer } from 'native-base';
 import useAppSelector from 'hooks/useAppSelector';
-import { fonts } from 'utils/constants';
 import { userDataSelector } from 'redux/slices/userDataSlice';
-import { jobsSelector, pullNextJobsPage } from 'redux/slices/jobsSlice';
+import { jobsSelector } from 'redux/slices/jobsSlice';
 import { Pressable, View } from 'react-native';
 import { Job } from 'types/job';
-import { CheckBox } from 'react-native-elements';
-import { TouchableOpacity } from 'react-native';
-import { Modal } from 'react-native';
-import { Box, HStack } from 'native-base';
-import MaterialChip from '../../../components/MaterialChip';
-import { IMaterial } from 'types/material';
-import MaterialSelector from 'components/MaterialSelector';
 import { useTranslation } from 'react-i18next';
 import AudioIcon from '../../../assets/audio_icon.svg';
-import * as Speech from 'expo-speech';
-import i18next from 'i18next';
-import { integer } from 'aws-sdk/clients/cloudfront';
 import { PartType } from 'types/part_type';
 import { ScreenWidth } from 'react-native-elements/dist/helpers';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { ItemClick } from 'native-base/lib/typescript/components/composites/Typeahead/useTypeahead/types';
 import AppStyles from 'styles/commonstyles';
 import TextHighlighter from 'components/SpeechHighlighter';
+import JobSearchPic from '../../../assets/job_search.svg';
 
 const JobsPage = ({
   setSortField,
@@ -57,7 +44,7 @@ const JobsPage = ({
     setModalVisible(!isModalVisible);
   };
   const updateResultArray = () => {
-    console.log('darawuzhere', jobFeedIds);
+    // console.log('darawuzhere', jobFeedIds);
     const transformedArray = jobFeedIds.flatMap((jobId) => {
       const job = jobsMap[jobId];
       const part = partsMap[job.partTypeId];
@@ -141,18 +128,32 @@ const JobsPage = ({
 
   return (
     <SafeAreaView>
-      <ScrollView>
-        <IconButton
+      <ScrollView style={AppStyles.mainContainer}>
+        {/* <IconButton
           style={AppStyles.audioStyle}
           icon={<AudioIcon />}
           onPress={() => {
             setPressed(true);
           }}
-        />
-        <VStack width="100%" mt='20px' alignItems='center'>
-          <TextHighlighter style={AppStyles.center_heading} text={t('Job Search')} pressed={pressed} setPressed={setPressed} />
+        /> */}
 
-          <TouchableOpacity onPress={toggleModal} style={styles.button}>
+        <JobSearchPic width={ScreenWidth * .9} height={200} style={styles.topImageStyle} />
+
+        <Spacer size={10} />
+
+        <TextHighlighter style={AppStyles.left_heading} text={t('Piece Selection')} pressed={pressed} setPressed={setPressed} />
+        
+        <Spacer size={5} />
+        
+        <TextHighlighter
+          style={{ width: '70%' }}
+          text={t('Choose a piece to make for the Mahjouba Motorcycle. Pieces are recommended to you based on location and your preferred materials.')}
+          pressed={pressed} setPressed={setPressed} />
+
+        <VStack width="100%" alignItems='center'>
+
+
+          {/* <TouchableOpacity onPress={toggleModal} style={styles.button}>
             <Text> Materials <Text style={styles.plusSign}>+</Text> </Text>
           </TouchableOpacity>
 
@@ -169,12 +170,12 @@ const JobsPage = ({
                 </TouchableOpacity>
               </View>
             </View>
-          </Modal>
+          </Modal> */}
 
           <FlatList
             horizontal
             data={resultArray}
-            style={{ height: 500, marginTop: 30, width: '100%' }}
+            style={{ height: 450, width: '100%' }}
             contentContainerStyle={{ paddingVertical: 16 }}
             contentInsetAdjustmentBehavior="never"
             snapToAlignment="center"
@@ -204,14 +205,14 @@ const JobsPage = ({
             keyExtractor={(item) => item.job._id} // assuming jobId is a unique identifier
           />
 
-          {cursor && (
+          {/* {cursor && (
             <Button onPress={pullNextPage} m='5px'>
               pull next page
             </Button>
           )}
           <Button onPress={reloadJobs} m='5px'>
             reload
-          </Button>
+          </Button> */}
         </VStack>
       </ScrollView>
     </SafeAreaView>
@@ -256,6 +257,11 @@ const styles = StyleSheet.create({
   modalFont: {
     fontSize: 20,
     color: 'white',
+  },
+  topImageStyle: {
+    position: 'absolute',
+    top: 0,
+    right: -100,
   },
 
 });
