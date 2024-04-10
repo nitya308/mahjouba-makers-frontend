@@ -5,7 +5,7 @@ export enum BaseTabRoutes {
   JOBS = 'home',
   PROFILE = 'profile',
   CURRJOB = 'my job',
-  BULLETIN = 'bulletin',
+  BULLETIN = 'workshops',
   PAYMENT = 'payment',
 }
 

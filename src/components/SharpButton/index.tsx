@@ -16,8 +16,9 @@ export default function SharpButton({
   return <Button
     bgColor= '#3A3449'
     outlineColor='black'
-    paddingTop={3}
-    paddingBottom={3}
+    padding={2.5}
+    paddingLeft={5}
+    paddingRight={5}
     borderRadius={40}
     leftIcon={leftIcon}
     rightIcon={rightIcon}
