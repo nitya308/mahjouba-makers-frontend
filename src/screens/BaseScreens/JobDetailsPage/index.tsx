@@ -13,6 +13,7 @@ import AudioIcon from '../../../assets/audio_icon.svg';
 import { fonts } from 'utils/constants';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import XIcon from 'assets/x.svg';
+import BackCircle from 'assets/back_circle.svg';
 import { TouchableOpacity } from 'react-native';
 import Money1 from '../../../assets/money1.svg';
 import Placeholder from 'assets/no_image_placeholder.png';
@@ -60,8 +61,8 @@ const JobDetailsPage = ({
   }
 
   return (
-    <SafeAreaView>
-      <ScrollView>
+    <View style={styles.container}>
+      <ScrollView >
         <IconButton
           style={AppStyles.audioStyle}
           icon={<AudioIcon />}
@@ -69,16 +70,27 @@ const JobDetailsPage = ({
             setPressed(true);
           }}
         />
+
         <TouchableOpacity style={styles.exit} onPress={exit}>
-          <XIcon width={40} height={40} />
+          <BackCircle width={40} height={40} />
         </TouchableOpacity>
+
+        {part && job &&
+          <>
+            <VStack width="100%" alignItems='center' mb={5}>
+              {!part.imageIds.length ? <Image alt='placeholder' source={Placeholder} style={styles.image} /> : <Image alt='part' source={{ uri: imageUrl }} style={styles.image} />}
+            </VStack>
+            <TextHighlighter style={AppStyles.left_heading} text={t(part.name)} pressed={pressed} setPressed={setPressed} />
+          </>
+        }
+
 
         <VStack width="100%" mt='20px' alignItems='center'>
           {part && job ? (
             <>
               {!part.imageIds.length ? <Image alt='placeholder' source={Placeholder} style={styles.image} /> : <Image alt='part' source={{ uri: imageUrl }} style={styles.image} />}
               <View style={styles.infoContainer}>
-                <TextHighlighter style={styles.name} text={t(part.name)} pressed={pressed} setPressed={setPressed} />
+
               </View>
               <View style={styles.infoContainer}>
                 <View style={styles.textAndIcon}>
@@ -157,13 +169,30 @@ const JobDetailsPage = ({
           )}
         </VStack>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   exit: {
-    padding: 10,
+    position: 'absolute',
+    top: 25,
+    left: 5,
+    zIndex: 5,
+  },
+  container: {
+    backgroundColor: '#ffffff',
+    height: '90%',
+    width: '100%',
+    borderTopLeftRadius: 40,
+    borderTopRightRadius: 40,
+    shadowColor: '#000000',
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.27,
+    paddingHorizontal: 20,
   },
   acceptButton: {
     alignSelf: 'center',
@@ -206,13 +235,13 @@ const styles = StyleSheet.create({
     lineHeight: 24,
   },
   image: {
-    width: '90%',
-    height: 200,
-    marginBottom: 20,
+    marginTop: 75,
+    height: 300,
   },
   name: {
     fontSize: 30,
     fontFamily: fonts.bold,
+    marginTop: 10,
   },
   text: {
     lineHeight: 25,

@@ -17,7 +17,7 @@ import AppStyles from 'styles/commonstyles';
 import SharpButton from 'components/SharpButton';
 
 
-const JobCard = ({ job, part, handleSelect }: { job: Job, part: PartType, handleSelect: (job?: Job) => void; }) => {
+const JobCard = ({ job, part, setSelectedJobId }: { job: Job, part: PartType, setSelectedJobId: (id: string) => void }) => {
 
   const { t } = useTranslation();
 
@@ -25,6 +25,10 @@ const JobCard = ({ job, part, handleSelect }: { job: Job, part: PartType, handle
   const imageUrl = photoMap?.[part?.imageIds[0]]?.fullUrl;
 
   const [pressed, setPressed] = useState(false);
+
+  const handleSelect = (selectedJob: Job) => {
+    setSelectedJobId(selectedJob._id);
+  };
 
   return (
     <View style={styles.jobCardContainer}>

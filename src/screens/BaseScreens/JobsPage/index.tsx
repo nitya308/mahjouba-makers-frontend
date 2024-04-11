@@ -1,6 +1,8 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import React, { useEffect, useState } from 'react';
 import JobCard from 'components/JobCard';
 import { Animated, StyleSheet, FlatList, ScrollView, SafeAreaView } from 'react-native';
+import Modal from 'react-native-modal';
 import { Text, VStack, Button, IconButton, Spinner, Spacer } from 'native-base';
 import useAppSelector from 'hooks/useAppSelector';
 import { userDataSelector } from 'redux/slices/userDataSlice';
@@ -14,51 +16,28 @@ import { ScreenWidth } from 'react-native-elements/dist/helpers';
 import AppStyles from 'styles/commonstyles';
 import TextHighlighter from 'components/SpeechHighlighter';
 import JobSearchPic from '../../../assets/job_search.svg';
+import JobDetailsPage from '../JobDetailsPage';
 
 const JobsPage = ({
-  setSortField,
-  setSortOrder,
-  pullNextPage,
   handleSelect,
-  reloadJobs,
 }: {
-  setSortField: (newField?: string) => void;
-  setSortOrder: (order: 1 | -1) => void;
-  pullNextPage: () => void;
   handleSelect: (job?: Job) => void;
-  reloadJobs: () => void;
 }) => {
   const { userData } = useAppSelector(userDataSelector);
-  const { cursor, jobFeedIds, jobsMap, partsMap, materialsMap, loading, currentJobId } = useAppSelector(jobsSelector);
+  const { jobFeedIds, jobsMap, partsMap, materialsMap, loading } = useAppSelector(jobsSelector);
   const { t } = useTranslation();
+  const [selectedJobId, setSelectedJobId] = useState<string | undefined>();
 
-  const [isModalVisible, setModalVisible] = useState(false);
-  const materialNames = Object.values(materialsMap).map(material => material.name);
-  const [selectedMaterialIds, setSelectedMaterialIds] = useState<string[]>([]);
-  const [scrollViewWidth, setScrollViewWidth] = React.useState(0);
-  const boxWidth = scrollViewWidth * 0.7;
-  const boxDistance = scrollViewWidth - boxWidth;
-  const halfBoxDistance = boxDistance / 2;
-  const pan = React.useRef(new Animated.ValueXY()).current;
-  const toggleModal = () => {
-    setModalVisible(!isModalVisible);
-  };
-  const updateResultArray = () => {
+  const [resultArray, setResultArray] = useState<{ job: Job, part: PartType }[]>([]);
+  const calculateMatchingJobs = () => {
     // console.log('darawuzhere', jobFeedIds);
     const transformedArray = jobFeedIds.flatMap((jobId) => {
       const job = jobsMap[jobId];
       const part = partsMap[job.partTypeId];
-
-      if (part?.materialIds && part?.materialIds.some(materialId => selectedMaterialIds.includes(materialId))) {
-        const materials = part?.materialIds?.map((materialId) => {
-          const material = materialsMap[materialId];
-          return material ? material.name : '';
-        }) || [];
-
+      if (part?.materialIds && part?.materialIds.some(materialId => userData?.materialIds?.includes(materialId))) {
         return [{
           job,
           part,
-          materials,
         }];
       } else {
         return []; // Return an empty array for entries that don't match the condition
@@ -68,26 +47,19 @@ const JobsPage = ({
     setResultArray(transformedArray);
   };
 
-  const [resultArray, setResultArray] = useState<{ job: Job, part: PartType, materials: string[] }[]>([]);
   useEffect(() => {
-    updateResultArray();
+    calculateMatchingJobs();
+  }, [userData, materialsMap, jobFeedIds, jobsMap, partsMap]);
 
-  }, [selectedMaterialIds, materialsMap, jobFeedIds, jobsMap, partsMap]);
-
-  useEffect(() => {
-    if (resultArray.length == 0) {
-      updateResultArray();
-    }
-    if (selectedMaterialIds.length == 0) {
-      setSelectedMaterialIds(userData?.materialIds ? userData?.materialIds : []);
-
-    }
-
-  }, []);
+  const [scrollViewWidth, setScrollViewWidth] = React.useState(0);
+  const boxWidth = scrollViewWidth * 0.7;
+  const boxDistance = scrollViewWidth - boxWidth;
+  const halfBoxDistance = boxDistance / 2;
+  const pan = React.useRef(new Animated.ValueXY()).current;
 
   const renderItem = ({ item, index }: {
     item: {
-      job: Job, part: PartType, materials: string[]
+      job: Job, part: PartType,
     }, index: number
   }) => (
     <Animated.View
@@ -107,8 +79,8 @@ const JobsPage = ({
         ],
       }}>
       <View style={{ alignContent: 'center', alignItems: 'center' }}>
-        <Pressable style={styles.jobCard} key={item.job._id} onPress={() => handleSelect(item.job)}>
-          <JobCard job={item.job} part={item.part} handleSelect={handleSelect} />
+        <Pressable style={styles.jobCard} key={item.job._id} onPress={() => setSelectedJobId(item.job._id)}>
+          <JobCard job={item.job} part={item.part} setSelectedJobId={setSelectedJobId} />
         </Pressable>
       </View>
     </Animated.View>
@@ -129,13 +101,13 @@ const JobsPage = ({
   return (
     <SafeAreaView>
       <ScrollView style={AppStyles.mainContainer}>
-        {/* <IconButton
+        <IconButton
           style={AppStyles.audioStyle}
           icon={<AudioIcon />}
           onPress={() => {
             setPressed(true);
           }}
-        /> */}
+        />
 
         <JobSearchPic width={ScreenWidth * .9} height={200} style={styles.topImageStyle} />
 
@@ -186,17 +158,16 @@ const JobsPage = ({
             renderItem={renderItem}
             keyExtractor={(item) => item.job._id} // assuming jobId is a unique identifier
           />
-
-          {/* {cursor && (
-            <Button onPress={pullNextPage} m='5px'>
-              pull next page
-            </Button>
-          )}
-          <Button onPress={reloadJobs} m='5px'>
-            reload
-          </Button> */}
         </VStack>
       </ScrollView>
+      <Modal
+        style={{ justifyContent: 'flex-end', margin: 0}}
+        backdropOpacity={0}
+        isVisible={selectedJobId != undefined}>
+        {selectedJobId &&
+          <JobDetailsPage jobId={selectedJobId ?? ''} exit={() => setSelectedJobId(undefined)} />
+        }
+      </Modal>
     </SafeAreaView>
 
   );
@@ -222,23 +193,7 @@ const styles = StyleSheet.create({
     color: '#080026',
   },
   modalContainer: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalContent: {
-    backgroundColor: 'rgba(0, 0, 0, 1)',
-    padding: 20,
-    borderRadius: 10,
-    width: 370,
-    alignItems: 'center',
-    borderColor: 'white',
-    borderWidth: 1,
-  },
-  modalFont: {
-    fontSize: 20,
-    color: 'white',
+    height: 300,
   },
   topImageStyle: {
     position: 'absolute',
