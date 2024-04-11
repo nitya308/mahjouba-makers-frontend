@@ -17,17 +17,14 @@ import AppStyles from 'styles/commonstyles';
 import SharpButton from 'components/SharpButton';
 
 
-const JobCard = ({ job, part, materials }: { job: Job, part: PartType, materials: string[] }) => {
+const JobCard = ({ job, part, handleSelect }: { job: Job, part: PartType, handleSelect: (job?: Job) => void; }) => {
 
   const { t } = useTranslation();
 
   const photoMap = useAppSelector((state) => state.photos.photosMap);
-  const [pressed, setPressed] = useState(false);
+  const imageUrl = photoMap?.[part?.imageIds[0]]?.fullUrl;
 
-  // Display different image depending on current jobStatus
-  const imageUrl = (job?.jobStatus === JOB_STATUS_ENUM.COMPLETE || job?.jobStatus === JOB_STATUS_ENUM.PENDING_REVIEW)
-    ? (photoMap?.[job?.imageIds[0]]?.fullUrl)
-    : (photoMap?.[part?.imageIds[0]]?.fullUrl);
+  const [pressed, setPressed] = useState(false);
 
   return (
     <View style={styles.jobCardContainer}>
@@ -49,11 +46,10 @@ const JobCard = ({ job, part, materials }: { job: Job, part: PartType, materials
         }
       </View>
 
-
       <View style={[AppStyles.row, { marginHorizontal: 10 }]}>
-        <TextHighlighter style={styles.price} text={t(job?.price?.toString() + '  MAD')} pressed={pressed} setPressed={setPressed} />
+        <TextHighlighter style={styles.price} text={t(job?.price?.toString() + ' MAD')} pressed={pressed} setPressed={setPressed} />
         <SharpButton my='10px'
-          size='sm' onPress={() => console.log('pressed')}>
+          size='sm' onPress={() => handleSelect(job)}>
           <TextHighlighter style={AppStyles.buttonText} text={t('View')} pressed={pressed} setPressed={setPressed} />
         </SharpButton>
       </View>
@@ -110,7 +106,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingTop: 10,
   },
-
   price: {
     fontSize: 20,
   },

@@ -108,7 +108,7 @@ const JobsPage = ({
       }}>
       <View style={{ alignContent: 'center', alignItems: 'center' }}>
         <Pressable style={styles.jobCard} key={item.job._id} onPress={() => handleSelect(item.job)}>
-          <JobCard job={item.job} part={item.part} materials={item.materials} />
+          <JobCard job={item.job} part={item.part} handleSelect={handleSelect} />
         </Pressable>
       </View>
     </Animated.View>
@@ -142,35 +142,17 @@ const JobsPage = ({
         <Spacer size={10} />
 
         <TextHighlighter style={AppStyles.left_heading} text={t('Piece Selection')} pressed={pressed} setPressed={setPressed} />
-        
+
         <Spacer size={5} />
-        
+
         <TextHighlighter
           style={{ width: '70%' }}
           text={t('Choose a piece to make for the Mahjouba Motorcycle. Pieces are recommended to you based on location and your preferred materials.')}
           pressed={pressed} setPressed={setPressed} />
 
+        <Spacer size={5} />
+
         <VStack width="100%" alignItems='center'>
-
-
-          {/* <TouchableOpacity onPress={toggleModal} style={styles.button}>
-            <Text> Materials <Text style={styles.plusSign}>+</Text> </Text>
-          </TouchableOpacity>
-
-          <Modal visible={isModalVisible} animationType="fade" transparent={true}  >
-            <View style={styles.modalContainer}>
-              <View style={styles.modalContent}>
-                <Text style={[styles.modalFont, { marginTop: 10, marginBottom: 20 }]}>Select Materials</Text>
-                <MaterialSelector
-                  selectedMaterialIds={selectedMaterialIds}
-                  setSelectedMaterialIds={setSelectedMaterialIds}
-                />
-                <TouchableOpacity onPress={toggleModal}>
-                  <Text style={styles.modalFont}>Close</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </Modal> */}
 
           <FlatList
             horizontal
