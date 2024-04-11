@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import SharpButton from 'components/SharpButton';
 import TextHighlighter from 'components/SpeechHighlighter';
 import React, { useState } from 'react';
@@ -8,10 +9,12 @@ import AppStyles from 'styles/commonstyles';
 import HammerIcon from '../../../assets/hammer2.svg';
 import { HStack, VStack } from 'native-base';
 import WorkshopCard from 'components/WorkshopCard';
+import Modal from 'react-native-modal';
 
 const BulletinPage = () => {
   const [pressed, setPressed] = useState(false);
   const { t } = useTranslation();
+  const [selectedWorkshopId, setSelectedWorkshopId] = useState<string | undefined>();
 
   return (
     <View>
@@ -36,6 +39,12 @@ const BulletinPage = () => {
           </VStack>
 
         </ScrollView>
+        <Modal
+          style={{ justifyContent: 'flex-end', margin: 0 }}
+          backdropOpacity={0}
+          isVisible={selectedWorkshopId != undefined}>
+          <Text>Modal</Text>
+        </Modal>
       </SafeAreaView>
     </View>
   );
