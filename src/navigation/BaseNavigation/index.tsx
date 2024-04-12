@@ -28,9 +28,9 @@ const MyTheme = {
   ...DarkTheme,
   colors: {
     ...DarkTheme.colors,
-    background: 'black',
-    card: 'black',
-    text: 'white',
+    background: 'white',
+    card: 'white',
+    text: 'black',
   },
 };
 

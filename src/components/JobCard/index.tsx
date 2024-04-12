@@ -14,84 +14,70 @@ import { useTranslation } from 'react-i18next';
 import { Icon } from 'react-native-elements';
 import TextHighlighter from 'components/SpeechHighlighter';
 import AppStyles from 'styles/commonstyles';
+import SharpButton from 'components/SharpButton';
 
 
-const JobCard = ({ job, part, materials }: { job: Job, part: PartType, materials: string[] }) => {
+const JobCard = ({ job, part, setSelectedJobId }: { job: Job, part: PartType, setSelectedJobId: (id: string) => void }) => {
 
   const { t } = useTranslation();
 
   const photoMap = useAppSelector((state) => state.photos.photosMap);
+  const imageUrl = photoMap?.[part?.imageIds[0]]?.fullUrl;
+
   const [pressed, setPressed] = useState(false);
 
-  // Display different image depending on current jobStatus
-  const imageUrl = (job?.jobStatus === JOB_STATUS_ENUM.COMPLETE || job?.jobStatus === JOB_STATUS_ENUM.PENDING_REVIEW)
-    ? (photoMap?.[job?.imageIds[0]]?.fullUrl)
-    : (photoMap?.[part?.imageIds[0]]?.fullUrl);
+  const handleSelect = (selectedJob: Job) => {
+    setSelectedJobId(selectedJob._id);
+  };
 
   return (
     <View style={styles.jobCardContainer}>
+
+      <IconButton
+        style={AppStyles.audioStyle}
+        icon={<AudioIcon />}
+        onPress={() => {
+          setPressed(true);
+        }}
+      />
+
+      <TextHighlighter style={styles.name} text={t(part?.name)} pressed={pressed} setPressed={setPressed} />
+
       <View style={styles.imageWrapper}>
         {part?.imageIds?.length
           ? <Image source={{ uri: imageUrl }} style={styles.image} alt="part image" />
           : <Image source={Placeholder} style={styles.image} alt="image not found" />
         }
       </View>
-      <View style={styles.cardContent}>
-        <IconButton
-          style={AppStyles.audioStyle}
-          icon={<AudioIcon />}
-          onPress={() => {
-            setPressed(true);
-          }}
-        />
-        <View style={styles.namePriceContainer}>
-          <TextHighlighter style={styles.name} text={t(part?.name)} pressed={pressed} setPressed={setPressed} />
-        </View>
-        {materials && materials?.length > 0 && (
-          <View style={styles.materialContainer}>
-            <HammerIcon />
-            {materials.map((material, index) => (
-              <View key={material}>
-                {index < materials.length - 1 &&
-                  <TextHighlighter style={styles.materialChip} text={t(material + ',')} pressed={pressed} setPressed={setPressed} />
-                }
-                {index == materials.length - 1 &&
-                  <TextHighlighter style={styles.materialChip} text={t(material)} pressed={pressed} setPressed={setPressed} />
-                }
-              </View>
-            ))}
-          </View>
-        )}
-        <View style={styles.materialContainer}>
-          <Money1 />
-          <TextHighlighter style={styles.price} text={t(job?.price?.toString())} pressed={pressed} setPressed={setPressed} />
-        </View>
-        {job?.completionDate && (
-          <Text style={styles.completionDate}>
-            Completed {new Date(job.completionDate).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' })}
-          </Text>
-        )}
+
+      <View style={[AppStyles.row, { marginHorizontal: 10 }]}>
+        <TextHighlighter style={styles.price} text={t(job?.price?.toString() + ' MAD')} pressed={pressed} setPressed={setPressed} />
+        <SharpButton my='10px'
+          size='sm' onPress={() => handleSelect(job)}>
+          <TextHighlighter style={AppStyles.buttonText} text={t('View')} pressed={pressed} setPressed={setPressed} />
+        </SharpButton>
       </View>
     </View>
+
   );
 };
 
 const styles = StyleSheet.create({
   jobCardContainer: {
-    backgroundColor: '#333333', //weird error with: #ffffff1a
-    borderWidth: 1,
-    borderColor: '#FFC01D',
     borderRadius: 10,
-    borderBottomLeftRadius: 10,
-    marginBottom: 10,
-    shadowColor: '#FFC01D',
-    shadowOpacity: 1,
-    shadowOffset: { width: -17, height: 0 },
-    paddingBottom: 70,
+    // shadowColor: '#3A3449',
+    // shadowOpacity: 0.15,
+    // shadowRadius: 1,
+    borderWidth: 2,
+    borderColor: '#F2F1EC',
+
+  },
+  name: {
+    padding: 10,
+    fontSize: 30,
   },
   completionDate: {
     fontSize: 18,
-    color: '#00FF00',
     textAlign: 'right',
   },
   image: {
@@ -111,7 +97,6 @@ const styles = StyleSheet.create({
   },
   materialChip: {
     fontSize: 20,
-    color: 'white',
   },
   cardContent: {
     paddingLeft: 20,
@@ -125,14 +110,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingTop: 10,
   },
-  name: {
-    paddingTop: 20,
-    fontSize: 30,
-    color: '#FFFFFF',
-  },
   price: {
     fontSize: 20,
-    color: 'white',
   },
   audioIcon: {
     position: 'absolute',

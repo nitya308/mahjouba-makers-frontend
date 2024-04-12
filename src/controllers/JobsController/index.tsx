@@ -60,16 +60,12 @@ export default function JobsController(): JSX.Element {
   return <View flex={1}>
     {currentJobId ?
       <CurrentJobPage setDetailsPageOpen={setDetailsPageOpen}></CurrentJobPage> :
-      detailsPageOpen && selectedJob ?
-        <JobDetailsPage
-          jobId={selectedJob._id}
-          exit={handleJobSelect} /> :
-        <JobsPage
-          handleSelect={handleJobSelect}
-          pullNextPage={pullNextPage}
-          setSortField={setSortField}
-          setSortOrder={setSortOrder}
-          reloadJobs={reloadJobs} />
+      <JobsPage
+        handleSelect={handleJobSelect}
+        pullNextPage={pullNextPage}
+        setSortField={setSortField}
+        setSortOrder={setSortOrder}
+        reloadJobs={reloadJobs} />
     }
   </View>;
 }

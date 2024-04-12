@@ -37,9 +37,9 @@ const TextHighlighter = ({ text, pressed, setPressed, style }: { text: string, p
   const [curr, setCurr] = useState('');
   const [after, setAfter] = useState('');
   return (
-    <Text style={[style ? style : {}, style?.color ? {} : { color: Colors.white }, style?.fontFamily ? {} : { fontFamily: fonts.regular }]}>
+    <Text style={[style ? style : {}, style?.color ? {} : { color: Colors.black }, style?.fontFamily ? {} : { fontFamily: fonts.regular }]}>
       <Text>{before}</Text>
-      <Text style={{ backgroundColor: 'yellow', color: 'black' }}>{curr}</Text>
+      <Text style={{ backgroundColor: 'yellow' }}>{curr}</Text>
       <Text>{after}</Text>
     </Text>
   );
