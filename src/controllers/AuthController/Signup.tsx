@@ -1,32 +1,28 @@
-import React, { useCallback, useRef, useState, useEffect, useTransition } from 'react';
-import { Text, Input, VStack, Center, Button, Box, ScrollView, Spacer } from 'native-base';
-import { phonePassSignup, userPassSignUp } from 'utils/auth';
+import React, { useCallback, useRef, useState, useEffect } from 'react';
+import { Text, Input, VStack, Center, Box, ScrollView, Spacer } from 'native-base';
+import { phonePassSignup } from 'utils/auth';
 import SharpButton from 'components/SharpButton';
-import IDSetup from '..//SetupController/IDSetup';
-import { FirebaseRecaptchaVerifierModal, FirebaseRecaptchaBanner } from 'expo-firebase-recaptcha';
+import { FirebaseRecaptchaVerifierModal } from 'expo-firebase-recaptcha';
 import { app, auth } from '../../../firebase';
-import { ConfirmationResult, PhoneAuthProvider, signInWithCredential } from 'firebase/auth';
+import { PhoneAuthProvider, signInWithCredential } from 'firebase/auth';
 import useAppDispatch from 'hooks/useAppDispatch';
 import { setName as setReduxName } from 'redux/slices/authSlice';
-import { SafeAreaView } from 'react-native';
+import { SafeAreaView, TextInput, View } from 'react-native';
 import Colors from 'utils/Colors';
-import { StyleSheet } from 'react-native';
 import AudioIcon from '../../assets/audio_icon.svg';
 import { IconButton } from 'native-base';
 import TextHighlighter from 'components/SpeechHighlighter';
 import { useTranslation } from 'react-i18next';
 import styles from 'styles/onboarding';
+import AppStyles from 'styles/commonstyles';
 
 const Signup = () => {
   const dispatch = useAppDispatch();
-
 
   const recaptchaVerifier = useRef<any>(null);
   const [name, setName] = useState<string | undefined>();
   const [phone, setPhone] = useState<string | undefined>();
   const [confirmationCode, setConfirmationCode] = useState<string | undefined>();
-  // const [password, setPassword] = useState<string | undefined>();
-  // const [passConfirm, setPassConfirm] = useState<string | undefined>();
   const [error, setError] = useState<string | undefined>();
   const [phoneVerify, setPhoneVerify] = useState(false);
   const [confirmResult, setConfirmResult] = useState<string | undefined>();
@@ -50,12 +46,7 @@ const Signup = () => {
       setError('Complete required fields');
       return;
     }
-    // else if (password != passConfirm) {
-    //   setError('Passwords do not match');
-    //   return;
-    // }
     try {
-      // console.log(recaptchaVerifier.current);
       dispatch(setReduxName(name));
       const result = await phonePassSignup(phone, recaptchaVerifier.current);
       console.log(result);
@@ -91,11 +82,8 @@ const Signup = () => {
           setPressed(true);
         }}
       />
-      <ScrollView>
-        
-        <VStack space={2}>
-
-
+      <ScrollView style={AppStyles.mainContainer}>
+        <VStack space={4}>
           <FirebaseRecaptchaVerifierModal
             ref={recaptchaVerifier}
             firebaseConfig={app.options}
@@ -103,107 +91,62 @@ const Signup = () => {
           />
           {
             !phoneVerify ?
-              <VStack space={2} mb='10px' alignItems='center' mt='73px'>
-                <TextHighlighter style={styles.heading} text={t('Enter your name \n and phone number')} pressed={pressed} setPressed={setPressed} />
-                <Box height='70px' />
-                <TextHighlighter style={styles.subheading} text={t('Name')} pressed={pressed} setPressed={setPressed} />
-                <Input
-                  w='190px'
-                  borderRadius='2px'
-                  paddingY='10px'
-                  paddingX='16px'
-                  borderColor={Colors.outline}
-                  borderWidth='1px'
-                  placeholderTextColor='#737B7D'
-                  placeholder='Name'
-                  color='white'
-                  autoCapitalize='none'
-                  size='sm'
-                  type='text'
+              <View>
+                <Spacer size={20} />
+
+                <VStack space={10} alignItems="center">
+                  <TextHighlighter style={styles.heading} text={t('What’s your name \n and phone number?')} pressed={pressed} setPressed={setPressed} />
+                </VStack>
+
+                <Spacer size={10} />
+
+                <TextHighlighter style={styles.inputLabel} text={t('Name')} pressed={pressed} setPressed={setPressed} />
+                <TextInput
+                  style={styles.inputBoxStyle}
+                  placeholder='Abdelali Arib'
                   value={name}
                   onChangeText={setName}
                 />
-                <TextHighlighter style={styles.subheading} text={t('Phone Number')} pressed={pressed} setPressed={setPressed} />
-                <Input
-                  w='190px'
-                  borderRadius='2px'
-                  paddingY='10px'
-                  paddingX='16px'
-                  borderColor={Colors.outline}
-                  borderWidth='1px'
-                  placeholderTextColor='#737B7D'
+
+                <Spacer size={10} />
+
+                <TextHighlighter style={styles.inputLabel} text={t('Phone Number')} pressed={pressed} setPressed={setPressed} />
+                <TextInput
+                  style={styles.inputBoxStyle}
                   placeholder='Phone #'
-                  autoCapitalize='none'
-                  color='white'
-                  size='sm'
-                  type='text'
                   value={phone}
                   onChangeText={setPhone}
                 />
-                {/* <Text fontSize='md' mx='auto'>
-              Password
-            </Text>
-            <Input 
-              w='100%' 
-              borderRadius='2px'  
-              autoCapitalize='none' 
-              paddingY='10px' 
-              paddingX='16px' 
-              borderColor='black'
-              borderWidth='1px'
-              placeholder='Password' 
-              size='sm'
-              type='password' 
-              value={password} 
-              onChangeText={setPassword} 
-            />
-            <Text fontSize='md' mx='auto'>
-              Confirm Password
-            </Text>
-            <Input 
-              w='100%' 
-              borderRadius='2px'  
-              autoCapitalize='none' 
-              paddingY='8px' 
-              paddingX='16px' 
-              borderColor='black'
-              borderWidth='1px'
-              placeholder='Confirm password' 
-              type='password' 
-              size='sm'
-              value={passConfirm} 
-              onChangeText={setPassConfirm} 
-            /> */}
-                <SharpButton w='160px' my='10px'
-                  size='sm' onPress={handleSubmit}>
-                  <TextHighlighter style={styles.buttonText} text={t('Submit')} pressed={pressed} setPressed={setPressed} />
-                </SharpButton>
-              </VStack> :
-              <VStack space={2} mb='10px' alignItems='center' mt='73px'>
-                <Box alignItems='center' >
-                  <TextHighlighter style={styles.heading} text={t('Confirmation Code')} pressed={pressed} setPressed={setPressed} />
-                  <Box height='20px' />
-                  <Input
-                    w='190px'
-                    borderRadius='2px'
-                    paddingY='10px'
-                    paddingX='16px'
-                    borderColor={Colors.outline}
-                    color='white'
-                    borderWidth='1px'
-                    placeholder='Ex 12346'
-                    autoCapitalize='none'
-                    size='sm'
-                    type='text'
-                    value={confirmationCode}
-                    onChangeText={setConfirmationCode}
-                  />
-                  <SharpButton w='160px' my='10px'
-                    size='sm' onPress={handlePhoneConfirm}>
-                    <TextHighlighter style={styles.subheading} text={t('Enter')} pressed={pressed} setPressed={setPressed} />
+
+                <Spacer size={10} />
+
+                <VStack space={0} alignItems="center" mt={0} mb={0}>
+                  <SharpButton size='sm' onPress={handleSubmit}>
+                    <TextHighlighter style={AppStyles.buttonText} text={t('Continue')} pressed={pressed} setPressed={setPressed} />
                   </SharpButton>
-                </Box>
-              </VStack>
+                </VStack>
+              </View>
+              :
+              <View>
+                <VStack space={0} alignItems="center" mt='100px'>
+                  <TextHighlighter style={styles.heading} text={t('Check your phone')} pressed={pressed} setPressed={setPressed} />
+                  <TextHighlighter style={styles.heading} text={t('for a code')} pressed={pressed} setPressed={setPressed} />
+                </VStack>
+                <Spacer size={10} />
+                <TextHighlighter style={styles.inputLabel} text={t('Confirmation Code')} pressed={pressed} setPressed={setPressed} />
+                <TextInput
+                  style={styles.inputBoxStyle}
+                  placeholder='Ex 12346'
+                  value={confirmationCode}
+                  onChangeText={setConfirmationCode}
+                />
+                <Spacer size={10} />
+                <VStack space={0} alignItems="center" mt={0} mb={0}>
+                  <SharpButton w='90px' size='sm' onPress={handlePhoneConfirm}>
+                    <TextHighlighter style={AppStyles.buttonText} text={t('Enter')} pressed={pressed} setPressed={setPressed} />
+                  </SharpButton>
+                </VStack>
+              </View>
           }
           {
             error &&

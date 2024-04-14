@@ -1,17 +1,17 @@
 import React, { useCallback, useRef, useState, useEffect } from 'react';
-import { Text, Input, VStack, Center, Button, Box, ScrollView, IconButton } from 'native-base';
-import { phonePassSignup, userPassSignUp } from 'utils/auth';
+import { Text, Input, VStack, Center, Box, ScrollView, IconButton, Spacer } from 'native-base';
+import { phonePassSignup } from 'utils/auth';
 import SharpButton from 'components/SharpButton';
-import IDSetup from 'controllers/SetupController/IDSetup';
-import { FirebaseRecaptchaVerifierModal, FirebaseRecaptchaBanner } from 'expo-firebase-recaptcha';
+import { FirebaseRecaptchaVerifierModal } from 'expo-firebase-recaptcha';
 import { app, auth } from '../../../firebase';
-import { ConfirmationResult, PhoneAuthProvider, signInWithCredential } from 'firebase/auth';
-import { SafeAreaView } from 'react-native';
+import { PhoneAuthProvider, signInWithCredential } from 'firebase/auth';
+import { SafeAreaView, TextInput, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import styles from 'styles/onboarding';
 import Colors from 'utils/Colors';
 import AudioIcon from '../../assets/audio_icon.svg';
 import TextHighlighter from 'components/SpeechHighlighter';
+import AppStyles from 'styles/commonstyles';
 
 const Login = () => {
   const recaptchaVerifier = useRef<any>(null);
@@ -76,8 +76,8 @@ const Login = () => {
           setPressed(true);
         }}
       />
-      <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}>
-        <VStack space={4} alignItems='center'>
+      <ScrollView style={AppStyles.mainContainer}>
+        <VStack space={4}>
           <FirebaseRecaptchaVerifierModal
             ref={recaptchaVerifier}
             firebaseConfig={app.options}
@@ -85,60 +85,49 @@ const Login = () => {
           />
           {
             !phoneVerify ?
-              <VStack space={2} alignItems="center">
-                <Box height='30px' />
-                <TextHighlighter style={styles.heading} text={t('Hey again!')} pressed={pressed} setPressed={setPressed} />
-                <Box height='10px' />
-                <TextHighlighter style={styles.heading} text={t('Enter your phone \n number to sign in')} pressed={pressed} setPressed={setPressed} />
-                <Box height='20px' />
-                <TextHighlighter style={styles.subheading} text={t('Phone Number')} pressed={pressed} setPressed={setPressed} />
-                <Input
-                  w="204px"
-                  h="42px"
-                  borderRadius='2px'
-                  py='10px'
-                  px='16px'
-                  borderColor={Colors.outline}
-                  borderWidth='1px'
+              <View>
+                <VStack space={10} alignItems="center">
+                  <Spacer size={20} />
+                  <TextHighlighter style={styles.heading} text={t('Welcome back')} pressed={pressed} setPressed={setPressed} />
+                  <TextHighlighter style={styles.heading} text={t('Login here')} pressed={pressed} setPressed={setPressed} />
+                  <Spacer size={10} />
+                </VStack>
+
+                <TextHighlighter style={styles.inputLabel} text={t('Phone Number')} pressed={pressed} setPressed={setPressed} />
+                <TextInput
+                  style={styles.inputBoxStyle}
                   placeholder='Phone #'
-                  autoCapitalize='none'
-                  size='md'
-                  type='text'
-                  color='white'
                   value={phone}
                   onChangeText={setPhone}
                 />
-                <Box height='50px' />
-                <SharpButton w='90px' h='42px' size='sm' onPress={handleSubmit}>
-                  <TextHighlighter style={styles.buttonText} text={t('Send')} pressed={pressed} setPressed={setPressed} />
-                </SharpButton>
-              </VStack>
+                <Spacer size={5} />
+                <VStack space={0} alignItems="center" mt={0} mb={0}>
+                  <SharpButton w='90px' h='42px' size='sm' onPress={handleSubmit}>
+                    <TextHighlighter style={AppStyles.buttonText} text={t('Send')} pressed={pressed} setPressed={setPressed} />
+                  </SharpButton>
+                </VStack>
+              </View>
               :
-              <VStack space={2} alignItems='center'>
-                <TextHighlighter style={styles.heading} text={t('Confirmation')} pressed={pressed} setPressed={setPressed} />
-                <TextHighlighter style={styles.subheading} text={t('Code')} pressed={pressed} setPressed={setPressed} />
-                <Box height='30px' />
-                <Input
-                  w="204px"
-                  h="42px"
-                  borderRadius='2px'
-                  py='10px'
-                  px='16px'
-                  borderColor={Colors.outline}
-                  borderWidth='1px'
+              <View>
+                <VStack space={0} alignItems="center" mt='100px'>
+                  <TextHighlighter style={styles.heading} text={t('Check your phone')} pressed={pressed} setPressed={setPressed} />
+                  <TextHighlighter style={styles.heading} text={t('for a')} pressed={pressed} setPressed={setPressed} />
+                </VStack>
+                <Spacer size={10} />
+                <TextHighlighter style={styles.inputLabel} text={t('Confirmation Code')} pressed={pressed} setPressed={setPressed} />
+                <TextInput
+                  style={styles.inputBoxStyle}
                   placeholder='Ex 12346'
-                  autoCapitalize='none'
-                  size='md'
-                  color='white'
-                  type='text'
                   value={confirmationCode}
                   onChangeText={setConfirmationCode}
                 />
-                <Box height='30px' />
-                <SharpButton w='90px' h='42px' size='sm' onPress={handlePhoneConfirm}>
-                  <TextHighlighter style={styles.buttonText} text={t('Enter')} pressed={pressed} setPressed={setPressed} />
-                </SharpButton>
-              </VStack>
+                <Spacer size={5} />
+                <VStack space={0} alignItems="center" mt={0} mb={0}>
+                  <SharpButton w='90px' size='sm' onPress={handlePhoneConfirm}>
+                    <TextHighlighter style={AppStyles.buttonText} text={t('Enter')} pressed={pressed} setPressed={setPressed} />
+                  </SharpButton>
+                </VStack>
+              </View>
           }
           {error && (
             <Center>
