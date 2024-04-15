@@ -40,6 +40,7 @@ const JobsPage = ({
   const [resultArray, setResultArray] = useState<{ job: Job, part: PartType }[]>([]);
 
   const calculateMatchingJobs = () => {
+    console.log('Calculating matching jobs', jobFeedIds);
     const transformedArray = jobFeedIds.flatMap((jobId) => {
       const job = jobsMap[jobId];
       const part = partsMap[job.partTypeId];
