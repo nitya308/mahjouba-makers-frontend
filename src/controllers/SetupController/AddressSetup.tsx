@@ -17,7 +17,7 @@ import styles from 'styles/onboarding';
 import AudioIcon from '../../assets/audio_icon.svg';
 import AppStyles from 'styles/commonstyles';
 
-export default function AddressSetup({ navigation, route }): JSX.Element {
+export default function AddressSetup({ navigation, route }: { navigation: any, route: any }): JSX.Element {
   const dispatch = useAppDispatch();
   const { fbUserRef } = useAppSelector(authSelector);
   const { loading } = useAppSelector(userDataSelector);
@@ -26,25 +26,14 @@ export default function AddressSetup({ navigation, route }): JSX.Element {
   const { t } = useTranslation();
 
   const [selectedAddress, setSelectedAddress] = useState<Address | undefined>(undefined);
-  const { name, selectedProfileImage, idNo, idPicBack, idPicFront, iceNo, icePicBack, icePicFront, selectedMaterialIds } = route.params;
+  const { name, selectedProfileImage, selectedMaterialIds } = route.params;
   const [pressed, setPressed] = useState(false);
 
   const handleSubmit = useCallback(async () => {
-    if (!idNo || !iceNo || !selectedAddress || !idPicBack?.uri || !idPicFront?.uri || !icePicBack?.uri || !icePicFront?.uri || !fbUserRef || !name) return;
-    console.log([idPicFront, idPicBack]);
+    if ( !selectedAddress || !fbUserRef || !name) return;
+
     setImageUploading(true);
     try {
-      const idPicFrontUploadUri = await uploadMedia(`${fbUserRef?.uid}-idFront.jpeg`, idPicFront.uri);
-      const idPicBackUploadUri = await uploadMedia(`${fbUserRef?.uid}-idBack.jpeg`, idPicBack.uri);
-
-      const icePicFrontUploadUri = await uploadMedia(`${fbUserRef?.uid}-iceFront.jpeg`, icePicFront.uri);
-      const icePicBackUploadUri = await uploadMedia(`${fbUserRef?.uid}-iceBack.jpeg`, icePicBack.uri);
-
-      setImageUploading(false);
-      if (!idPicFrontUploadUri || !idPicBackUploadUri || !icePicFrontUploadUri || !icePicBackUploadUri) {
-        setError('Image upload failed');
-        return;
-      }
 
       let profilePicUri: string | undefined = undefined;
       if (selectedProfileImage) {
@@ -61,24 +50,6 @@ export default function AddressSetup({ navigation, route }): JSX.Element {
             fullUrl: profilePicUri,
             fileType: 'image/jpeg',
           } : undefined,
-          idFront: {
-            fullUrl: idPicFrontUploadUri,
-            fileType: 'image/jpeg',
-          },
-          idBack: {
-            fullUrl: idPicBackUploadUri,
-            fileType: 'image/jpeg',
-          },
-          iceFront: {
-            fullUrl: icePicFrontUploadUri,
-            fileType: 'image/jpeg',
-          },
-          iceBack: {
-            fullUrl: icePicBackUploadUri,
-            fileType: 'image/jpeg',
-          },
-          idNo,
-          iceNo,
         },
         fbUserRef,
       }));
@@ -86,7 +57,7 @@ export default function AddressSetup({ navigation, route }): JSX.Element {
       console.log(err);
       setImageUploading(false);
     }
-  }, [name, idNo, idPicBack, idPicFront, iceNo, icePicFront, icePicBack, selectedAddress, selectedMaterialIds, selectedProfileImage, fbUserRef, setImageUploading]);
+  }, [name, selectedAddress, selectedMaterialIds, selectedProfileImage, fbUserRef, setImageUploading]);
 
   if (loading || imageUploading) {
     return <View flex='1'>

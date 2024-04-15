@@ -11,7 +11,7 @@ import TextHighlighter from '../../components/SpeechHighlighter';
 import styles from 'styles/onboarding';
 import AppStyles from 'styles/commonstyles';
 
-export default function Welcome({ navigation }) {
+export default function Welcome({ navigation }: { navigation: any }) {
 
   const [pressed, setPressed] = useState(false);
 
