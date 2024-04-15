@@ -12,6 +12,27 @@ const AppStyles = StyleSheet.create({
   mainContainer: { paddingHorizontal: 20, height: '100%' },
   buttonText: { color: 'white', fontSize: 18, fontFamily: fonts.bold },
   row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  inputBoxStyle: {
+    marginTop: 10,
+    padding: 15,
+    borderRadius: 10,
+    borderWidth: 0,
+    fontSize: 18,
+    backgroundColor: '#F2F1EC',
+    shadowColor: '#3A3449',
+    shadowOpacity: 0.15,
+    shadowOffset: { width: 0, height: 8 },
+  },
+  materialBoxStyle: {
+    marginTop: 10,
+    padding: 15,
+    borderRadius: 10,
+    borderWidth: 0,
+    fontSize: 18,
+    shadowColor: '#3A3449',
+    shadowOpacity: 0.15,
+    shadowOffset: { width: 0, height: 8 },
+  },
 });
 
 export default AppStyles;

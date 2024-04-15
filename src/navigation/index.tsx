@@ -33,6 +33,7 @@ const RootNavigation = () => {
     if (userData?.language) {
       i18next.changeLanguage(userData?.language);
     }
+    console.log('DATA', userData);
     return userData !== undefined;
   }, [userData, loading]);
   // When the app loads, try to log in with token stored in async storage

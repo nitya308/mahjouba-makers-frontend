@@ -21,10 +21,10 @@ function App() {
       headerLeft: () => null,
     }}>
       <RootStack.Screen name="ProfileSetup" component={ProfileSetup} />
-      <RootStack.Screen name="DataAgreement" component={DataAgreement} />
+      {/* <RootStack.Screen name="DataAgreement" component={DataAgreement} />
       <RootStack.Screen name="IDSetup" component={IDSetup} />
       <RootStack.Screen name="ICESetup" component={ICESetup} />
-      <RootStack.Screen name="BankingSetup" component={BankingSetup} />
+      <RootStack.Screen name="BankingSetup" component={BankingSetup} /> */}
       <RootStack.Screen name="MaterialSetup" component={MaterialSetup} />
       <RootStack.Screen name="AddressSetup" component={AddressSetup} />
     </RootStack.Navigator>

@@ -102,7 +102,7 @@ const Signup = () => {
 
                 <TextHighlighter style={styles.inputLabel} text={t('Name')} pressed={pressed} setPressed={setPressed} />
                 <TextInput
-                  style={styles.inputBoxStyle}
+                  style={AppStyles.inputBoxStyle}
                   placeholder='Abdelali Arib'
                   value={name}
                   onChangeText={setName}
@@ -112,7 +112,7 @@ const Signup = () => {
 
                 <TextHighlighter style={styles.inputLabel} text={t('Phone Number')} pressed={pressed} setPressed={setPressed} />
                 <TextInput
-                  style={styles.inputBoxStyle}
+                  style={AppStyles.inputBoxStyle}
                   placeholder='Phone #'
                   value={phone}
                   onChangeText={setPhone}
@@ -135,7 +135,7 @@ const Signup = () => {
                 <Spacer size={10} />
                 <TextHighlighter style={styles.inputLabel} text={t('Confirmation Code')} pressed={pressed} setPressed={setPressed} />
                 <TextInput
-                  style={styles.inputBoxStyle}
+                  style={AppStyles.inputBoxStyle}
                   placeholder='Ex 12346'
                   value={confirmationCode}
                   onChangeText={setConfirmationCode}

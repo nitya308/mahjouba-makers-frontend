@@ -15,7 +15,7 @@ import styles from 'styles/onboarding';
 import TextHighlighter from 'components/SpeechHighlighter';
 import { useTranslation } from 'react-i18next';
 
-export default function ProfileSetup({ navigation }): JSX.Element {
+export default function ProfileSetup({ navigation }: { navigation: any }): JSX.Element {
   const [pressed, setPressed] = useState(false);
   const [selectedImage, setSelectedImage] = useState<Image | undefined>();
   const dispatch = useAppDispatch();
@@ -75,7 +75,7 @@ export default function ProfileSetup({ navigation }): JSX.Element {
             leftIcon={<Icon as={AntDesign} name='arrowright' color='white' size='lg' />}
             mr='30px'
             p='10px'
-            onPress={() => (name && selectedImage ? navigation.navigate('DataAgreement', { name, selectedImage }) : alert('Please complete all fields'))}
+            onPress={() => (name && selectedImage ? navigation.navigate('MaterialSetup', { name, selectedImage }) : alert('Please complete all fields'))}
           />
         </HStack>
       </View>

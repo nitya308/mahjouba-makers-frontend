@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import AddressInput from 'components/AddressInput';
 import Address from 'types/address';
-import { View, Box, HStack, Heading, Icon, Text, Center, Spinner, IconButton } from 'native-base';
+import { View, Box, HStack, Heading, Icon, Text, Center, Spinner, IconButton, VStack, Spacer } from 'native-base';
 import Colors from 'utils/Colors';
 import SharpButton from 'components/SharpButton';
 import DotProgress from 'components/DotProgress';
@@ -15,6 +15,7 @@ import useAppSelector from 'hooks/useAppSelector';
 import TextHighlighter from 'components/SpeechHighlighter';
 import styles from 'styles/onboarding';
 import AudioIcon from '../../assets/audio_icon.svg';
+import AppStyles from 'styles/commonstyles';
 
 export default function AddressSetup({ navigation, route }): JSX.Element {
   const dispatch = useAppDispatch();
@@ -104,7 +105,7 @@ export default function AddressSetup({ navigation, route }): JSX.Element {
           </Center>
         </View>
       ) : (
-        <View style={{ flex: 1 }} alignItems='center'>
+        <View style={AppStyles.mainContainer} alignItems='center'>
           <IconButton
             style={styles.audioStyle}
             icon={<AudioIcon />}
@@ -112,23 +113,21 @@ export default function AddressSetup({ navigation, route }): JSX.Element {
               setPressed(true);
             }}
           />
-          <Box w='100%' alignItems='center' justifyContent='center' mt={150}>
+          <VStack space={0} w='100%' alignItems='center' mt={150}>
             <TextHighlighter style={styles.heading} text={t('Where do you \n work?')} pressed={pressed} setPressed={setPressed} />
-            <Box w={200} mt={70} borderColor={Colors.outline} borderRadius='5px' borderWidth={selectedAddress ? '2px' : '0px'}>
-              <AddressInput
-                setAddress={setSelectedAddress}
-                placeholder={selectedAddress?.description || t('Address')}
-              />
-            </Box>
-          </Box>
-          <SharpButton
-            backgroundColor={Colors.highlight}
-            mt='20px'
-            w='200px'
-            onPress={() => selectedAddress ? handleSubmit() : alert('Please complete all fields')}
-          >
-            <TextHighlighter style={styles.buttonText} text={t('Create Account')} pressed={pressed} setPressed={setPressed} />
-          </SharpButton>
+            <Spacer size={10} />
+            <TextHighlighter style={styles.inputLabel} text={t('Your address')} pressed={pressed} setPressed={setPressed} />
+            <AddressInput
+              setAddress={setSelectedAddress}
+              placeholder={selectedAddress?.description || t('Address')}
+            />
+            <Spacer size={20} />
+            <SharpButton onPress={() => selectedAddress ? handleSubmit() : alert('Please complete all fields')}>
+              <TextHighlighter style={AppStyles.buttonText} text={t('Complete Profile')} pressed={pressed} setPressed={setPressed} />
+            </SharpButton>
+          </VStack>
+
+
           <View style={{ position: 'absolute', bottom: 0, left: 0, right: 0, marginBottom: 50 }}>
             <HStack
               space={4}

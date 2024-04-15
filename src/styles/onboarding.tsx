@@ -9,17 +9,6 @@ const OnboardingStyles = StyleSheet.create({
   buttonText: { fontSize: 20, textAlign: 'center', fontWeight: 'bold' },
   body: { fontSize: 20, textAlign: 'center' },
   small: { marginTop: 5, fontSize: 20, color: 'white' },
-  inputBoxStyle: {
-    marginTop: 10,
-    padding: 15,
-    borderRadius: 10,
-    borderWidth: 0,
-    fontSize: 18,
-    backgroundColor: '#F2F1EC',
-    shadowColor: '#3A3449',
-    shadowOpacity: 0.15,
-    shadowOffset: { width: 0, height: 8 },
-  },
 });
 
 export default OnboardingStyles;
