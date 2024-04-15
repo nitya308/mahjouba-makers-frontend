@@ -8,7 +8,7 @@ export default {
   white: '#FFFFFF',
   black: '#000000',
   lightGray: '#F2F1EC',
-  midGray: '#D3D3D3',
+  midGray: '#B4B3B0',
   darkGray: '#838181',
   gray: '#9B9999',
   blueBlack: '#292B33',

@@ -24,7 +24,14 @@ import MaterialSelector from 'components/MaterialSelector';
 import { cleanUndefinedFields } from 'utils/requestUtils';
 import SharpButton from 'components/SharpButton';
 
-const JobsPage = () => {
+const JobsPage = ({
+  pullNextPage,
+  reloadJobs,
+}: {
+  pullNextPage: () => void;
+  reloadJobs: () => void;
+}) => {
+
   const { userData } = useAppSelector(userDataSelector);
   const { jobFeedIds, jobsMap, partsMap, materialsMap, loading } = useAppSelector(jobsSelector);
   const { t } = useTranslation();
@@ -122,7 +129,7 @@ const JobsPage = () => {
 
   return (
     <SafeAreaView>
-      <ScrollView style={AppStyles.mainContainer}>
+      <ScrollView>
         <IconButton
           style={AppStyles.audioStyle}
           icon={<AudioIcon />}
@@ -133,29 +140,30 @@ const JobsPage = () => {
 
         <JobSearchPic width={ScreenWidth * .9} height={200} style={styles.topImageStyle} />
 
-        <Spacer size={10} />
+        <View style={{ paddingHorizontal: 20 }}>
+          <Spacer size={10} />
 
-        <TextHighlighter style={AppStyles.left_heading} text={t('Piece Selection')} pressed={pressed} setPressed={setPressed} />
+          <TextHighlighter style={AppStyles.left_heading} text={t('Piece Selection')} pressed={pressed} setPressed={setPressed} />
 
-        <Spacer size={5} />
+          <Spacer size={5} />
 
-        <TextHighlighter
-          style={{ width: '70%' }}
-          text={t('Choose a piece to make for the Mahjouba Motorcycle. Pieces are recommended to you based on location and your preferred materials.')}
-          pressed={pressed} setPressed={setPressed} />
-
-        <Pressable onPress={() => setChangeMaterials(true)}>
           <TextHighlighter
-            style={{ color: Colors.highlight, fontWeight: 600 }}
-            text={t('Change materials here.')}
+            style={{ width: '70%' }}
+            text={t('Choose a piece to make for the Mahjouba Motorcycle. Pieces are recommended to you based on location and your preferred materials.')}
             pressed={pressed} setPressed={setPressed} />
-        </Pressable>
 
+          <Pressable onPress={() => setChangeMaterials(true)}>
+            <TextHighlighter
+              style={{ color: Colors.highlight, fontWeight: 600 }}
+              text={t('Change materials here.')}
+              pressed={pressed} setPressed={setPressed} />
+          </Pressable>
 
-        <Spacer size={5} />
+          <Spacer size={5} />
+
+        </View>
 
         <VStack width="100%" alignItems='center' justifyContent='center'>
-
           <Modal isVisible={changeMaterials} backdropOpacity={0} style={styles.materialsModal}>
             <View style={{ height: '100%', padding: 40 }}>
               <VStack space={5} alignItems='center'>
@@ -178,6 +186,7 @@ const JobsPage = () => {
             horizontal
             data={resultArray}
             style={{ height: 450, width: '100%' }}
+            onEndReached={pullNextPage}
             contentContainerStyle={{ paddingVertical: 16 }}
             contentInsetAdjustmentBehavior="never"
             snapToAlignment="center"

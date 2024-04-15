@@ -41,19 +41,21 @@ const BaseNavigation = () => {
         screenOptions={{
           header: () => null,
           tabBarStyle: {
-            backgroundColor: Colors.backgroundBlack,
+            backgroundColor: Colors.white,
             width: '100%',
             alignSelf: 'center',
-            borderTopWidth: 2,
-            borderTopColor: 'white',
+            borderTopColor: Colors.lightGray,
             position: 'absolute',
             height: 120,
+            shadowColor: Colors.black,
+            shadowOpacity: 0.15,
+            shadowOffset: { width: 0, height: -2 },
           },
           tabBarIconStyle: {
             marginTop: 10,
           },
           tabBarLabelStyle: {
-            color: 'white',
+            color: Colors.black,
           },
           tabBarActiveTintColor: '#FFC01D',
         }}
@@ -65,7 +67,7 @@ const BaseNavigation = () => {
           options={{
             tabBarIcon: (props) => ((props.focused) ? <SearchIconFilled /> : <SearchIcon />),
             tabBarLabel: (props) => (
-              <Text color={props.focused ? Colors.yellow : Colors.white}>
+              <Text color={props.focused ? Colors.black : Colors.midGray}>
                 {BaseTabRoutes.JOBS}
               </Text>
             ),
@@ -77,7 +79,7 @@ const BaseNavigation = () => {
           options={{
             tabBarIcon: (props) => ((props.focused) ? <SearchIconFilled /> : <SearchIcon />),
             tabBarLabel: (props) => (
-              <Text color={props.focused ? Colors.yellow : Colors.white}>
+              <Text color={props.focused ? Colors.black : Colors.midGray}>
                 {BaseTabRoutes.BULLETIN}
               </Text>
             ),
@@ -89,7 +91,7 @@ const BaseNavigation = () => {
           options={{
             tabBarIcon: (props) => ((props.focused) ? <HammerIconFilled /> : <HammerIcon />),
             tabBarLabel: (props) => (
-              <Text color={props.focused ? Colors.yellow : Colors.white}>
+              <Text color={props.focused ? Colors.black : Colors.midGray}>
                 {BaseTabRoutes.PAYMENT}
               </Text>
             ),
@@ -101,7 +103,7 @@ const BaseNavigation = () => {
           options={{
             tabBarIcon: (props) => ((props.focused) ? <PersonIconFilled /> : <PersonIcon />),
             tabBarLabel: (props) => (
-              <Text color={props.focused ? Colors.yellow : Colors.white}>
+              <Text color={props.focused ? Colors.black : Colors.midGray}>
                 {BaseTabRoutes.PROFILE}
               </Text>
             ),
