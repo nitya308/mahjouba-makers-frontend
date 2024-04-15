@@ -1,36 +1,46 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import JobCard from 'components/JobCard';
-import { Animated, StyleSheet, FlatList, ScrollView, SafeAreaView } from 'react-native';
+import { Animated, StyleSheet, FlatList, ScrollView, SafeAreaView, TouchableOpacity } from 'react-native';
 import Modal from 'react-native-modal';
-import { Text, VStack, Button, IconButton, Spinner, Spacer } from 'native-base';
+import { Text, VStack, Button, IconButton, Spinner, Spacer, Center } from 'native-base';
 import useAppSelector from 'hooks/useAppSelector';
-import { userDataSelector } from 'redux/slices/userDataSlice';
+import { updateUser, userDataSelector } from 'redux/slices/userDataSlice';
 import { jobsSelector } from 'redux/slices/jobsSlice';
 import { Pressable, View } from 'react-native';
 import { Job } from 'types/job';
 import { useTranslation } from 'react-i18next';
+import useAppDispatch from 'hooks/useAppDispatch';
 import AudioIcon from '../../../assets/audio_icon.svg';
+import { authSelector } from 'redux/slices/authSlice';
 import { PartType } from 'types/part_type';
 import { ScreenWidth } from 'react-native-elements/dist/helpers';
 import AppStyles from 'styles/commonstyles';
 import TextHighlighter from 'components/SpeechHighlighter';
 import JobSearchPic from '../../../assets/job_search.svg';
 import JobDetailsPage from '../JobDetailsPage';
+import Colors from 'utils/Colors';
+import MaterialSelector from 'components/MaterialSelector';
+import { cleanUndefinedFields } from 'utils/requestUtils';
+import SharpButton from 'components/SharpButton';
 
 const JobsPage = ({
-  handleSelect,
+  pullNextPage,
+  reloadJobs,
 }: {
-  handleSelect: (job?: Job) => void;
+  pullNextPage: () => void;
+  reloadJobs: () => void;
 }) => {
+
   const { userData } = useAppSelector(userDataSelector);
   const { jobFeedIds, jobsMap, partsMap, materialsMap, loading } = useAppSelector(jobsSelector);
   const { t } = useTranslation();
   const [selectedJobId, setSelectedJobId] = useState<string | undefined>();
 
   const [resultArray, setResultArray] = useState<{ job: Job, part: PartType }[]>([]);
+
   const calculateMatchingJobs = () => {
-    // console.log('darawuzhere', jobFeedIds);
+    console.log('Calculating matching jobs', jobFeedIds);
     const transformedArray = jobFeedIds.flatMap((jobId) => {
       const job = jobsMap[jobId];
       const part = partsMap[job.partTypeId];
@@ -94,13 +104,33 @@ const JobsPage = ({
 
   const [pressed, setPressed] = useState(false);
 
+  const [changeMaterials, setChangeMaterials] = useState(false);
+  const [selectedMaterialIds, setSelectedMaterialIds] = useState<string[]>(userData?.materialIds ?? []);
+  const dispatch = useAppDispatch();
+  const { fbUserRef } = useAppSelector(authSelector);
+
+  const modalClose = useCallback(async () => {
+    if (!selectedMaterialIds || !fbUserRef) return;
+    try {
+      dispatch(updateUser({
+        updates: cleanUndefinedFields({
+          materialIds: selectedMaterialIds,
+        }),
+        fbUserRef,
+      }));
+    } catch (err) {
+      console.log(err);
+    }
+    setChangeMaterials(false);
+  }, [userData, selectedMaterialIds]);
+
   if (loading) {
     return <Spinner />;
   }
 
   return (
     <SafeAreaView>
-      <ScrollView style={AppStyles.mainContainer}>
+      <ScrollView>
         <IconButton
           style={AppStyles.audioStyle}
           icon={<AudioIcon />}
@@ -111,25 +141,53 @@ const JobsPage = ({
 
         <JobSearchPic width={ScreenWidth * .9} height={200} style={styles.topImageStyle} />
 
-        <Spacer size={10} />
+        <View style={{ paddingHorizontal: 20 }}>
+          <Spacer size={10} />
 
-        <TextHighlighter style={AppStyles.left_heading} text={t('Piece Selection')} pressed={pressed} setPressed={setPressed} />
+          <TextHighlighter style={AppStyles.left_heading} text={t('Piece Selection')} pressed={pressed} setPressed={setPressed} />
 
-        <Spacer size={5} />
+          <Spacer size={5} />
 
-        <TextHighlighter
-          style={{ width: '70%' }}
-          text={t('Choose a piece to make for the Mahjouba Motorcycle. Pieces are recommended to you based on location and your preferred materials.')}
-          pressed={pressed} setPressed={setPressed} />
+          <TextHighlighter
+            style={{ width: '70%' }}
+            text={t('Choose a piece to make for the Mahjouba Motorcycle. Pieces are recommended to you based on location and your preferred materials.')}
+            pressed={pressed} setPressed={setPressed} />
 
-        <Spacer size={5} />
+          <Pressable onPress={() => setChangeMaterials(true)}>
+            <TextHighlighter
+              style={{ color: Colors.highlight, fontWeight: 600 }}
+              text={t('Change materials here.')}
+              pressed={pressed} setPressed={setPressed} />
+          </Pressable>
 
-        <VStack width="100%" alignItems='center'>
+          <Spacer size={5} />
+
+        </View>
+
+        <VStack width="100%" alignItems='center' justifyContent='center'>
+          <Modal isVisible={changeMaterials} backdropOpacity={0} style={styles.materialsModal}>
+            <View style={{ height: '100%', padding: 40 }}>
+              <VStack space={5} alignItems='center'>
+                <Text style={AppStyles.center_heading}>Select Materials</Text>
+                <ScrollView style={{ height: 350 }}>
+                  <MaterialSelector
+                    selectedMaterialIds={selectedMaterialIds}
+                    setSelectedMaterialIds={setSelectedMaterialIds}
+                  />
+                </ScrollView>
+                <SharpButton size='sm' onPress={modalClose}>
+                  <Text style={AppStyles.buttonText}>Save</Text>
+                </SharpButton>
+              </VStack>
+              <Spacer size={70} />
+            </View>
+          </Modal>
 
           <FlatList
             horizontal
             data={resultArray}
             style={{ height: 450, width: '100%' }}
+            onEndReached={pullNextPage}
             contentContainerStyle={{ paddingVertical: 16 }}
             contentInsetAdjustmentBehavior="never"
             snapToAlignment="center"
@@ -160,14 +218,16 @@ const JobsPage = ({
           />
         </VStack>
       </ScrollView>
+
       <Modal
-        style={{ justifyContent: 'flex-end', margin: 0}}
+        style={{ justifyContent: 'flex-end', margin: 0 }}
         backdropOpacity={0}
         isVisible={selectedJobId != undefined}>
         {selectedJobId &&
           <JobDetailsPage jobId={selectedJobId ?? ''} exit={() => setSelectedJobId(undefined)} />
         }
       </Modal>
+
     </SafeAreaView>
 
   );
@@ -194,6 +254,15 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     height: 300,
+  },
+  materialsModal: {
+    marginTop: 120,
+    marginBottom: 200,
+    marginHorizontal: 20,
+    borderRadius: 30,
+    borderWidth: 3,
+    borderColor: '#F2F1EC',
+    backgroundColor: 'white',
   },
   topImageStyle: {
     position: 'absolute',

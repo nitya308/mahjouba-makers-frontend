@@ -5,6 +5,8 @@ import { buildAddr } from 'utils/geoUtils';
 import Address from 'types/address';
 import { View, Text } from 'native-base';
 import Colors from 'utils/Colors';
+import App from '../../../App';
+import AppStyles from 'styles/commonstyles';
 
 export default function AddressInput({
   setAddress,
@@ -62,9 +64,8 @@ export default function AddressInput({
             flexGrow: 1,
             minHeight: 100,
           },
-          textInput: {
-            color: 'black',
-          },
+          textInput: AppStyles.inputBoxStyle,
+        
         }}
         textInputProps={{
           onChangeText: (newText?: string) => {

@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import AddressInput from 'components/AddressInput';
 import Address from 'types/address';
-import { View, Box, HStack, Heading, Icon, Text, Center, Spinner, IconButton } from 'native-base';
+import { View, Box, HStack, Heading, Icon, Text, Center, Spinner, IconButton, VStack, Spacer } from 'native-base';
 import Colors from 'utils/Colors';
 import SharpButton from 'components/SharpButton';
 import DotProgress from 'components/DotProgress';
@@ -15,8 +15,9 @@ import useAppSelector from 'hooks/useAppSelector';
 import TextHighlighter from 'components/SpeechHighlighter';
 import styles from 'styles/onboarding';
 import AudioIcon from '../../assets/audio_icon.svg';
+import AppStyles from 'styles/commonstyles';
 
-export default function AddressSetup({ navigation, route }): JSX.Element {
+export default function AddressSetup({ navigation, route }: { navigation: any, route: any }): JSX.Element {
   const dispatch = useAppDispatch();
   const { fbUserRef } = useAppSelector(authSelector);
   const { loading } = useAppSelector(userDataSelector);
@@ -25,25 +26,14 @@ export default function AddressSetup({ navigation, route }): JSX.Element {
   const { t } = useTranslation();
 
   const [selectedAddress, setSelectedAddress] = useState<Address | undefined>(undefined);
-  const { name, selectedProfileImage, idNo, idPicBack, idPicFront, iceNo, icePicBack, icePicFront, selectedMaterialIds } = route.params;
+  const { name, selectedProfileImage, selectedMaterialIds } = route.params;
   const [pressed, setPressed] = useState(false);
 
   const handleSubmit = useCallback(async () => {
-    if (!idNo || !iceNo || !selectedAddress || !idPicBack?.uri || !idPicFront?.uri || !icePicBack?.uri || !icePicFront?.uri || !fbUserRef || !name) return;
-    console.log([idPicFront, idPicBack]);
+    if ( !selectedAddress || !fbUserRef || !name) return;
+
     setImageUploading(true);
     try {
-      const idPicFrontUploadUri = await uploadMedia(`${fbUserRef?.uid}-idFront.jpeg`, idPicFront.uri);
-      const idPicBackUploadUri = await uploadMedia(`${fbUserRef?.uid}-idBack.jpeg`, idPicBack.uri);
-
-      const icePicFrontUploadUri = await uploadMedia(`${fbUserRef?.uid}-iceFront.jpeg`, icePicFront.uri);
-      const icePicBackUploadUri = await uploadMedia(`${fbUserRef?.uid}-iceBack.jpeg`, icePicBack.uri);
-
-      setImageUploading(false);
-      if (!idPicFrontUploadUri || !idPicBackUploadUri || !icePicFrontUploadUri || !icePicBackUploadUri) {
-        setError('Image upload failed');
-        return;
-      }
 
       let profilePicUri: string | undefined = undefined;
       if (selectedProfileImage) {
@@ -60,24 +50,6 @@ export default function AddressSetup({ navigation, route }): JSX.Element {
             fullUrl: profilePicUri,
             fileType: 'image/jpeg',
           } : undefined,
-          idFront: {
-            fullUrl: idPicFrontUploadUri,
-            fileType: 'image/jpeg',
-          },
-          idBack: {
-            fullUrl: idPicBackUploadUri,
-            fileType: 'image/jpeg',
-          },
-          iceFront: {
-            fullUrl: icePicFrontUploadUri,
-            fileType: 'image/jpeg',
-          },
-          iceBack: {
-            fullUrl: icePicBackUploadUri,
-            fileType: 'image/jpeg',
-          },
-          idNo,
-          iceNo,
         },
         fbUserRef,
       }));
@@ -85,7 +57,7 @@ export default function AddressSetup({ navigation, route }): JSX.Element {
       console.log(err);
       setImageUploading(false);
     }
-  }, [name, idNo, idPicBack, idPicFront, iceNo, icePicFront, icePicBack, selectedAddress, selectedMaterialIds, selectedProfileImage, fbUserRef, setImageUploading]);
+  }, [name, selectedAddress, selectedMaterialIds, selectedProfileImage, fbUserRef, setImageUploading]);
 
   if (loading || imageUploading) {
     return <View flex='1'>
@@ -104,7 +76,7 @@ export default function AddressSetup({ navigation, route }): JSX.Element {
           </Center>
         </View>
       ) : (
-        <View style={{ flex: 1 }} alignItems='center'>
+        <View style={AppStyles.mainContainer} alignItems='center'>
           <IconButton
             style={styles.audioStyle}
             icon={<AudioIcon />}
@@ -112,23 +84,21 @@ export default function AddressSetup({ navigation, route }): JSX.Element {
               setPressed(true);
             }}
           />
-          <Box w='100%' alignItems='center' justifyContent='center' mt={150}>
+          <VStack space={0} w='100%' alignItems='center' mt={150}>
             <TextHighlighter style={styles.heading} text={t('Where do you \n work?')} pressed={pressed} setPressed={setPressed} />
-            <Box w={200} mt={70} borderColor={Colors.outline} borderRadius='5px' borderWidth={selectedAddress ? '2px' : '0px'}>
-              <AddressInput
-                setAddress={setSelectedAddress}
-                placeholder={selectedAddress?.description || t('Address')}
-              />
-            </Box>
-          </Box>
-          <SharpButton
-            backgroundColor={Colors.highlight}
-            mt='20px'
-            w='200px'
-            onPress={() => selectedAddress ? handleSubmit() : alert('Please complete all fields')}
-          >
-            <TextHighlighter style={styles.buttonText} text={t('Create Account')} pressed={pressed} setPressed={setPressed} />
-          </SharpButton>
+            <Spacer size={10} />
+            <TextHighlighter style={styles.inputLabel} text={t('Your address')} pressed={pressed} setPressed={setPressed} />
+            <AddressInput
+              setAddress={setSelectedAddress}
+              placeholder={selectedAddress?.description || t('Address')}
+            />
+            <Spacer size={20} />
+            <SharpButton onPress={() => selectedAddress ? handleSubmit() : alert('Please complete all fields')}>
+              <TextHighlighter style={AppStyles.buttonText} text={t('Complete Profile')} pressed={pressed} setPressed={setPressed} />
+            </SharpButton>
+          </VStack>
+
+
           <View style={{ position: 'absolute', bottom: 0, left: 0, right: 0, marginBottom: 50 }}>
             <HStack
               space={4}

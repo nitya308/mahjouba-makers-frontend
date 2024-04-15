@@ -61,10 +61,7 @@ export default function JobsController(): JSX.Element {
     {currentJobId ?
       <CurrentJobPage setDetailsPageOpen={setDetailsPageOpen}></CurrentJobPage> :
       <JobsPage
-        handleSelect={handleJobSelect}
         pullNextPage={pullNextPage}
-        setSortField={setSortField}
-        setSortOrder={setSortOrder}
         reloadJobs={reloadJobs} />
     }
   </View>;

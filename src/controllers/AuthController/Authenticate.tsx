@@ -8,9 +8,10 @@ import MahjoubaLogo from '../../assets/mahjouba_logo.svg';
 import styles from 'styles/onboarding';
 import AudioIcon from '../../assets/audio_icon.svg';
 import TextHighlighter from 'components/SpeechHighlighter';
+import AppStyles from 'styles/commonstyles';
 
 
-export default function Authenticate({ navigation }) {
+export default function Authenticate({ navigation }: { navigation: any }) {
   const { t } = useTranslation();
   const [pressed, setPressed] = useState(false);
 
@@ -29,13 +30,13 @@ export default function Authenticate({ navigation }) {
           <VStack space={2} alignItems="center">
             <MahjoubaLogo width='141px' height='104.88px' />
             <Box height='65px' width='100%' />
-            <SharpButton width='188px' height='42px' my='10px'
+            <SharpButton my='10px'
               size='sm' onPress={() => navigation.navigate('Login')}>
-              <TextHighlighter style={styles.buttonText} text={t('Sign In')} pressed={pressed} setPressed={setPressed} />
+              <TextHighlighter style={AppStyles.buttonText} text={t('Sign In')} pressed={pressed} setPressed={setPressed} />
             </SharpButton>
-            <SharpButton width='188px' height='42px' my='10px'
+            <SharpButton my='10px'
               size='sm' onPress={() => navigation.navigate('Signup')}>
-              <TextHighlighter style={styles.buttonText} text={t('Sign Up')} pressed={pressed} setPressed={setPressed} />
+              <TextHighlighter style={AppStyles.buttonText} text={t('Sign Up')} pressed={pressed} setPressed={setPressed} />
             </SharpButton>
           </VStack>
         </ScrollView>

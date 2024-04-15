@@ -9,8 +9,9 @@ import * as Speech from 'expo-speech';
 import AudioIcon from '../../assets/audio_icon.svg';
 import TextHighlighter from '../../components/SpeechHighlighter';
 import styles from 'styles/onboarding';
+import AppStyles from 'styles/commonstyles';
 
-export default function Welcome({ navigation }) {
+export default function Welcome({ navigation }: { navigation: any }) {
 
   const [pressed, setPressed] = useState(false);
 
@@ -36,15 +37,15 @@ export default function Welcome({ navigation }) {
             <Box height='65px' width='100%' />
             <SharpButton width='188px' my='10px'
               size='sm' onPress={() => handleLanguageSelection(Languages.EN)}>
-              <TextHighlighter style={styles.buttonText} text={'Welcome'} pressed={pressed} setPressed={setPressed} />
+              <TextHighlighter style={AppStyles.buttonText} text={'Welcome'} pressed={pressed} setPressed={setPressed} />
             </SharpButton>
             <SharpButton width='188px' my='10px'
               size='sm' onPress={() => handleLanguageSelection(Languages.FR)}>
-              <TextHighlighter style={styles.buttonText} text={'Bienvenue'} pressed={pressed} setPressed={setPressed} />
+              <TextHighlighter style={AppStyles.buttonText} text={'Bienvenue'} pressed={pressed} setPressed={setPressed} />
             </SharpButton>
             <SharpButton width='188px' my='10px'
               size='sm' onPress={() => handleLanguageSelection(Languages.AR)}>
-              <TextHighlighter style={styles.buttonText} text={'مرحباً'} pressed={pressed} setPressed={setPressed} />
+              <TextHighlighter style={AppStyles.buttonText} text={'مرحباً'} pressed={pressed} setPressed={setPressed} />
             </SharpButton>
           </VStack>
         </ScrollView>
