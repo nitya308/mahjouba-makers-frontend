@@ -54,6 +54,7 @@ export default function ProfileDisplay({
   }, [fbUserRef]);
 
   const [pressed, setPressed] = useState(false);
+  console.log('userData', userData?.qrCode);
 
   return (
     <SafeAreaView>
