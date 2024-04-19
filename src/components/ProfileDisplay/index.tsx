@@ -25,6 +25,7 @@ import { SafeAreaView } from 'react-native';
 import AppStyles from 'styles/commonstyles';
 import TextHighlighter from 'components/SpeechHighlighter';
 import JobHistoryCard from 'components/JobHistoryCard';
+import { SvgXml } from 'react-native-svg';
 
 export default function ProfileDisplay({
   toggleEditing,
@@ -63,6 +64,9 @@ export default function ProfileDisplay({
           icon={<EditIcon />}
           onPress={toggleEditing}
         />
+        {userData?.qrCode &&
+          <SvgXml xml={userData?.qrCode} width="100%" height="100%" />
+        }
         <HStack alignItems={'center'}>
           <TextHighlighter style={AppStyles.center_heading} text={t('My Profile')} pressed={pressed} setPressed={setPressed} />
         </HStack>

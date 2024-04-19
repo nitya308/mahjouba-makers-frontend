@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, Image, Spinner, IconButton, VStack } from 'native-base';
+import { View, Text, Image, Spinner, IconButton, VStack, Flex, Row } from 'native-base';
 import { ScrollView, StyleSheet } from 'react-native';
 import useAppSelector from 'hooks/useAppSelector';
 import useAppDispatch from 'hooks/useAppDispatch';
@@ -24,6 +24,7 @@ import Colors from 'utils/Colors';
 import AppStyles from 'styles/commonstyles';
 import TextHighlighter from 'components/SpeechHighlighter';
 import { useTranslation } from 'react-i18next';
+import { ScreenWidth } from 'react-native-elements/dist/helpers';
 
 const JobDetailsPage = ({
   jobId,
@@ -81,11 +82,75 @@ const JobDetailsPage = ({
               {!part.imageIds.length ? <Image alt='placeholder' source={Placeholder} style={styles.image} /> : <Image alt='part' source={{ uri: imageUrl }} style={styles.image} />}
             </VStack>
             <TextHighlighter style={AppStyles.left_heading} text={t(part.name)} pressed={pressed} setPressed={setPressed} />
+            <View style={styles.partDetails}>
+              <View style={[styles.greyBox, styles.greyBoxTop]}>
+                <View>
+                  <Text>Pay <TextHighlighter text={t(job?.price.toString()) + t(' MAD')} pressed={pressed} setPressed={setPressed} /></Text>
+                </View>
+                <Text>Time <TextHighlighter text={t(part.completionTime.toString()) + t(' hours')}/></Text>
+              </View>
+              <View style={[styles.greyBox, styles.greyBoxBottom]}>
+                <Text>Location</Text>
+              </View>
+              <View style={[styles.greyBox, styles.greyBoxBottom]}>
+                <Text>Materials</Text>
+                {materials.map((material, index) => (
+                  <Text key={material}>
+                    {index < materials.length - 1 &&
+                        <TextHighlighter text={t(material + ',')} pressed={pressed} setPressed={setPressed} />
+                    }
+                    {index == materials.length - 1 &&
+                        <TextHighlighter text={t(material)} pressed={pressed} setPressed={setPressed} />
+                    }
+                  </Text>
+                ))}
+                
+              </View>
+              {jobId !== currentJobId ?
+                <View style={styles.acceptButton}>
+                  <SharpButton
+                    width={'200px'}
+                    borderColor={Colors.yellow}
+                    borderWidth={'1px'}
+                    backgroundColor={'rgba(255, 192, 29, 0.5)'}
+                    my='2px'
+                    size='sm'
+                    onPress={() => {
+                      dispatch(acceptJob({ jobId: jobId ?? '', fbUserRef }));
+                    }}
+                    marginTop={'0px'}
+                  >
+                    <TextHighlighter style={styles.name} text={t('Accept Job')} pressed={pressed} setPressed={setPressed} />
+                  </SharpButton>
+                </View>
+                :
+                <View style={styles.acceptButton}>
+                  <Text>You have accepted this job.</Text>
+                  <SharpButton
+                    width={'120px'}
+                    borderColor={Colors.yellow}
+                    borderWidth={'1px'}
+                    backgroundColor={'rgb(255, 192, 29, 0.5)'}
+                    my='2px'
+                    size='sm'
+                    onPress={() => {
+                      dispatch(unacceptJob({ jobId: currentJobId ?? '', fbUserRef }));
+                    }}
+                    marginTop={'0px'}
+                  >
+                    <Text fontFamily={fonts.regular}>
+                      UnAccept Job
+                    </Text>
+                  </SharpButton>
+                </View>
+              }
+              
+            </View>
           </>
         }
 
 
-        <VStack width="100%" mt='20px' alignItems='center'>
+        {/* <VStack width="100%" mt='20px' alignItems='center'>
           {part && job ? (
             <>
               {!part.imageIds.length ? <Image alt='placeholder' source={Placeholder} style={styles.image} /> : <Image alt='part' source={{ uri: imageUrl }} style={styles.image} />}
@@ -167,7 +232,7 @@ const JobDetailsPage = ({
           ) : (
             <Text style={styles.text}>Loading{job?.partTypeId}</Text>
           )}
-        </VStack>
+        </VStack> */}
       </ScrollView>
     </View>
   );
@@ -195,8 +260,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   acceptButton: {
-    alignSelf: 'center',
-    marginBottom: 150,
+    marginLeft: ScreenWidth / 7,
+    marginRight: ScreenWidth / 7,
+    marginBottom: 20,
+    marginTop: 20,
   },
   materialContainer: {
     width: '90%',
@@ -229,6 +296,30 @@ const styles = StyleSheet.create({
   },
   infoBody: {
     padding: 10,
+  },
+  partDetails:{
+    alignContent: 'center',
+    marginRight: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    flexWrap: 'wrap',
+
+  },
+  greyBox: {
+    marginTop: 25,
+    padding: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    backgroundColor: '#F2F1EC',
+    borderRadius: 10,
+  },
+  greyBoxTop: {
+    width: 310,
+    height: 42,
+  },
+  greyBoxBottom: {
+    width: 148,
+    height: 78,
   },
   timeRemainingText: {
     fontSize: 20,

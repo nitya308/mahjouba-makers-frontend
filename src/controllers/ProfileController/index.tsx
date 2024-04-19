@@ -1,7 +1,9 @@
+
 import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, Center } from 'native-base';
 import { ProfilePage, AccountSettingsPage } from 'screens/BaseScreens';
 import Colors from 'utils/Colors';
+
 
 export default function ProfileController(): JSX.Element {
   const [profileEditing, setProfileEditing] = useState(false);
