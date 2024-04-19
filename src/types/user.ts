@@ -33,6 +33,7 @@ export interface IUser {
   icePhotoBackId: string | null,
   iceStatus: string | null,
   fcmTokens: string[] | null;
+  qrCode: string;
 }
 
 export interface CreateUserModel {
