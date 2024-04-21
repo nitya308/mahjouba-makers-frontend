@@ -6,6 +6,7 @@ import userDataReducer from './slices/userDataSlice';
 import jobsReducer from './slices/jobsSlice';
 import photoReducer from './slices/photosSlice';
 import addressReducer from './slices/addressSlice';
+import workshopsReducer from './slices/workshopsSlice';
 
 export const store = configureStore({
   reducer: {
@@ -16,6 +17,7 @@ export const store = configureStore({
     jobs: jobsReducer,
     photos: photoReducer,
     addresses: addressReducer,
+    workshops: workshopsReducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware({
     serializableCheck: false,
