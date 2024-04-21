@@ -10,8 +10,7 @@ import JobCard from './JobCard';
 import SharpButton from './SharpButton';
 
 
-const WorkshopCard = ({ pressed, setPressed }: { pressed: boolean, setPressed: React.Dispatch<React.SetStateAction<boolean>> }) => {
-
+const WorkshopCard = ({ workshop, pressed, setPressed }: { workshop: Workshop, pressed: boolean, setPressed: React.Dispatch<React.SetStateAction<boolean>> }) => {
   const { t } = useTranslation();
 
   return (
@@ -20,10 +19,10 @@ const WorkshopCard = ({ pressed, setPressed }: { pressed: boolean, setPressed: R
         <HammerIcon />
         <VStack space={1}>
           <TextHighlighter style={styles.workshopText}
-            text={t('Woodworking Workshop')}
+            text={t(workshop.name)}
             pressed={pressed} setPressed={setPressed} />
           <TextHighlighter style={styles.workshopText}
-            text={t('2024/03/01')}
+            text={t(workshop.workshopTime.toString())} // Convert workshopTime to string
             pressed={pressed} setPressed={setPressed} />
         </VStack>
         <SharpButton my='10px'

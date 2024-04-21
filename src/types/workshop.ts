@@ -6,7 +6,7 @@ export interface Workshop {
   workshopTime: Date;
   instructor: string;
   capacity: number;
-  participantIds: string;
+  participantIds: string[];
   createdAt: Date;
   updatedAt: Date;
 }
