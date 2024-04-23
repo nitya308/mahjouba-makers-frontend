@@ -8,6 +8,8 @@ const AppStyles = StyleSheet.create({
   center_heading: { fontSize: 32, lineHeight: 32, textAlign: 'center', fontFamily: fonts.bold },
   left_heading: { fontSize: 32, lineHeight: 32, textAlign: 'left', fontFamily: fonts.bold },
   bodyText: { fontSize: 18 },
+  bodyTextMd: { fontSize: 20 },
+  bodyTextLg: { fontSize: 25 },
   underline: { textDecorationLine: 'underline' },
   audioStyle: { position: 'absolute', top: 5, right: 5, zIndex: 1 },
   mainContainer: { paddingHorizontal: 20, height: '100%' },

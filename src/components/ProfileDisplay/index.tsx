@@ -38,7 +38,7 @@ export default function ProfileDisplay({
 
 
   const [refreshing, setRefreshing] = useState(false);
-  
+
   const reloadJobHistory = useCallback(async () => {
     if (!fbUserRef) return;
     setRefreshing(true);
@@ -53,10 +53,7 @@ export default function ProfileDisplay({
   }, [fbUserRef, reloadJobHistory]);
 
   const [pressed, setPressed] = useState(false);
-  // if (userData?.homeAddressId) {
-  //   console.log('userData', addressMap[userData?.homeAddressId].city);
-  // }
-
+  
   return (
     <SafeAreaView>
       <IconButton
@@ -86,7 +83,7 @@ export default function ProfileDisplay({
             }
           </VStack>
           {userData?.qrCode &&
-            <SvgXml xml={userData?.qrCode} width="50%" height="100%" />
+            <SvgXml xml={userData?.qrCode} width="40%" height="90%"/>
           }
         </View>
         <View style={styles.profileDetailsRow}>
@@ -113,10 +110,12 @@ export default function ProfileDisplay({
           </HStack>
         </View>
         <Spacer size={5} />
-        <TextHighlighter style={AppStyles.center_heading} text={t('Past Projects')} pressed={pressed} setPressed={setPressed} />
+        <TextHighlighter style={[AppStyles.center_heading, AppStyles.underline]} text={t('Past Projects')} pressed={pressed} setPressed={setPressed} />
       </View>
-      <ScrollView style={styles.jobHistoryScroll} contentContainerStyle={{ flexGrow : 1, alignItems: 'center' }} refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={reloadJobHistory} />} >
+      <ScrollView style={styles.jobHistoryScroll} contentContainerStyle={{ flexGrow: 1, alignItems: 'center' }}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={reloadJobHistory} />}
+      >
         {jobHistoryIds.map((jobId: string) => {
           const job = jobsMap[jobId];
           const part = partsMap[job.partTypeId];
@@ -126,102 +125,39 @@ export default function ProfileDisplay({
           });
           return (
             <Pressable
-              marginBottom={'15px'}
               marginTop={'15px'}
               key={job._id}
               onPress={() => console.log('TODO')}
+              width={'90%'}
             >
               <JobHistoryCard job={job} part={part} materials={materials} pressed={pressed} setPressed={setPressed} />
             </Pressable>
           );
         })}
+        <Spacer size={400} />
       </ScrollView>
-
-
-      {/* <HStack alignItems={'center'}>
-        <TextHighlighter style={AppStyles.center_heading} text={t('My Profile')} pressed={pressed} setPressed={setPressed} />
-      </HStack>
-      <IconButton
-        icon={<AudioIcon />}
-        onPress={() => {
-          setPressed(true);
-        }}
-      />
-
-
-      <ScrollView
-        width={'100%'}
-        marginBottom={'180px'}
-      >
-        <VStack space={2} alignItems='center' marginTop={10}>
-
-          {
-            addressString &&
-            <HStack marginBottom={'10px'} space={2}>
-              <MapPinIcon />
-              <TextHighlighter style={{ maxWidth: '100%' }} text={t(addressString)} pressed={pressed} setPressed={setPressed} />
-            </HStack>
-          }
-          <HStack space={2}>
-            {
-              userData?.materialIds?.map((materialId: string) => {
-                const material = materialsMap[materialId];
-                if (material) {
-                  return <MaterialChip materialName={material?.name} />;
-                }
-                return <></>;
-              })
-            }
-          </HStack>
-          <Box
-            height={0.2}
-            width="100%"
-            backgroundColor={Colors.beige}
-            marginTop={5}
-            marginBottom={5}
-          />
-          <TextHighlighter style={AppStyles.center_heading} text={t('Past Projects')} pressed={pressed} setPressed={setPressed} />
-          {jobHistoryIds.map((jobId: string) => {
-            const job = jobsMap[jobId];
-            const part = partsMap[job.partTypeId];
-            const materials = part?.materialIds?.map((materialId: string) => {
-              const material = materialsMap[materialId];
-              return material ? material.name : ''; // Return the name if available, otherwise an empty string
-            });
-            return (
-              <Pressable
-                marginBottom={'15px'}
-                marginTop={'15px'}
-                key={job._id}
-                onPress={() => console.log('TODO')}
-              >
-                <JobHistoryCard job={job} part={part} materials={materials} />
-              </Pressable>
-            );
-          })}
-        </VStack>
-      </ScrollView> */}
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   profileRow: {
-    paddingTop: 50,
+    paddingTop: 20,
+    paddingHorizontal: 30,
     flexDirection: 'row',
-    gap: 25,
-    justifyContent: 'center',
-    alignItems: 'center',
+    gap: 30,
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
   },
   profileDetailsRow: {
     paddingVertical: 20,
-    paddingHorizontal: 20,
+    paddingHorizontal: 40,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  jobHistoryScroll:{
+  jobHistoryScroll: {
     paddingHorizontal: 20,
-    height: 'fit-content',
+    height: '100%',
   },
 });

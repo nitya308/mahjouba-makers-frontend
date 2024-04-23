@@ -14,6 +14,7 @@ import { useTranslation } from 'react-i18next';
 import { Icon } from 'react-native-elements';
 import TextHighlighter from 'components/SpeechHighlighter';
 import AppStyles from 'styles/commonstyles';
+import Colors from 'utils/Colors';
 
 
 const JobHistoryCard = (
@@ -34,18 +35,18 @@ const JobHistoryCard = (
 
   return (
     <View style={styles.jobCardContainer}>
-      <View style={styles.imageWrapper}>
+      <View>
         {part?.imageIds?.length
           ? <Image source={{ uri: imageUrl }} style={styles.image} alt="part image" />
           : <Image source={Placeholder} style={styles.image} alt="image not found" />
         }
       </View>
-      <HStack justifyContent="space-between" style={styles.cardContent} >
-        <TextHighlighter style={AppStyles.bodyText} text={t(part?.name)} pressed={pressed} setPressed={setPressed} />
-        <TextHighlighter style={AppStyles.bodyText} text={t(job?.price?.toString())} pressed={pressed} setPressed={setPressed} />
+      <HStack justifyContent="space-between" style={styles.cardContent} alignItems='center'>
+        <TextHighlighter style={AppStyles.bodyTextLg} text={t(part?.name)} pressed={pressed} setPressed={setPressed} />
+        <TextHighlighter style={AppStyles.bodyTextMd} text={t(job?.price?.toString() + ' ' + 'MAD')} pressed={pressed} setPressed={setPressed} />
       </HStack>
       {completionDate && (
-        <TextHighlighter style={styles.completionDate} text={t('Completed' + completionDate)} pressed={pressed} setPressed={setPressed} />
+        <TextHighlighter style={styles.completionDate} text={t('Completed' + ' ' + completionDate)} pressed={pressed} setPressed={setPressed} />
       )}
     </View>
   );
@@ -54,21 +55,20 @@ const JobHistoryCard = (
 const styles = StyleSheet.create({
   jobCardContainer: {
     backgroundColor: '#F2F1EC',
-    borderWidth: 1,
-    borderColor: '#FFC01D',
-    borderRadius: 0,
+    borderRadius: 10,
     marginBottom: 10,
-    width: 300,
+    borderWidth: 2,
+    borderColor: '#F2F1EC',
   },
   completionDate: {
     fontSize: 18,
-    color: '#00FF00',
+    color: Colors.darkGray,
     textAlign: 'right',
+    paddingBottom: 15,
+    paddingHorizontal: 15,
   },
   image: {
     height: 100,
-  },
-  imageWrapper: {
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
   },
