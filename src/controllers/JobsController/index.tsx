@@ -19,6 +19,7 @@ export default function JobsController(): JSX.Element {
   const [sortOrder, setSortOrder] = useState(1);
   const [detailsPageOpen, setDetailsPageOpen] = useState(false);
   const [selectedJob, setSelectedJob] = useState<Job | undefined>();
+  const [refreshing, setRefreshing] = useState(false);
 
   const pullNextPage = useCallback(() => {
     if (!cursor || !fbUserRef) return;
@@ -27,6 +28,7 @@ export default function JobsController(): JSX.Element {
 
   const reloadJobs = useCallback(async () => {
     if (!fbUserRef) return;
+    setRefreshing(true);
     let sortOptions: SortOptions | undefined = undefined;
     if (sortOrder && sortField) {
       sortOptions = {
@@ -34,11 +36,14 @@ export default function JobsController(): JSX.Element {
         order: sortOrder,
       };
     }
-    dispatch(clearJobFeed());
-    dispatch(pullJobs({ fbUserRef, sortOptions }));
-    dispatch(getAllMaterials({ fbUserRef }));
-    dispatch(getUserJobHistory({ fbUserRef }));
-    dispatch(getUserCurrentJob({ fbUserRef }));
+    await dispatch(clearJobFeed());
+    await dispatch(pullJobs({ fbUserRef, sortOptions }));
+    await dispatch(getAllMaterials({ fbUserRef }));
+    await dispatch(getUserJobHistory({ fbUserRef }));
+    await dispatch(getUserCurrentJob({ fbUserRef }));
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
   }, [fbUserRef, sortField, sortOrder]);
 
   useEffect(() => {
@@ -47,22 +52,14 @@ export default function JobsController(): JSX.Element {
 
   }, [fbUserRef, sortField, sortOrder, reloadJobs]);
 
-  const handleJobSelect = useCallback((job?: Job) => {
-    if (!detailsPageOpen) {
-      setSelectedJob(job);
-      setDetailsPageOpen(true);
-    } else {
-      setDetailsPageOpen(false);
-      setSelectedJob(undefined);
-    }
-  }, [detailsPageOpen, selectedJob]);
 
   return <View flex={1}>
     {currentJobId ?
       <CurrentJobPage setDetailsPageOpen={setDetailsPageOpen}></CurrentJobPage> :
       <JobsPage
         pullNextPage={pullNextPage}
-        reloadJobs={reloadJobs} />
+        reloadJobs={reloadJobs} 
+        refreshing={refreshing}/>
     }
   </View>;
 }

@@ -1,7 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import React, { useEffect, useState, useCallback } from 'react';
 import JobCard from 'components/JobCard';
-import { Animated, StyleSheet, FlatList, ScrollView, SafeAreaView, TouchableOpacity } from 'react-native';
+import { Animated, StyleSheet, FlatList, ScrollView, SafeAreaView, TouchableOpacity, RefreshControl } from 'react-native';
 import Modal from 'react-native-modal';
 import { Text, VStack, Button, IconButton, Spinner, Spacer, Center } from 'native-base';
 import useAppSelector from 'hooks/useAppSelector';
@@ -27,9 +27,11 @@ import SharpButton from 'components/SharpButton';
 const JobsPage = ({
   pullNextPage,
   reloadJobs,
+  refreshing,
 }: {
   pullNextPage: () => void;
   reloadJobs: () => void;
+  refreshing: boolean;
 }) => {
 
   const { userData } = useAppSelector(userDataSelector);
@@ -130,7 +132,8 @@ const JobsPage = ({
 
   return (
     <SafeAreaView>
-      <ScrollView>
+      <ScrollView refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={reloadJobs} />}>
         <IconButton
           style={AppStyles.audioStyle}
           icon={<AudioIcon />}
