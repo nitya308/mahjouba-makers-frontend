@@ -1,18 +1,18 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import SharpButton from 'components/SharpButton';
 import TextHighlighter from 'components/SpeechHighlighter';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { RefreshControl, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { RefreshControl, SafeAreaView, Text, View } from 'react-native';
 import { ScrollView } from 'react-native';
 import AppStyles from 'styles/commonstyles';
-import HammerIcon from '../../../assets/hammer2.svg';
-import { Pressable, HStack, VStack } from 'native-base';
+import AudioIcon from '../../../assets/audio_icon.svg';
+import { VStack, IconButton } from 'native-base';
 import WorkshopCard from 'components/WorkshopCard';
 import Modal from 'react-native-modal';
 import { workshopsSelector } from 'redux/slices/workshopsSlice';
 import useAppSelector from 'hooks/useAppSelector';
-import { authSelector } from 'redux/slices/authSlice';
+import { ScreenHeight } from 'react-native-elements/dist/helpers';
 
 const BulletinPage = ({ reloadWorkshops, refreshing }: { reloadWorkshops: () => void; refreshing: boolean }) => {
   const [pressed, setPressed] = useState(false);
@@ -21,12 +21,13 @@ const BulletinPage = ({ reloadWorkshops, refreshing }: { reloadWorkshops: () => 
   const { workshopsMap } = useAppSelector(workshopsSelector);
   console.log('workshopsMap:', workshopsMap);
 
+  console.log('Screen Height:', ScreenHeight);
+
   return (
     <View>
       <SafeAreaView>
         <ScrollView style={AppStyles.mainContainer} refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={reloadWorkshops} /> }>
-
+          <RefreshControl refreshing={refreshing} onRefresh={reloadWorkshops} />}>
           <View style={AppStyles.row}>
             <TextHighlighter style={AppStyles.left_heading} text={t('Workshops')} pressed={pressed} setPressed={setPressed} />
             <SharpButton my='10px'
@@ -44,8 +45,22 @@ const BulletinPage = ({ reloadWorkshops, refreshing }: { reloadWorkshops: () => 
               <WorkshopCard key={workshop._id} workshop={workshop} pressed={pressed} setPressed={setPressed} />
             ))}
           </VStack>
-
         </ScrollView>
+        <IconButton
+          icon={<AudioIcon />}
+          onPress={() => {
+            setPressed(true);
+          }}
+          style={{
+            position: 'absolute',
+            top: ScreenHeight - 200,
+            right: 5,
+            zIndex: 1,
+            shadowColor: '#3A3449',
+            shadowOpacity: 0.15,
+            shadowOffset: { width: 0, height: 5 },
+          }}
+        />
         <Modal
           style={{ justifyContent: 'flex-end', margin: 0 }}
           backdropOpacity={0}

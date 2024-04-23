@@ -23,6 +23,7 @@ import Colors from 'utils/Colors';
 import MaterialSelector from 'components/MaterialSelector';
 import { cleanUndefinedFields } from 'utils/requestUtils';
 import SharpButton from 'components/SharpButton';
+import { ScreenHeight } from 'react-native-elements/dist/helpers';
 
 const JobsPage = ({
   pullNextPage,
@@ -40,6 +41,7 @@ const JobsPage = ({
   const [selectedJobId, setSelectedJobId] = useState<string | undefined>();
 
   const [resultArray, setResultArray] = useState<{ job: Job, part: PartType }[]>([]);
+  console.log('Screen Height:', ScreenHeight);
 
   const calculateMatchingJobs = () => {
     console.log('Calculating matching jobs', jobFeedIds);
@@ -134,13 +136,6 @@ const JobsPage = ({
     <SafeAreaView>
       <ScrollView refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={reloadJobs} />}>
-        <IconButton
-          style={AppStyles.audioStyle}
-          icon={<AudioIcon />}
-          onPress={() => {
-            setPressed(true);
-          }}
-        />
 
         <JobSearchPic width={ScreenWidth * .9} height={200} style={styles.topImageStyle} />
 
@@ -230,7 +225,21 @@ const JobsPage = ({
           <JobDetailsPage jobId={selectedJobId ?? ''} exit={() => setSelectedJobId(undefined)} />
         }
       </Modal>
-
+      <IconButton
+        style={{
+          position: 'absolute',
+          top: ScreenHeight - 200,
+          right: 5,
+          zIndex: 1,
+          shadowColor: '#3A3449',
+          shadowOpacity: 0.15,
+          shadowOffset: { width: 0, height: 5 },
+        }}
+        icon={<AudioIcon />}
+        onPress={() => {
+          setPressed(true);
+        }}
+      />
     </SafeAreaView>
 
   );

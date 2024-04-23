@@ -18,6 +18,7 @@ import AppStyles from 'styles/commonstyles';
 import TextHighlighter from 'components/SpeechHighlighter';
 import JobHistoryCard from 'components/JobHistoryCard';
 import { SvgXml } from 'react-native-svg';
+import { ScreenHeight } from 'react-native-elements/dist/helpers';
 
 export default function ProfileDisplay({
   toggleEditing,
@@ -53,7 +54,7 @@ export default function ProfileDisplay({
   }, [fbUserRef, reloadJobHistory]);
 
   const [pressed, setPressed] = useState(false);
-  
+
   return (
     <SafeAreaView>
       <IconButton
@@ -83,7 +84,7 @@ export default function ProfileDisplay({
             }
           </VStack>
           {userData?.qrCode &&
-            <SvgXml xml={userData?.qrCode} width="40%" height="90%"/>
+            <SvgXml xml={userData?.qrCode} width="40%" height="90%" />
           }
         </View>
         <View style={styles.profileDetailsRow}>
@@ -136,6 +137,21 @@ export default function ProfileDisplay({
         })}
         <Spacer size={400} />
       </ScrollView>
+      <IconButton
+        icon={<AudioIcon />}
+        onPress={() => {
+          setPressed(true);
+        }}
+        style={{
+          position: 'absolute',
+          top: ScreenHeight - 200,
+          right: 5,
+          zIndex: 1,
+          shadowColor: '#3A3449',
+          shadowOpacity: 0.15,
+          shadowOffset: { width: 0, height: 5 },
+        }}
+      />
     </SafeAreaView>
   );
 }

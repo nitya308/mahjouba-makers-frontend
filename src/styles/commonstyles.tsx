@@ -11,7 +11,7 @@ const AppStyles = StyleSheet.create({
   bodyTextMd: { fontSize: 20 },
   bodyTextLg: { fontSize: 25 },
   underline: { textDecorationLine: 'underline' },
-  audioStyle: { position: 'absolute', top: 5, right: 5, zIndex: 1 },
+  audioStyle: { position: 'absolute', top: 0, right: 0, zIndex: 1 },
   mainContainer: { paddingHorizontal: 20, height: '100%' },
   buttonText: { color: 'white', fontSize: 18, fontFamily: fonts.bold },
   row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
