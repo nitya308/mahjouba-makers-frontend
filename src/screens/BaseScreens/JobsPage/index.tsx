@@ -1,5 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import JobCard from 'components/JobCard';
 import { Animated, StyleSheet, FlatList, ScrollView, SafeAreaView, TouchableOpacity, RefreshControl } from 'react-native';
 import Modal from 'react-native-modal';
@@ -23,7 +23,6 @@ import Colors from 'utils/Colors';
 import MaterialSelector from 'components/MaterialSelector';
 import { cleanUndefinedFields } from 'utils/requestUtils';
 import SharpButton from 'components/SharpButton';
-import { ScreenHeight } from 'react-native-elements/dist/helpers';
 
 const JobsPage = ({
   pullNextPage,
@@ -41,7 +40,6 @@ const JobsPage = ({
   const [selectedJobId, setSelectedJobId] = useState<string | undefined>();
 
   const [resultArray, setResultArray] = useState<{ job: Job, part: PartType }[]>([]);
-  console.log('Screen Height:', ScreenHeight);
 
   const calculateMatchingJobs = () => {
     console.log('Calculating matching jobs', jobFeedIds);
@@ -94,7 +92,11 @@ const JobsPage = ({
       }}>
       <View style={{ alignContent: 'center', alignItems: 'center' }}>
         <Pressable style={styles.jobCard} key={item.job._id} onPress={() => setSelectedJobId(item.job._id)}>
-          <JobCard job={item.job} part={item.part} setSelectedJobId={setSelectedJobId} />
+          <JobCard job={item.job} part={item.part} setSelectedJobId={setSelectedJobId}
+          // This is logic to only read ones that are currently on the screen
+          // Using any () brackets here breaks the code idk why
+            pressed={viewableJobs[1] == item.job._id && pressed || resultArray[0].job._id == item.job._id && pressed && viewableJobs[0] == item.job._id}
+            setPressed={setPressed} />
         </Pressable>
       </View>
     </Animated.View>
@@ -127,6 +129,24 @@ const JobsPage = ({
     }
     setChangeMaterials(false);
   }, [userData, selectedMaterialIds]);
+
+
+  const [viewableJobs, setViewableJobs] = useState<string[]>([]);
+
+  const handleVieweableItemsChanged = useCallback(({ changed }: { changed: any }) => {
+    // console.log('Viewable items changed', changed);
+
+    setViewableJobs((oldViewedItems: string[]) => {
+      changed.forEach(({ isViewable, item }: { isViewable: any, item: any }) => {
+        if (!isViewable) {
+          oldViewedItems = oldViewedItems.filter((jobId) => jobId !== item.job._id);
+        } else if (isViewable) {
+          oldViewedItems.push(item.job._id);
+        }
+      });
+      return oldViewedItems;
+    });
+  }, []);
 
   if (loading) {
     return <Spinner />;
@@ -211,6 +231,7 @@ const JobsPage = ({
                 useNativeDriver: false,
               },
             )}
+            onViewableItemsChanged={handleVieweableItemsChanged}
             renderItem={renderItem}
             keyExtractor={(item) => item.job._id} // assuming jobId is a unique identifier
           />
@@ -226,19 +247,11 @@ const JobsPage = ({
         }
       </Modal>
       <IconButton
-        style={{
-          position: 'absolute',
-          top: ScreenHeight - 200,
-          right: 5,
-          zIndex: 1,
-          shadowColor: '#3A3449',
-          shadowOpacity: 0.15,
-          shadowOffset: { width: 0, height: 5 },
-        }}
         icon={<AudioIcon />}
         onPress={() => {
           setPressed(true);
         }}
+        style={AppStyles.audioButtonStyle}
       />
     </SafeAreaView>
 

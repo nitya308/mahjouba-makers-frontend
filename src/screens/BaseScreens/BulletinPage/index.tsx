@@ -21,8 +21,6 @@ const BulletinPage = ({ reloadWorkshops, refreshing }: { reloadWorkshops: () => 
   const { workshopsMap } = useAppSelector(workshopsSelector);
   console.log('workshopsMap:', workshopsMap);
 
-  console.log('Screen Height:', ScreenHeight);
-
   return (
     <View>
       <SafeAreaView>
@@ -51,15 +49,7 @@ const BulletinPage = ({ reloadWorkshops, refreshing }: { reloadWorkshops: () => 
           onPress={() => {
             setPressed(true);
           }}
-          style={{
-            position: 'absolute',
-            top: ScreenHeight - 200,
-            right: 5,
-            zIndex: 1,
-            shadowColor: '#3A3449',
-            shadowOpacity: 0.15,
-            shadowOffset: { width: 0, height: 5 },
-          }}
+          style={AppStyles.audioButtonStyle}
         />
         <Modal
           style={{ justifyContent: 'flex-end', margin: 0 }}

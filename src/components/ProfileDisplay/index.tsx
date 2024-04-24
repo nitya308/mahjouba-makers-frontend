@@ -57,13 +57,6 @@ export default function ProfileDisplay({
 
   return (
     <SafeAreaView>
-      <IconButton
-        icon={<AudioIcon />}
-        onPress={() => {
-          setPressed(true);
-        }}
-        style={AppStyles.audioStyle}
-      />
       <View>
         <View style={styles.profileRow}>
           <VStack space={2}>
@@ -142,15 +135,7 @@ export default function ProfileDisplay({
         onPress={() => {
           setPressed(true);
         }}
-        style={{
-          position: 'absolute',
-          top: ScreenHeight - 200,
-          right: 5,
-          zIndex: 1,
-          shadowColor: '#3A3449',
-          shadowOpacity: 0.15,
-          shadowOffset: { width: 0, height: 5 },
-        }}
+        style={AppStyles.audioButtonStyle}
       />
     </SafeAreaView>
   );

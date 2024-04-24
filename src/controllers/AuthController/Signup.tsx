@@ -75,13 +75,6 @@ const Signup = () => {
 
   return (
     <SafeAreaView>
-      <IconButton
-        style={styles.audioStyle}
-        icon={<AudioIcon />}
-        onPress={() => {
-          setPressed(true);
-        }}
-      />
       <ScrollView style={AppStyles.mainContainer}>
         <VStack space={4}>
           <FirebaseRecaptchaVerifierModal
@@ -156,6 +149,13 @@ const Signup = () => {
           }
         </VStack>
       </ScrollView>
+      <IconButton
+        icon={<AudioIcon />}
+        onPress={() => {
+          setPressed(true);
+        }}
+        style={AppStyles.audioButtonStyle}
+      />
     </SafeAreaView>
   );
 };

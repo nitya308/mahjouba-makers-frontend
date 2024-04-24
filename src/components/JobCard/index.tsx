@@ -17,14 +17,17 @@ import AppStyles from 'styles/commonstyles';
 import SharpButton from 'components/SharpButton';
 
 
-const JobCard = ({ job, part, setSelectedJobId }: { job: Job, part: PartType, setSelectedJobId: (id: string) => void }) => {
-
+const JobCard = (
+  { job, part, setSelectedJobId, pressed, setPressed }:
+  { job: Job, part: PartType, setSelectedJobId: (id: string) => void, pressed: boolean, setPressed: React.Dispatch<React.SetStateAction<boolean>> },
+) => {
   const { t } = useTranslation();
 
   const photoMap = useAppSelector((state) => state.photos.photosMap);
   const imageUrl = photoMap?.[part?.imageIds[0]]?.fullUrl;
 
-  const [pressed, setPressed] = useState(false);
+  // IF WE EVER want to switch back to individual audio icons for jobs, we can add this back in and remove it from props
+  // const [pressed, setPressed] = useState(false);
 
   const handleSelect = (selectedJob: Job) => {
     setSelectedJobId(selectedJob._id);
@@ -32,15 +35,6 @@ const JobCard = ({ job, part, setSelectedJobId }: { job: Job, part: PartType, se
 
   return (
     <View style={styles.jobCardContainer}>
-
-      <IconButton
-        style={AppStyles.audioStyle}
-        icon={<AudioIcon />}
-        onPress={() => {
-          setPressed(true);
-        }}
-      />
-
       <TextHighlighter style={styles.name} text={t(part?.name)} pressed={pressed} setPressed={setPressed} />
 
       <View style={styles.imageWrapper}>
@@ -65,9 +59,6 @@ const JobCard = ({ job, part, setSelectedJobId }: { job: Job, part: PartType, se
 const styles = StyleSheet.create({
   jobCardContainer: {
     borderRadius: 10,
-    // shadowColor: '#3A3449',
-    // shadowOpacity: 0.15,
-    // shadowRadius: 1,
     borderWidth: 2,
     borderColor: '#F2F1EC',
 
