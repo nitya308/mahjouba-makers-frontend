@@ -1,17 +1,29 @@
-import React, {  } from 'react';
+import React, { } from 'react';
 import { View, VStack } from 'native-base';
 import { StyleSheet } from 'react-native';
-import HammerIcon from '../assets/hammer2.svg';
+import HammerIcon from '../../assets/hammer2.svg';
 import { useTranslation } from 'react-i18next';
 import TextHighlighter from 'components/SpeechHighlighter';
 import AppStyles from 'styles/commonstyles';
 import { Workshop } from 'types/workshop';
-import JobCard from './JobCard';
-import SharpButton from './SharpButton';
+import SharpButton from '../SharpButton';
 
 
-const WorkshopCard = ({ workshop, pressed, setPressed }: { workshop: Workshop, pressed: boolean, setPressed: React.Dispatch<React.SetStateAction<boolean>> }) => {
+const WorkshopCard = ({
+  workshop,
+  pressed,
+  setPressed,
+  setSelectedWorkshopId,
+}: {
+  workshop: Workshop;
+  pressed: boolean;
+  setPressed: React.Dispatch<React.SetStateAction<boolean>>;
+  setSelectedWorkshopId: (id: string) => void;
+}) => {
   const { t } = useTranslation();
+  const handleSelect = (selectedWorkshop: Workshop) => {
+    setSelectedWorkshopId(selectedWorkshop._id);
+  };
 
   return (
     <View style={styles.workshopContainer}>
@@ -26,7 +38,7 @@ const WorkshopCard = ({ workshop, pressed, setPressed }: { workshop: Workshop, p
             pressed={pressed} setPressed={setPressed} />
         </VStack>
         <SharpButton my='10px'
-          size='sm' onPress={() => console.log('pressed')}>
+          size='sm' onPress={() => handleSelect(workshop)}>
           <TextHighlighter style={AppStyles.buttonText} text={t('View')} pressed={pressed} setPressed={setPressed} />
         </SharpButton>
       </View>

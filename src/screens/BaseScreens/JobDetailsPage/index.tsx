@@ -87,7 +87,7 @@ const JobDetailsPage = ({
                 <View>
                   <Text>Pay <TextHighlighter text={t(job?.price.toString()) + t(' MAD')} pressed={pressed} setPressed={setPressed} /></Text>
                 </View>
-                <Text>Time <TextHighlighter text={t(part.completionTime.toString()) + t(' hours')}/></Text>
+                <Text>Time <TextHighlighter text={t(part.completionTime.toString()) + t(' hours')} pressed={pressed} setPressed={setPressed}/></Text>
               </View>
               <View style={[styles.greyBox, styles.greyBoxBottom]}>
                 <Text>Location</Text>
