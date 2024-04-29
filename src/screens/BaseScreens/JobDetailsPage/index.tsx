@@ -90,16 +90,22 @@ const JobDetailsPage = ({
             <View style={styles.partDetails}>
               <TextHighlighter style={AppStyles.left_heading} text={t(part.name)} pressed={pressed} setPressed={setPressed} />
               <View style={[styles.greyBox, styles.greyBoxTop]}>
-                <View>
-                  <Text>Pay <TextHighlighter text={t(job?.price.toString()) + t(' MAD')} pressed={pressed} setPressed={setPressed} /></Text>
+                <View style={{ flexDirection:'row' }}>
+                  <Text><TextHighlighter style={styles.partDetailsHeader} text={'Pay '} pressed={pressed} setPressed={setPressed} /></Text>
+                  <Text><TextHighlighter text={t(job?.price.toString()) + t(' MAD')} pressed={pressed} setPressed={setPressed} /></Text>
                 </View>
-                <Text><TextHighlighter text={t('Time ') + t(part.completionTime.toString()) + t(' hours')} pressed={pressed} setPressed={setPressed}/></Text>
+                <View style={{ flexDirection:'row' }}>
+                  <Text><TextHighlighter style={styles.partDetailsHeader} text={'Time '} pressed={pressed} setPressed={setPressed} /></Text>
+                  <Text><TextHighlighter text={t(part.completionTime.toString()) + t(' hours')} pressed={pressed} setPressed={setPressed}/></Text>
+                </View>
               </View>
               <View style={[styles.greyBox, styles.greyBoxBottom]}>
-                <Text><TextHighlighter text={t('Location ') + '\n' + t(address.city.toString()) + '\n' + t(address.city.toString())} pressed={pressed} setPressed={setPressed} /></Text>
-              </View>
+                <Text><TextHighlighter style={styles.partDetailsHeader} text={t('Location ')} pressed={pressed} setPressed={setPressed} /></Text>
+                <Text><TextHighlighter text={t(address.street.toString()) + '\n' + t(address.city.toString()) } pressed={pressed} setPressed={setPressed} /></Text>
+                <Text><TextHighlighter text={ t(address.country.toString()) + ', ' + t(address.postalCode.toString())} pressed={pressed} setPressed={setPressed} /></Text>
+              </View> 
               <View style={[styles.greyBox, styles.greyBoxBottom]}>
-                <Text>Materials</Text>
+                <Text><TextHighlighter style={styles.partDetailsHeader} text={'Materials'} pressed={pressed} setPressed={setPressed} /></Text>
                 {materials.map((material, index) => (
                   <Text key={material}>
                     {index < materials.length - 1 &&
@@ -247,7 +253,7 @@ const JobDetailsPage = ({
 const styles = StyleSheet.create({
   exit: {
     position: 'absolute',
-    top: 0,
+    top: 10,
     left: 5,
     zIndex: 5,
   },
@@ -291,6 +297,12 @@ const styles = StyleSheet.create({
     borderBottomColor: '#000000',
     borderBottomWidth: 1,
   },
+  partDetailsHeader: {
+    color: '#3A3449',
+    fontSize: 20,
+    fontWeight: '200',
+    fontStyle: 'normal',
+  },
   infoContainer: {
     width: '90%',
     borderColor: Colors.yellow,
@@ -314,19 +326,23 @@ const styles = StyleSheet.create({
   greyBox: {
     marginTop: 25,
     padding: 10,
-    flexDirection: 'row',
     justifyContent: 'space-around',
     alignContent: 'center',
     backgroundColor: '#F2F1EC',
     borderRadius: 10,
   },
   greyBoxTop: {
+    flexDirection: 'row',
     width: 330,
     height: 42,
   },
   greyBoxBottom: { 
+    justifyContent: 'center',
+    alignItems: 'flex-start',
     width: 148,
-    height: 78,
+    height: 150,
+    display: 'flex',
+    flexDirection: 'column',
   },
   timeRemainingText: {
     fontSize: 20,
