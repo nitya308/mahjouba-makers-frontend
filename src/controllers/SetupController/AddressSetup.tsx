@@ -30,7 +30,7 @@ export default function AddressSetup({ navigation, route }: { navigation: any, r
   const [pressed, setPressed] = useState(false);
 
   const handleSubmit = useCallback(async () => {
-    if ( !selectedAddress || !fbUserRef || !name) return;
+    if (!selectedAddress || !fbUserRef || !name) return;
 
     setImageUploading(true);
     try {
@@ -77,13 +77,6 @@ export default function AddressSetup({ navigation, route }: { navigation: any, r
         </View>
       ) : (
         <View style={AppStyles.mainContainer} alignItems='center'>
-          <IconButton
-            style={styles.audioStyle}
-            icon={<AudioIcon />}
-            onPress={() => {
-              setPressed(true);
-            }}
-          />
           <VStack space={0} w='100%' alignItems='center' mt={150}>
             <TextHighlighter style={styles.heading} text={t('Where do you \n work?')} pressed={pressed} setPressed={setPressed} />
             <Spacer size={10} />
@@ -116,6 +109,13 @@ export default function AddressSetup({ navigation, route }: { navigation: any, r
               <DotProgress progress={6} completion={7} />
             </HStack>
           </View>
+          <IconButton
+            icon={<AudioIcon />}
+            onPress={() => {
+              setPressed(true);
+            }}
+            style={AppStyles.audioButtonStyle}
+          />
         </View>
       )}
     </>

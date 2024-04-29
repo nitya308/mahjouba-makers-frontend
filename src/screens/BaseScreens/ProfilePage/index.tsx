@@ -17,13 +17,13 @@ export default function ProfilePage({
   toggleEditing: () => void;
   toggleSettingsOpen: () => void;
 }) {
-  return <View h='100%'>
-    { editing ?
+  return (
+    editing ?
       <ProfileEditor toggleEditing={toggleEditing} /> :
-      <ProfileDisplay 
+      <ProfileDisplay
         toggleEditing={toggleEditing}
         toggleSettingsOpen={toggleSettingsOpen}
       />
-    }
-  </View>;
+
+  );
 }

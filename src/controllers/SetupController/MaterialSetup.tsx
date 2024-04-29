@@ -20,13 +20,6 @@ export default function MaterialSetup({ navigation, route }: { navigation: any, 
 
   return (
     <SafeAreaView>
-      <IconButton
-        style={styles.audioStyle}
-        icon={<AudioIcon />}
-        onPress={() => {
-          setPressed(true);
-        }}
-      />
       <ScrollView style={AppStyles.mainContainer}>
         <VStack space={4} alignItems='center' mt='10' mb='100'>
           <TextHighlighter style={styles.heading} text={t('What materials do \n you work with?')} pressed={pressed} setPressed={setPressed} />
@@ -58,6 +51,13 @@ export default function MaterialSetup({ navigation, route }: { navigation: any, 
           />
         </HStack>
       </View>
+      <IconButton
+        icon={<AudioIcon />}
+        onPress={() => {
+          setPressed(true);
+        }}
+        style={AppStyles.audioButtonStyle}
+      />
     </SafeAreaView>
   );
 }

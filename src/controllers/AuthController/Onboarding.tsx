@@ -27,16 +27,16 @@ export default function Onboarding({ navigation }: { navigation: any }) {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
+      <Center flex={1}>
+        <TextHighlighter text={textDisplay[pgNo]} pressed={pressed} setPressed={setPressed} />
+      </Center>
       <IconButton
-        style={styles.audioStyle}
         icon={<AudioIcon />}
         onPress={() => {
           setPressed(true);
         }}
+        style={AppStyles.audioButtonStyle}
       />
-      <Center flex={1}>
-        <TextHighlighter text={textDisplay[pgNo]} pressed={pressed} setPressed={setPressed} />
-      </Center>
     </SafeAreaView>
   );
 }
