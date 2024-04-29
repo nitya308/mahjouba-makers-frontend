@@ -64,6 +64,12 @@ const JobDetailsPage = ({
   return (
     <View style={styles.container}>
       <ScrollView >
+        <View style={styles.imageWrapper}>
+          {part?.imageIds?.length
+            ? <Image source={{ uri: imageUrl }} style={styles.image} alt="part image" />
+            : <Image source={Placeholder} style={styles.image} alt="image not found" />
+          }
+        </View>
         <IconButton
           style={AppStyles.audioStyle}
           icon={<AudioIcon />}
@@ -81,16 +87,16 @@ const JobDetailsPage = ({
             <VStack width="100%" alignItems='center' mb={5}>
               {!part.imageIds.length ? <Image alt='placeholder' source={Placeholder} style={styles.image} /> : <Image alt='part' source={{ uri: imageUrl }} style={styles.image} />}
             </VStack>
-            <TextHighlighter style={AppStyles.left_heading} text={t(part.name)} pressed={pressed} setPressed={setPressed} />
             <View style={styles.partDetails}>
+              <TextHighlighter style={AppStyles.left_heading} text={t(part.name)} pressed={pressed} setPressed={setPressed} />
               <View style={[styles.greyBox, styles.greyBoxTop]}>
                 <View>
                   <Text>Pay <TextHighlighter text={t(job?.price.toString()) + t(' MAD')} pressed={pressed} setPressed={setPressed} /></Text>
                 </View>
-                <Text>Time <TextHighlighter text={t(part.completionTime.toString()) + t(' hours')}/></Text>
+                <Text><TextHighlighter text={t('Time ') + t(part.completionTime.toString()) + t(' hours')} pressed={pressed} setPressed={setPressed}/></Text>
               </View>
               <View style={[styles.greyBox, styles.greyBoxBottom]}>
-                <Text>Location</Text>
+                <Text><TextHighlighter text={t('Location ') + '\n' + t(address.city.toString()) + '\n' + t(address.city.toString())} pressed={pressed} setPressed={setPressed} /></Text>
               </View>
               <View style={[styles.greyBox, styles.greyBoxBottom]}>
                 <Text>Materials</Text>
@@ -110,9 +116,9 @@ const JobDetailsPage = ({
                 <View style={styles.acceptButton}>
                   <SharpButton
                     width={'200px'}
-                    borderColor={Colors.yellow}
+                    borderColor={Colors.jobButton}
                     borderWidth={'1px'}
-                    backgroundColor={'rgba(255, 192, 29, 0.5)'}
+                    backgroundColor={Colors.jobButton}
                     my='2px'
                     size='sm'
                     onPress={() => {
@@ -120,7 +126,7 @@ const JobDetailsPage = ({
                     }}
                     marginTop={'0px'}
                   >
-                    <TextHighlighter style={styles.name} text={t('Accept Job')} pressed={pressed} setPressed={setPressed} />
+                    <TextHighlighter style={styles.acceptJob} text={t('Accept Job')} pressed={pressed} setPressed={setPressed} />
                   </SharpButton>
                 </View>
                 :
@@ -128,9 +134,9 @@ const JobDetailsPage = ({
                   <Text>You have accepted this job.</Text>
                   <SharpButton
                     width={'120px'}
-                    borderColor={Colors.yellow}
+                    borderColor={Colors.jobButton}
                     borderWidth={'1px'}
-                    backgroundColor={'rgb(255, 192, 29, 0.5)'}
+                    backgroundColor={Colors.jobButton}
                     my='2px'
                     size='sm'
                     onPress={() => {
@@ -241,7 +247,7 @@ const JobDetailsPage = ({
 const styles = StyleSheet.create({
   exit: {
     position: 'absolute',
-    top: 25,
+    top: 0,
     left: 5,
     zIndex: 5,
   },
@@ -299,25 +305,26 @@ const styles = StyleSheet.create({
   },
   partDetails:{
     alignContent: 'center',
-    marginRight: 20,
+    marginRight: 10,
+    marginLeft: 10,
     flexDirection: 'row',
     justifyContent: 'space-between',
     flexWrap: 'wrap',
-
   },
   greyBox: {
     marginTop: 25,
     padding: 10,
     flexDirection: 'row',
     justifyContent: 'space-around',
+    alignContent: 'center',
     backgroundColor: '#F2F1EC',
     borderRadius: 10,
   },
   greyBoxTop: {
-    width: 310,
+    width: 330,
     height: 42,
   },
-  greyBoxBottom: {
+  greyBoxBottom: { 
     width: 148,
     height: 78,
   },
@@ -332,7 +339,12 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 30,
     fontFamily: fonts.bold,
-    marginTop: 10,
+    marginTop: 0,
+  },
+  acceptJob: {
+    color: '#FFF',
+    fontSize: 30,
+    fontFamily: fonts.bold,
   },
   text: {
     lineHeight: 25,
@@ -341,6 +353,11 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 10,
+  },
+  imageWrapper: {
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    marginBottom: -350,
   },
 });
 
