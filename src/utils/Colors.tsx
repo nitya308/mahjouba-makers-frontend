@@ -3,6 +3,7 @@ export default {
   backgroundBase: '#FFF4D8',
   backgroundLight: '#FFFDF6',
   buttonMain: '#E2E5E600',
+  jobButton: '#3A3449',
   highlight: '#FFC01D',
   outline: '#B78433',
   white: '#FFFFFF',
