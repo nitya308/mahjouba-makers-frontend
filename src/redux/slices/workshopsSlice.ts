@@ -28,10 +28,10 @@ export const getWorkshops = createAsyncThunk(
     }
   },
 );
-
+ 
 export const updateWorkshop = createAsyncThunk(
-  'workshops/',
-  async (req: { id: string, updates: Partial<Workshop>, fbUserRef: User }, { dispatch }) => {
+  'workshops',
+  async (req: { id: string, updates: Partial<Workshop>, fbUserRef: User | null }, { dispatch }) => {
     dispatch(startWorkshopsLoading());
     try {
       const res: Workshop = await workshopsApi.updateWorkshop(req.id, req.updates, req.fbUserRef);

@@ -98,6 +98,7 @@ const JobDetailsPage = ({
                   <Text><TextHighlighter style={styles.partDetailsHeader} text={'Time '} pressed={pressed} setPressed={setPressed} /></Text>
                   <Text><TextHighlighter text={t(part.completionTime.toString()) + t(' hours')} pressed={pressed} setPressed={setPressed}/></Text>
                 </View>
+                <Text>Time <TextHighlighter text={t(part.completionTime.toString()) + t(' hours')} pressed={pressed} setPressed={setPressed}/></Text>
               </View>
               <View style={[styles.greyBox, styles.greyBoxBottom]}>
                 <Text><TextHighlighter style={styles.partDetailsHeader} text={t('Location ')} pressed={pressed} setPressed={setPressed} /></Text>

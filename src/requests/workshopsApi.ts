@@ -10,6 +10,7 @@ const getWorkshops = async (fbUserRef: User) => {
   return axios.get<Workshop[]>(`${SERVER_URL}workshops`, config)
     .then((res) => {
       console.log('api call return', res.data);
+      console.log('Workshops api return:', res.data as Workshop[]);
       return res.data as Workshop[];
     })
     .catch((err) => {
