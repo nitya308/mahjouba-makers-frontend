@@ -1,61 +1,95 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import SharpButton from 'components/SharpButton';
 import TextHighlighter from 'components/SpeechHighlighter';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { RefreshControl, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { RefreshControl, SafeAreaView, StyleSheet, View } from 'react-native';
 import { ScrollView } from 'react-native';
 import AppStyles from 'styles/commonstyles';
-import HammerIcon from '../../../assets/hammer2.svg';
-import { Pressable, HStack, VStack } from 'native-base';
+import { Pressable, VStack, Button } from 'native-base';
 import WorkshopCard from 'components/WorkshopCard';
 import Modal from 'react-native-modal';
 import { workshopsSelector } from 'redux/slices/workshopsSlice';
 import useAppSelector from 'hooks/useAppSelector';
-import { authSelector } from 'redux/slices/authSlice';
 import WorkshopDetailsPage from '../WorkshopDetailsPage';
+import { userDataSelector } from 'redux/slices/userDataSlice';
+import { fonts } from 'utils/constants';
+import Colors from 'utils/Colors';
 
 const BulletinPage = ({ reloadWorkshops, refreshing }: { reloadWorkshops: () => void; refreshing: boolean }) => {
   const [pressed, setPressed] = useState(false);
   const { t } = useTranslation();
   const [selectedWorkshopId, setSelectedWorkshopId] = useState<string | undefined>();
-  const { id } = useAppSelector(authSelector);
+  const userId = useAppSelector(userDataSelector).userData?._id;
   const { workshopsMap } = useAppSelector(workshopsSelector);
   const [currentSignUpsPressed, setCurrentSignUpsPressed] = useState(false);
-  const signedUpWorkshops: string[] = Object.entries(workshopsMap).reduce((acc: string[], [key, workshop]) => {
-    if (workshop.participantIds?.includes(id)) {
-      acc.push(key);  // Collect the workshop ID
-    }
-    return acc;
-  }, []);
-  console.log('workshopsMap:', workshopsMap);
+
+  const [availableWorkshops, setAvailableWorkshops] = useState<string[]>([]);
+  const [signedUpWorkshops, setSignedUpWorkshops] = useState<string[]>([]);
+
+  useEffect(() => {
+    setAvailableWorkshops([]);
+    setSignedUpWorkshops([]);
+    Object.values(workshopsMap).forEach((workshop) => {
+      if (userId && workshop.participantIds?.includes(userId)) {
+        setAvailableWorkshops((prev) => [...prev, workshop._id]);
+      } else {
+        setSignedUpWorkshops((prev) => [...prev, workshop._id]);
+      }
+    });
+  }, [workshopsMap]);
 
   return (
     <View>
-      <SafeAreaView>
-        <ScrollView style={AppStyles.mainContainer} refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={reloadWorkshops} />}>
-
-          <View style={AppStyles.row}>
+      <SafeAreaView >
+        <View style={[AppStyles.row, styles.paddingPage]}>
+          <Pressable onPress={() => { setCurrentSignUpsPressed(false); }}>
             <TextHighlighter style={AppStyles.left_heading} text={t('Workshops')} pressed={pressed} setPressed={setPressed} />
-            <SharpButton my='10px'
-              size='sm' onPress={() => setCurrentSignUpsPressed(true)}>
-              <TextHighlighter style={AppStyles.buttonText} text={t('Current Sign Ups')} pressed={pressed} setPressed={setPressed} />
-            </SharpButton>
-          </View>
+          </Pressable>
 
-          <TextHighlighter
-            text={t('Sign up for Workshops to learn new skills, crafting techniques, or to simply bond with other craftsmen in your area.')}
-            pressed={pressed} setPressed={setPressed} />
+          <Button onPress={() => { setCurrentSignUpsPressed(true); }}
+            style={currentSignUpsPressed ? styles.tabButtonPressed : styles.tabButton}>
+            <TextHighlighter style={styles.tabText} text={t('Current Sign Ups')} pressed={pressed} setPressed={setPressed} />
+          </Button>
 
+        </View>
+        <ScrollView
+          style={[AppStyles.mainContainer, currentSignUpsPressed ? styles.tabBackground : {}]}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={reloadWorkshops} />}>
           <VStack space={6} marginTop={5}>
-            {Object.values(workshopsMap).map((workshop) => (
-              <Pressable key={workshop._id} onPress={() => setSelectedWorkshopId(workshop._id)}>
-                <WorkshopCard key={workshop._id} workshop={workshop} pressed={pressed} setPressed={setPressed} setSelectedWorkshopId={(workshopId: string) => setSelectedWorkshopId(workshopId)} />
-              </Pressable>
-            ))}
+            {currentSignUpsPressed ?
+              <VStack space={6} marginTop={5}>
+                {signedUpWorkshops.map((registeredWorkshopId) => {
+                  const registeredWorkshop = workshopsMap[registeredWorkshopId];
+                  return (
+                    <Pressable key={registeredWorkshopId} onPress={() => setSelectedWorkshopId(registeredWorkshopId)}>
+                      <WorkshopCard
+                        key={registeredWorkshopId}
+                        workshop={registeredWorkshop}
+                        pressed={pressed}
+                        setPressed={setPressed}
+                        setSelectedWorkshopId={(workshopId: string) => setSelectedWorkshopId(workshopId)}
+                      />
+                    </Pressable>
+                  );
+                })}
+              </VStack>
+              :
+              <VStack space={6}>
+                <TextHighlighter
+                  text={t('Sign up for Workshops to learn new skills, crafting techniques, or to simply bond with other craftsmen in your area.')}
+                  pressed={pressed} setPressed={setPressed} />
+                {availableWorkshops.map((workshopId) => (
+                  <Pressable key={workshopId} onPress={() => setSelectedWorkshopId(workshopId)}>
+                    <WorkshopCard key={workshopId}
+                      workshop={workshopsMap[workshopId]}
+                      pressed={pressed} setPressed={setPressed}
+                      setSelectedWorkshopId={(id: string) => setSelectedWorkshopId(id)} />
+                  </Pressable>
+                ))}
+              </VStack>
+            }
           </VStack>
-
         </ScrollView>
 
         <Modal
@@ -67,7 +101,7 @@ const BulletinPage = ({ reloadWorkshops, refreshing }: { reloadWorkshops: () => 
           }
         </Modal>
 
-        <Modal
+        {/* <Modal
           style={{ justifyContent: 'flex-end', margin: 0 }}
           backdropOpacity={0}
           isVisible={currentSignUpsPressed}
@@ -86,7 +120,7 @@ const BulletinPage = ({ reloadWorkshops, refreshing }: { reloadWorkshops: () => 
               </Pressable>
             );
           })}
-        </Modal>
+        </Modal> */}
       </SafeAreaView>
     </View>
   );
@@ -94,4 +128,28 @@ const BulletinPage = ({ reloadWorkshops, refreshing }: { reloadWorkshops: () => 
 
 export default BulletinPage;
 
+const styles = StyleSheet.create({
+  tabButton: {
+    borderColor: '#91EAF9',
+    borderWidth: 2,
+    backgroundColor: '#FFFFFF',
+    color: '#000000',
+    borderRadius: 10,
+    padding: 2.5,
+  },
+  tabButtonPressed: {
+    borderColor: '#91EAF9',
+    borderWidth: 2,
+    backgroundColor: 'rgba(145, 234, 249, 0.4)',
+    color: '#000000',
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    padding: 2.5,
+  },
+  tabBackground: {
+    backgroundColor: 'rgba(145, 234, 249, 0.3)',
+  },
+  tabText: { color: Colors.black, fontSize: 18, fontFamily: fonts.bold },
+  paddingPage: { paddingHorizontal: 20, paddingTop: 20 },
+});
 
