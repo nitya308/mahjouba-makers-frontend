@@ -1,6 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import TextHighlighter from 'components/SpeechHighlighter';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { RefreshControl, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import { ScrollView } from 'react-native';
