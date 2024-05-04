@@ -22,15 +22,7 @@ export default function Welcome({ navigation }: { navigation: any }) {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <IconButton
-        style={styles.audioStyle}
-        icon={<AudioIcon />}
-        onPress={() => {
-          setPressed(true);
-        }}
-      />
       <Center flex={1}>
-
         <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}>
           <VStack space={2} alignItems="center">
             <MahjoubaLogo width='141px' height='104.88px' />
@@ -50,6 +42,13 @@ export default function Welcome({ navigation }: { navigation: any }) {
           </VStack>
         </ScrollView>
       </Center>
+      <IconButton
+        icon={<AudioIcon />}
+        onPress={() => {
+          setPressed(true);
+        }}
+        style={AppStyles.audioButtonStyle}
+      />
     </SafeAreaView>
   );
 }

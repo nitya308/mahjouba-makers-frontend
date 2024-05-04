@@ -22,15 +22,13 @@ export default function ProfileController(): JSX.Element {
     }
   }, [settingsOpen, setSettingsOpen, profileEditing]);
 
-  return <View flex={1} backgroundColor={Colors.backgroundBlack}>
-    {
-      settingsOpen ? 
-        <AccountSettingsPage exit={() => toggleSettingsOpen()} /> :
-        <ProfilePage
-          editing={profileEditing}
-          toggleEditing={toggleProfileEditing}
-          toggleSettingsOpen={toggleSettingsOpen} 
-        />
-    }
-  </View>;
+  return (
+    settingsOpen ?
+      <AccountSettingsPage exit={() => toggleSettingsOpen()} /> :
+      <ProfilePage
+        editing={profileEditing}
+        toggleEditing={toggleProfileEditing}
+        toggleSettingsOpen={toggleSettingsOpen}
+      />
+  );
 }
