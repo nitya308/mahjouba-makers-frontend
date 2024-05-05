@@ -22,8 +22,10 @@ const AppStyles = StyleSheet.create({
     shadowOffset: { width: 0, height: 5 },
   },
   mainContainer: { paddingHorizontal: 20, height: '100%' },
+  paddingContainer: { paddingHorizontal: 20 },
   buttonText: { color: 'white', fontSize: 18, fontFamily: fonts.bold },
   row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  rowFlexStart: { flexDirection: 'row', justifyContent: 'flex-start', gap: 5, alignItems: 'center', width: '100%', padding: 0 },
   inputBoxStyle: {
     marginTop: 10,
     padding: 15,

@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Text, View, Image, IconButton, HStack } from 'native-base';
+import { Text, View, Image, IconButton, HStack, VStack } from 'native-base';
 import { StyleSheet } from 'react-native';
 import useAppSelector from 'hooks/useAppSelector';
 import { JOB_STATUS_ENUM, Job } from 'types/job';
@@ -15,15 +15,15 @@ import { Icon } from 'react-native-elements';
 import TextHighlighter from 'components/SpeechHighlighter';
 import AppStyles from 'styles/commonstyles';
 import Colors from 'utils/Colors';
+import SharpButton from 'components/SharpButton';
 
 
-const JobHistoryCard = (
+const PaidJobCard = (
   { job, part, pressed, setPressed }:
   { job: Job, part: PartType, materials: string[], pressed: boolean, setPressed: React.Dispatch<React.SetStateAction<boolean>> },
 ) => {
 
   const { t } = useTranslation();
-
   const photoMap = useAppSelector((state) => state.photos.photosMap);
 
   // Display different image depending on current jobStatus
@@ -31,58 +31,58 @@ const JobHistoryCard = (
     ? (photoMap?.[job?.imageIds[0]]?.fullUrl)
     : (photoMap?.[part?.imageIds[0]]?.fullUrl);
 
-  const [completionDate, setCompletionDate] = useState<string | null>(null);
-
-  useEffect(() => {
-    // if (!job?.completionDate) return;
-    // const temp = new Date(job.completionDate);
-    // console.log('date', temp.getFullYear(), temp.getMonth(), temp.getDate());
-    setCompletionDate(job?.completionDate ? new Date(job.completionDate).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' }) : null);
-  }, [job.completionDate]);
-
+  const completionDate = job?.completionDate ? new Date(job.completionDate).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' }) : null;
 
   return (
     <View style={styles.jobCardContainer}>
-      <View>
+      <View style={AppStyles.rowFlexStart}>
+
         {part?.imageIds?.length
           ? <Image source={{ uri: imageUrl }} style={styles.image} alt="part image" />
           : <Image source={Placeholder} style={styles.image} alt="image not found" />
         }
+
+        <VStack space={1} padding={2} style={{ flexGrow: 1 }}>
+          <View style={AppStyles.row}>
+            <TextHighlighter style={AppStyles.bodyTextLg} text={t(part?.name)} pressed={pressed} setPressed={setPressed} />
+            <TextHighlighter style={AppStyles.bodyTextMd} text={t(job?.price?.toString() + ' ' + 'MAD')} pressed={pressed} setPressed={setPressed} />
+          </View>
+          {completionDate && (
+            <TextHighlighter style={styles.completionDate} text={t('Completed' + ' ' + completionDate)} pressed={pressed} setPressed={setPressed} />
+          )}
+        </VStack>
+
       </View>
-      <HStack justifyContent="space-between" style={styles.cardContent} alignItems='center'>
-        <TextHighlighter style={AppStyles.bodyTextLg} text={t(part?.name)} pressed={pressed} setPressed={setPressed} />
-        <TextHighlighter style={AppStyles.bodyTextMd} text={t(job?.price?.toString() + ' ' + 'MAD')} pressed={pressed} setPressed={setPressed} />
-      </HStack>
-      {completionDate && (
-        <TextHighlighter style={styles.completionDate} text={t('Completed' + ' ' + completionDate)} pressed={pressed} setPressed={setPressed} />
-      )}
+      <View>
+
+      </View>
+
+
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   jobCardContainer: {
-    backgroundColor: '#F2F1EC',
-    borderRadius: 10,
-    marginBottom: 10,
     borderWidth: 2,
     borderColor: '#F2F1EC',
   },
   completionDate: {
     fontSize: 18,
     color: Colors.darkGray,
-    textAlign: 'right',
-    paddingBottom: 15,
-    paddingHorizontal: 15,
   },
   image: {
-    height: 100,
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
+    height: 65,
+    minWidth: 65,
   },
   cardContent: {
     padding: 10,
   },
+  timeLeft:
+  {
+    color: Colors.outline,
+    fontSize: 18,
+  },
 });
 
-export default JobHistoryCard;
+export default PaidJobCard;
