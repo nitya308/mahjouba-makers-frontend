@@ -26,6 +26,7 @@ const PendingJobCard = (
   const { t } = useTranslation();
   const photoMap = useAppSelector((state) => state.photos.photosMap);
   const daysLeft = useMemo(() => {
+    // TODO: this needs to be from approval date
     if (job?.completionDate) {
       const completionDate = new Date(job.completionDate);
       const currentDate = new Date();
