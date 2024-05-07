@@ -29,7 +29,7 @@ const JobHistoryCard = (
   // Display different image depending on current jobStatus
   const imageUrl = (job?.jobStatus === JOB_STATUS_ENUM.COMPLETE || job?.jobStatus === JOB_STATUS_ENUM.PENDING_REVIEW)
     ? (photoMap?.[job?.imageIds[0]]?.fullUrl)
-    : (photoMap?.[part?.imageIds[0]]?.fullUrl);
+    : (photoMap?.[part?.mainImageId]?.fullUrl);
 
   const [completionDate, setCompletionDate] = useState<string | null>(null);
 
@@ -44,7 +44,7 @@ const JobHistoryCard = (
   return (
     <View style={styles.jobCardContainer}>
       <View>
-        {part?.imageIds?.length
+        {imageUrl && imageUrl !== ''
           ? <Image source={{ uri: imageUrl }} style={styles.image} alt="part image" />
           : <Image source={Placeholder} style={styles.image} alt="image not found" />
         }

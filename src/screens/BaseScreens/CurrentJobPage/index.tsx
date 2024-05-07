@@ -142,8 +142,8 @@ export default function CurrentJobPage(
       <VStack width="100%" mt='20px' alignItems='flex-start'>
         {currentJob ? (
           <BaseView>
-            {currentPart?.imageIds.length
-              ? <Image alt='part' source={{ uri: photoMap?.[currentPart?.imageIds[0]]?.fullUrl ?? '' }} style={styles.image} />
+            {currentPart?.mainImageId
+              ? <Image alt='part' source={{ uri: photoMap?.[currentPart?.mainImageId]?.fullUrl ?? '' }} style={styles.image} />
               : <Image alt='placeholder' source={Placeholder} style={styles.image} />}
             <View>
               <View style={styles.infoContainer}>

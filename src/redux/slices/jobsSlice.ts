@@ -108,7 +108,7 @@ export const getPartsAndMaterialsForJob = createAsyncThunk(
       try {
         const dbPart = await partsApi.getPart(req.job.partTypeId, req.fbUserRef);
         dispatch(addPart({ part: dbPart, id: req.job.partTypeId }));
-        dispatch(getPhotos({ photoIds: dbPart.imageIds, fbUserRef: req.fbUserRef }));
+        dispatch(getPhotos({ photoIds: [dbPart.mainImageId, ... dbPart.instructionImageIds], fbUserRef: req.fbUserRef }));
         const materialIds = dbPart.materialIds;
         await Promise.all(
           materialIds.map(async (mId) => {
@@ -141,11 +141,11 @@ export const getUserJobHistory = createAsyncThunk(
       if (jobs) {
         dispatch(getPartsAndMaterialsForJobs({ jobs, fbUserRef: req.fbUserRef }));
         dispatch(getAddresses({ fbUserRef: req.fbUserRef, addressIds: jobs.map((job: Job) => job.dropoffAddressId) }));
-        // let photoIds: string[] = [];
-        // jobs.forEach((job: Job) => {
-        //   photoIds = [...photoIds, ...job.imageIds];
-        // });
-        // dispatch(getPhotos({ fbUserRef: req.fbUserRef, photoIds }));
+        let photoIds: string[] = [];
+        jobs.forEach((job: Job) => {
+          photoIds = [...photoIds, ...job.imageIds];
+        });
+        dispatch(getPhotos({ fbUserRef: req.fbUserRef, photoIds }));
       }
 
       return jobs;
