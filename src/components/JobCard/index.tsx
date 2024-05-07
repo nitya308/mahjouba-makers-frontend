@@ -24,7 +24,7 @@ const JobCard = (
   const { t } = useTranslation();
 
   const photoMap = useAppSelector((state) => state.photos.photosMap);
-  const imageUrl = photoMap?.[part?.imageIds[0]]?.fullUrl;
+  const imageUrl = photoMap?.[part?.mainImageId]?.fullUrl;
 
   // IF WE EVER want to switch back to individual audio icons for jobs, we can add this back in and remove it from props
   // const [pressed, setPressed] = useState(false);
@@ -38,7 +38,7 @@ const JobCard = (
       <TextHighlighter style={styles.name} text={t(part?.name)} pressed={pressed} setPressed={setPressed} />
 
       <View style={styles.imageWrapper}>
-        {part?.imageIds?.length
+        {part?.mainImageId
           ? <Image source={{ uri: imageUrl }} style={styles.image} alt="part image" />
           : <Image source={Placeholder} style={styles.image} alt="image not found" />
         }

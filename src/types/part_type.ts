@@ -4,7 +4,8 @@ export interface PartType {
   description: string;
   payout: number;
   instructions: string;
-  imageIds: string[];
+  instructionImageIds: string[];
+  mainImageId: string;
   completionTime: number;
   materialIds: string[];
 }
@@ -14,7 +15,8 @@ export interface PartTypeParams {
   description?: string;
   payout?: number;
   instructions?: string;
-  imageIds?: string[];
+  instructionImageIds?: string[];
+  mainImageId?: string;
   completionTime?: number;
-  materialIds: string[];
+  materialIds?: string[];
 }

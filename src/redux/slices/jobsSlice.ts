@@ -141,11 +141,11 @@ export const getUserJobHistory = createAsyncThunk(
       if (jobs) {
         dispatch(getPartsAndMaterialsForJobs({ jobs, fbUserRef: req.fbUserRef }));
         dispatch(getAddresses({ fbUserRef: req.fbUserRef, addressIds: jobs.map((job: Job) => job.dropoffAddressId) }));
-        let photoIds: string[] = [];
-        jobs.forEach((job: Job) => {
-          photoIds = [...photoIds, ...job.imageIds];
-        });
-        dispatch(getPhotos({ fbUserRef: req.fbUserRef, photoIds }));
+        // let photoIds: string[] = [];
+        // jobs.forEach((job: Job) => {
+        //   photoIds = [...photoIds, ...job.imageIds];
+        // });
+        // dispatch(getPhotos({ fbUserRef: req.fbUserRef, photoIds }));
       }
 
       return jobs;
