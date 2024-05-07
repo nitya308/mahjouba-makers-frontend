@@ -55,6 +55,7 @@ export default function CurrentJobPage(
   const dueDate = new Date(currentJob?.dueDate);
   const [timeRemaining, setTimeRemaining] = useState(calculateTimeRemaining());
 
+  
   useEffect(() => {
     const intervalId = setInterval(() => {
       setTimeRemaining(calculateTimeRemaining());
@@ -85,6 +86,7 @@ export default function CurrentJobPage(
   const [showModal, setShowModal] = useState(false);
 
   const dispatch = useAppDispatch();
+  const imageUrl = photoMap?.[currentPart?.mainImageId]?.fullUrl;
 
 
   const saveNewJobPhoto = useCallback(async () => {
@@ -142,60 +144,36 @@ export default function CurrentJobPage(
       <VStack width="100%" mt='20px' alignItems='flex-start'>
         {currentJob ? (
           <BaseView>
-            {currentPart?.mainImageId
-              ? <Image alt='part' source={{ uri: photoMap?.[currentPart?.mainImageId]?.fullUrl ?? '' }} style={styles.image} />
-              : <Image alt='placeholder' source={Placeholder} style={styles.image} />}
             <View>
-              <View style={styles.infoContainer}>
-                <Text style={styles.name}>{currentPart?.name}</Text>
-                <Text>{`Current Date: ${currentDate.toDateString()}`}</Text>
+              <View style={styles.detailsHeader}>
+                <Text style={styles.name}>Job Details</Text>
               </View>
-              <View style={styles.infoContainer}>
-                <View style={styles.timeRemaining}>
-                  <TimeRemainingIcon />
-                  <Text style={styles.timeRemainingText}>{`${timeRemaining.days} days ${timeRemaining.hours} hours remaining`}</Text>
+              <View style={styles.jobDetails}>
+                <Text style={styles.text}>{currentPart?.name}</Text>
+              </View>
+              <View style={styles.jobDetails}>
+                <Text style={styles.timeRemainingText}>Time Remaining:</Text>
+              </View>
+              <View>
+                <View style={styles.jobDetails}>
+                  <Text style={styles.timeRemainingText}>{`${timeRemaining.days} days ${timeRemaining.hours} hours ${timeRemaining.minutes} minutes`}</Text>
                 </View>
               </View>
-              <View style={styles.infoContainer}>
-                <View style={styles.infoBody}>
-                  <View style={styles.textAndIcon}>
-                    <MapPinIcon width={28} height={28} />
-                    <Text style={[styles.text, { maxWidth: '90%' }]}>{currentAddress?.description}</Text>
-                  </View>
-                  <View style={styles.textAndIcon}>
-                    <Image alt='MAD icon' source={MADIcon} />
-                    <Text style={styles.text}>{`${currentJob?.price} MAD`}</Text>
-                  </View>
+              <Center>
+                <View>
+                  {imageUrl ? (
+                    <Image
+                      source={{ uri: imageUrl }}
+                      style={styles.image} // Adjust the width and height as needed
+                    />
+                  ) : (
+                    <View>
+                      {/* Placeholder or fallback UI if image URL is not available */}
+                    </View>
+                  )}
                 </View>
-              </View>
+              </Center>
             </View>
-            <View style={styles.infoContainer}>
-              <View style={styles.materialContainer}>
-                <HammerIcon />
-                {currentPart?.materialIds?.map((materialId, index) => (
-                  <View key={index}>
-                    <Text style={styles.text}>{materialsMap?.[materialId]?.name ?? ''}</Text>
-                  </View>
-                ))}
-              </View>
-            </View>
-            <Center marginTop={'10px'}>
-              <SharpButton
-                width={'200px'}
-                backgroundColor={Colors.yellow}
-                my='2px'
-                size='sm'
-                onPress={() => {
-                  dispatch(unacceptJob({ jobId: currentJobId ?? '', fbUserRef }));
-                  setDetailsPageOpen(false);
-                }}
-                marginBottom={'10px'}
-              >
-                <Text fontFamily={fonts.regular}>
-                Unaccept Job
-                </Text>
-              </SharpButton>
-            </Center>
             <Center marginTop={'10px'}>
               <AppModal
                 showModal={showModal}
@@ -231,7 +209,7 @@ export default function CurrentJobPage(
                 </Center>
                 <Center marginTop={'10px'}>
                   <SharpButton
-                    width={'80px'}
+                    width={'90px'}
                     backgroundColor={Colors.yellow}
                     my='2px'
                     size='sm'
@@ -244,6 +222,26 @@ export default function CurrentJobPage(
                   </SharpButton>
                 </Center>
               </AppModal>
+            </Center>
+            <Center marginTop={'10px'}>
+              <SharpButton
+                width={'200px'}
+                backgroundColor={Colors.white}
+                borderRadius={'24px'}
+                borderColor={Colors.black}
+                borderWidth={'.5'}
+                my='2px'
+                size='sm'
+                onPress={() => {
+                  dispatch(unacceptJob({ jobId: currentJobId ?? '', fbUserRef }));
+                  setDetailsPageOpen(false);
+                }}
+                marginBottom={'10px'}
+              >
+                <Text fontFamily={fonts.regular}>
+                Unaccept Job
+                </Text>
+              </SharpButton>
             </Center>
           </BaseView>
         )
@@ -264,31 +262,29 @@ export default function CurrentJobPage(
 }
 
 const styles = StyleSheet.create({
-  infoContainer: {
+  detailsHeader: {
     flexDirection: 'row',
     width: ScreenWidth,
-    borderColor: Colors.yellow,
-    borderWidth: 1,
     alignSelf: 'flex-start',
     paddingHorizontal: 5,
     paddingVertical: 10,
     marginBottom: 10,
+    marginTop: 50,
   },
   materialContainer: {
     width: '90%',
     alignSelf: 'center',
     borderColor: '#000000',
-    borderWidth: 1,
     marginBottom: 15,
     padding: 10,
   },
-  timeRemaining: {
-    marginLeft: 15,
+  jobDetails: {
+    marginLeft: 30,
+    marginBottom: 20,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
     color: 'white',
-    borderBottomWidth: 1,
   },
   textAndIcon: {
     marginLeft: 15,
@@ -297,27 +293,24 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   image: {
-    marginTop: 20,
-    height: '50%',
-    width: '50%',
-    marginBottom: 20,
+    width: 315, 
+    height: 315,
+    borderRadius: 10,
   },
   name: {
     marginLeft: 15,
-    color: 'white',
-    fontSize: 40,
+    fontSize: 35,
     lineHeight: 40,
   },
   timeRemainingText: {
-    color: 'white',
     fontSize: 20,
     lineHeight: 24,
   },
   text: {
     lineHeight: 25,
-    fontSize: 20,
+    paddingTop: 20,
+    fontSize: 30,
     maxWidth: '90%',
-    color: 'white',
   },
   button: {
     marginTop: 10,
