@@ -93,8 +93,8 @@ const JobsPage = ({
       <View style={{ alignContent: 'center', alignItems: 'center' }}>
         <Pressable style={styles.jobCard} key={item.job._id} onPress={() => setSelectedJobId(item.job._id)}>
           <JobCard job={item.job} part={item.part} setSelectedJobId={setSelectedJobId}
-          // This is logic to only read ones that are currently on the screen
-          // Using any () brackets here breaks the code idk why
+            // This is logic to only read ones that are currently on the screen
+            // Using any () brackets here breaks the code idk why
             pressed={viewableJobs[1] == item.job._id && pressed || resultArray[0].job._id == item.job._id && pressed && viewableJobs[0] == item.job._id}
             setPressed={setPressed} />
         </Pressable>
@@ -242,9 +242,11 @@ const JobsPage = ({
         style={{ justifyContent: 'flex-end', margin: 0 }}
         backdropOpacity={0}
         isVisible={selectedJobId != undefined}>
-        {selectedJobId &&
-          <JobDetailsPage jobId={selectedJobId ?? ''} exit={() => setSelectedJobId(undefined)} />
-        }
+        <>
+          {selectedJobId &&
+            <JobDetailsPage jobId={selectedJobId ?? ''} exit={() => setSelectedJobId(undefined)} />
+          }
+        </>
       </Modal>
       <IconButton
         icon={<AudioIcon />}

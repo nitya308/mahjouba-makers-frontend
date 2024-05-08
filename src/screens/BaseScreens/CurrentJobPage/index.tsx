@@ -55,7 +55,7 @@ export default function CurrentJobPage(
   const dueDate = new Date(currentJob?.dueDate);
   const [timeRemaining, setTimeRemaining] = useState(calculateTimeRemaining());
 
-  
+
   useEffect(() => {
     const intervalId = setInterval(() => {
       setTimeRemaining(calculateTimeRemaining());
@@ -86,7 +86,7 @@ export default function CurrentJobPage(
   const [showModal, setShowModal] = useState(false);
 
   const dispatch = useAppDispatch();
-  const imageUrl = photoMap?.[currentPart?.imageIds[0]]?.fullUrl;
+  const imageUrl = photoMap?.[currentPart?.mainImageId]?.fullUrl;
 
 
   const saveNewJobPhoto = useCallback(async () => {
@@ -171,6 +171,26 @@ export default function CurrentJobPage(
                       {/* Placeholder or fallback UI if image URL is not available */}
                     </View>
                   )}
+                  <Text>Instruction Images:</Text>
+                  {
+                    currentPart?.instructionImageIds.map((instructionImageId) => {
+                      const instructionImageUrl = photoMap?.[instructionImageId]?.fullUrl;
+                      return (
+                        <View>
+                          {instructionImageUrl ? (
+                            <Image
+                              source={{ uri: instructionImageUrl }}
+                              style={styles.image} // Adjust the width and height as needed
+                            />
+                          ) : (
+                            <View>
+                              {/* Placeholder or fallback UI if image URL is not available */}
+                            </View>
+                          )}
+                        </View>
+                      );
+                    })
+                  }
                 </View>
               </Center>
             </View>
@@ -189,7 +209,7 @@ export default function CurrentJobPage(
                     }}
                   >
                     <Text fontFamily={fonts.regular}>
-                    Complete Job
+                      Complete Job
                     </Text>
                   </SharpButton>
                 }
@@ -198,7 +218,7 @@ export default function CurrentJobPage(
               >
                 <HStack alignItems={'center'}>
                   <Text fontStyle={fonts.regular} marginTop={'20px'} maxWidth={'220px'}>
-                  Please upload at least 1 image of the completed part.
+                    Please upload at least 1 image of the completed part.
                   </Text>
                 </HStack>
                 <Center marginTop={'10px'}>
@@ -217,7 +237,7 @@ export default function CurrentJobPage(
                     marginTop={'10px'}
                   >
                     <Text fontFamily={fonts.regular}>
-                    Finalize
+                      Finalize
                     </Text>
                   </SharpButton>
                 </Center>
@@ -239,7 +259,7 @@ export default function CurrentJobPage(
                 marginBottom={'10px'}
               >
                 <Text fontFamily={fonts.regular}>
-                Unaccept Job
+                  Unaccept Job
                 </Text>
               </SharpButton>
             </Center>
@@ -251,7 +271,7 @@ export default function CurrentJobPage(
               marginTop={'100px'}
             >
               <Text>
-              You haven't accepted a job yet
+                You haven't accepted a job yet
               </Text>
             </Center>
           </BaseView>
@@ -293,7 +313,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   image: {
-    width: 315, 
+    width: 315,
     height: 315,
     borderRadius: 10,
   },

@@ -40,7 +40,7 @@ const PendingJobCard = (
   // Display different image depending on current jobStatus
   const imageUrl = (job?.jobStatus === JOB_STATUS_ENUM.COMPLETE || job?.jobStatus === JOB_STATUS_ENUM.PENDING_REVIEW)
     ? (photoMap?.[job?.imageIds[0]]?.fullUrl)
-    : (photoMap?.[part?.imageIds[0]]?.fullUrl);
+    : (photoMap?.[part?.mainImageId]?.fullUrl);
 
   const completionDate = job?.completionDate ? new Date(job.completionDate).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' }) : null;
 
@@ -48,7 +48,7 @@ const PendingJobCard = (
     <View style={styles.jobCardContainer}>
       <View style={AppStyles.rowFlexStart}>
 
-        {part?.imageIds?.length
+        {imageUrl && imageUrl !== ''
           ? <Image source={{ uri: imageUrl }} style={styles.image} alt="part image" />
           : <Image source={Placeholder} style={styles.image} alt="image not found" />
         }
