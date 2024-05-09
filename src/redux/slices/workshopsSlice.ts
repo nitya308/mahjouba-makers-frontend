@@ -28,14 +28,16 @@ export const getWorkshops = createAsyncThunk(
     }
   },
 );
- 
+
 export const updateWorkshop = createAsyncThunk(
   'workshops',
   async (req: { id: string, updates: Partial<Workshop>, fbUserRef: User | null }, { dispatch }) => {
     dispatch(startWorkshopsLoading());
     try {
-      const res: Workshop = await workshopsApi.updateWorkshop(req.id, req.updates, req.fbUserRef);
-      return res;
+      if (req.fbUserRef) {
+        const res: Workshop = await workshopsApi.updateWorkshop(req.id, req.updates, req.fbUserRef);
+        return res;
+      }
     } catch (err) {
       return {} as Workshop;
     } finally {
