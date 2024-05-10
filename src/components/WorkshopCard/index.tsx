@@ -21,6 +21,16 @@ const WorkshopCard = ({
   setSelectedWorkshopId: (id: string) => void;
 }) => {
   const { t } = useTranslation();
+
+  const formatDate = (date: string): string => {
+    const d = new Date(date);
+    const options: Intl.DateTimeFormatOptions = {
+      year: 'numeric', month: 'long', day: 'numeric', 
+      hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true,
+    };
+    return d.toLocaleString('en-US', options);
+  };
+
   const handleSelect = (selectedWorkshop: Workshop) => {
     setSelectedWorkshopId(selectedWorkshop._id);
   };
@@ -34,7 +44,7 @@ const WorkshopCard = ({
             text={t(workshop.name)}
             pressed={pressed} setPressed={setPressed} />
           <TextHighlighter style={styles.workshopText}
-            text={t(workshop.workshopTime.toString())} // Convert workshopTime to string
+            text={formatDate(workshop.workshopTime.toString())}
             pressed={pressed} setPressed={setPressed} />
         </VStack>
         <SharpButton my='10px'

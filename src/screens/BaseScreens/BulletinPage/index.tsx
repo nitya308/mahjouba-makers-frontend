@@ -15,7 +15,6 @@ import WorkshopDetailsPage from '../WorkshopDetailsPage';
 import { userDataSelector } from 'redux/slices/userDataSlice';
 import { fonts } from 'utils/constants';
 import Colors from 'utils/Colors';
-import { ScreenHeight } from 'react-native-elements/dist/helpers';
 
 const BulletinPage = ({ reloadWorkshops, refreshing }: { reloadWorkshops: () => void; refreshing: boolean }) => {
   const [pressed, setPressed] = useState(false);
@@ -33,9 +32,9 @@ const BulletinPage = ({ reloadWorkshops, refreshing }: { reloadWorkshops: () => 
     setSignedUpWorkshops([]);
     Object.values(workshopsMap).forEach((workshop) => {
       if (userId && workshop.participantIds?.includes(userId)) {
-        setAvailableWorkshops((prev) => [...prev, workshop._id]);
-      } else {
         setSignedUpWorkshops((prev) => [...prev, workshop._id]);
+      } else {
+        setAvailableWorkshops((prev) => [...prev, workshop._id]);
       }
     });
   }, [workshopsMap]);
@@ -76,12 +75,13 @@ const BulletinPage = ({ reloadWorkshops, refreshing }: { reloadWorkshops: () => 
                   );
                 })}
               </VStack>
-              :
+              : 
               <VStack space={6}>
                 <TextHighlighter
                   text={t('Sign up for Workshops to learn new skills, crafting techniques, or to simply bond with other craftsmen in your area.')}
                   pressed={pressed} setPressed={setPressed} />
                 {availableWorkshops.map((workshopId) => (
+                  workshopId &&
                   <Pressable key={workshopId} onPress={() => setSelectedWorkshopId(workshopId)}>
                     <WorkshopCard key={workshopId}
                       workshop={workshopsMap[workshopId]}
@@ -105,7 +105,7 @@ const BulletinPage = ({ reloadWorkshops, refreshing }: { reloadWorkshops: () => 
           backdropOpacity={0}
           isVisible={selectedWorkshopId != undefined}>
           {selectedWorkshopId &&
-            <WorkshopDetailsPage workshopId={selectedWorkshopId ?? ''} exit={() => setSelectedWorkshopId(undefined)} />
+            <WorkshopDetailsPage workshopId={selectedWorkshopId ?? ''} exit={() => setSelectedWorkshopId(undefined)} reloadWorkshops={reloadWorkshops} />
           }
         </Modal>
 

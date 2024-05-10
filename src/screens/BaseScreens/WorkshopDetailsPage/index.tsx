@@ -30,33 +30,27 @@ import { updateWorkshop, workshopsSelector } from 'redux/slices/workshopsSlice';
 const WorkshopDetailsPage = ({
   workshopId,
   exit,
+  reloadWorkshops,
 }: {
   workshopId: string;
   exit: () => void;
+  reloadWorkshops: () => void;
 }): JSX.Element => {
   const dispatch = useAppDispatch();
-  const { fbUserRef, id } = useAppSelector(authSelector);
+  const userId = useAppSelector(userDataSelector).userData?._id;
+  const { fbUserRef } = useAppSelector(authSelector);
   const { loading, workshopsMap } = useAppSelector(workshopsSelector);
-  console.log('workshopsMap:', workshopsMap);
-  // Filter the workshops where the current user is a participant
-  const signedUpWorkshops: string[] = Object.entries(workshopsMap).reduce((acc: string[], [key, workshop]) => {
-    if (workshop.participantIds?.includes(id)) {
-      acc.push(key);  // Collect the workshop ID
-    }
-    return acc;
-  }, []);
-  console.log('signedUpWorkshops:', signedUpWorkshops);
-  const isSignedUp = signedUpWorkshops?.includes(workshopId);
+  const addressMap = useAppSelector((state) => state.addresses.addressMap);
   const workshop = workshopsMap[workshopId];
+  const isSignedUp = workshop.participantIds?.includes(userId ?? '');
   const workshopTitle = workshop.name;
   const time = workshop.workshopTime;
   const description = workshop.description;
   const instructor = workshop.instructor;
-  const location = workshop.location;
+  const location = addressMap[workshop.location].description;
   const capacity = workshop.capacity;
   const participantsNumber = workshop.participantIds?.length;
   const spotsLeft = capacity - participantsNumber;
-
   const [pressed, setPressed] = useState(false);
   const { t } = useTranslation();
 
@@ -88,16 +82,8 @@ const WorkshopDetailsPage = ({
             <TextHighlighter style={styles.text} text={t(location)} pressed={pressed} setPressed={setPressed} />
             <TextHighlighter style={styles.text} text={t(time.toString())} pressed={pressed} setPressed={setPressed} />
             <TextHighlighter style={styles.text} text={t(spotsLeft.toString())} pressed={pressed} setPressed={setPressed} />
-            {/* <HStack>
 
-              <View style={styles.workshopCardContainer}>
-
-              </View>
-              <View style={styles.workshopCardContainer}>
-            
-              </View>
-            </HStack> */}
-            {!isSignedUp && spotsLeft > 0 ?
+            {!isSignedUp && spotsLeft > 0 ? // Case 1: user can sign up
               <View style={styles.acceptButton}>
                 <SharpButton
                   width={'200px'}
@@ -108,15 +94,18 @@ const WorkshopDetailsPage = ({
                   size='sm'
                   onPress={() => {
                     // add the current user to the workshop participantIds
-                    workshop.participantIds.push(id);
-                    dispatch(updateWorkshop({ id: workshopId, updates: workshop, fbUserRef: fbUserRef }));
+                    const updatedParticipantIds = [...workshop.participantIds, userId ?? ''];
+                    const updatedWorkshop = { participantIds: updatedParticipantIds };
+                    dispatch(updateWorkshop({ id: workshopId, updates: updatedWorkshop, fbUserRef: fbUserRef }));
+                    reloadWorkshops();
+                    exit();
                   }}
                   marginTop={'0px'}
                 >
                   <TextHighlighter style={styles.name} text={t('Sign Up')} pressed={pressed} setPressed={setPressed} />
                 </SharpButton>
               </View>
-              : !isSignedUp && spotsLeft <= 0 ? ( // user cannot sign up if there are no spots left
+              : !isSignedUp && spotsLeft <= 0 ? ( // Case 2: user cannot sign up if there are no spots left
                 <View style={styles.acceptButton}>
                   <TextHighlighter style={styles.name} text={t('There are no spots left for this workshop')} pressed={pressed} setPressed={setPressed} />
                   {/* <SharpButton
@@ -135,7 +124,7 @@ const WorkshopDetailsPage = ({
                   >
                     <TextHighlighter style={styles.name} text={t('Withdraw')} pressed={pressed} setPressed={setPressed} />
                   </SharpButton> */}
-                </View> ) : ( // user is signed up
+                </View> ) : ( // Case 3: user is signed up
                 <View style={styles.acceptButton}>
                   <TextHighlighter style={styles.text} text={t('You are currently signed up for this workshop')} pressed={pressed} setPressed={setPressed} />
                   <SharpButton
@@ -146,9 +135,13 @@ const WorkshopDetailsPage = ({
                     size='sm'
                     my={'0px'}
                     onPress={() => {
-                    // remove the current user from the workshop participantIds
-                      workshop.participantIds.splice(workshop.participantIds.indexOf(id), 1);
-                      dispatch(updateWorkshop({ id: workshopId, updates: workshop, fbUserRef: fbUserRef }));
+                      // remove the current user from the workshop participantIds
+                      const userIndex = workshop.participantIds.indexOf(userId ?? '');
+                      const updatedParticipantIds = [...workshop.participantIds.slice(0, userIndex), ...workshop.participantIds.slice(userIndex + 1)];
+                      const updatedWorkshop = { participantIds: updatedParticipantIds };
+                      dispatch(updateWorkshop({ id: workshopId, updates: updatedWorkshop, fbUserRef: fbUserRef })); 
+                      reloadWorkshops();
+                      exit();
                     }}
                   >
                     <TextHighlighter style={styles.name} text={t('Withdraw')} pressed={pressed} setPressed={setPressed} />
