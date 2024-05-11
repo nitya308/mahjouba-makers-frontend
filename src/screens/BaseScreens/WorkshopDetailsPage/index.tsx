@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, Image, Spinner, IconButton, VStack, Flex, Row, HStack } from 'native-base';
+import { View, Text, Image, Spinner, IconButton, VStack, Flex, Row, HStack, Box, Spacer } from 'native-base';
 import { ScrollView, StyleSheet } from 'react-native';
 import useAppSelector from 'hooks/useAppSelector';
 import useAppDispatch from 'hooks/useAppDispatch';
@@ -24,7 +24,7 @@ import Colors from 'utils/Colors';
 import AppStyles from 'styles/commonstyles';
 import TextHighlighter from 'components/SpeechHighlighter';
 import { useTranslation } from 'react-i18next';
-import { ScreenWidth } from 'react-native-elements/dist/helpers';
+import { ScreenHeight, ScreenWidth } from 'react-native-elements/dist/helpers';
 import { updateWorkshop, workshopsSelector } from 'redux/slices/workshopsSlice';
 
 const WorkshopDetailsPage = ({
@@ -53,6 +53,14 @@ const WorkshopDetailsPage = ({
   const spotsLeft = capacity - participantsNumber;
   const [pressed, setPressed] = useState(false);
   const { t } = useTranslation();
+  const formatDate = (date: string): string => {
+    const d = new Date(date);
+    const options: Intl.DateTimeFormatOptions = {
+      year: 'numeric', month: 'long', day: 'numeric', 
+      hour: '2-digit', minute: '2-digit', hour12: true,
+    };
+    return d.toLocaleString('en-US', options);
+  };
 
   if (loading) {
     return <Spinner />;
@@ -74,13 +82,13 @@ const WorkshopDetailsPage = ({
         </TouchableOpacity>
 
         <>
-          <VStack width="100%" alignItems='center' mb={5}>
+          <VStack width="100%" mb={5}>
             {/* {!imageUrl ? <Image alt='placeholder' source={Placeholder} style={styles.image} /> :  />} */}
             <TextHighlighter style={styles.name} text={t(workshopTitle)} pressed={pressed} setPressed={setPressed} />
             <TextHighlighter style={styles.text} text={t(description)} pressed={pressed} setPressed={setPressed} />
             <TextHighlighter style={styles.text} text={t(instructor)} pressed={pressed} setPressed={setPressed} />
             <TextHighlighter style={styles.text} text={t(location)} pressed={pressed} setPressed={setPressed} />
-            <TextHighlighter style={styles.text} text={t(time.toString())} pressed={pressed} setPressed={setPressed} />
+            <TextHighlighter style={styles.text} text={t(formatDate(time.toString()))} pressed={pressed} setPressed={setPressed} />
             <TextHighlighter style={styles.text} text={t(spotsLeft.toString())} pressed={pressed} setPressed={setPressed} />
 
             {!isSignedUp && spotsLeft > 0 ? // Case 1: user can sign up
@@ -262,15 +270,17 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 30,
     fontFamily: fonts.bold,
-    marginTop: 10,
+    marginTop: 200,
+    textAlign: 'left',
   },
   text: {
     lineHeight: 25,
     fontSize: 20,
+    textAlign: 'left',
     maxWidth: '90%',
   },
   button: {
-    marginTop: 10,
+    marginTop: 0,
   },
 });
 
