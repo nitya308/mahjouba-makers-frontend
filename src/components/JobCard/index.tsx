@@ -24,7 +24,7 @@ const JobCard = (
   const { t } = useTranslation();
 
   const photoMap = useAppSelector((state) => state.photos.photosMap);
-  const imageUrl = photoMap?.[part?.imageIds[0]]?.fullUrl;
+  const imageUrl = " ";
 
   // IF WE EVER want to switch back to individual audio icons for jobs, we can add this back in and remove it from props
   // const [pressed, setPressed] = useState(false);

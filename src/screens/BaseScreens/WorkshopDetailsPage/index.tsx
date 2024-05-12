@@ -110,7 +110,7 @@ const WorkshopDetailsPage = ({
                   }}
                   marginTop={'0px'}
                 >
-                  <TextHighlighter style={styles.name} text={t('Sign Up')} pressed={pressed} setPressed={setPressed} />
+                  <TextHighlighter style={styles.buttonText} text={t('Sign Up')} pressed={pressed} setPressed={setPressed} />
                 </SharpButton>
               </View>
               : !isSignedUp && spotsLeft <= 0 ? ( // Case 2: user cannot sign up if there are no spots left
@@ -136,12 +136,10 @@ const WorkshopDetailsPage = ({
                 <View style={styles.acceptButton}>
                   <TextHighlighter style={styles.text} text={t('You are currently signed up for this workshop')} pressed={pressed} setPressed={setPressed} />
                   <SharpButton
-                    width={'180px'}
                     borderColor={Colors.yellow}
                     borderWidth={'1px'}
+                    marginTop={'30px'}
                     backgroundColor={'rgb(255, 192, 29, 0.5)'}
-                    size='sm'
-                    my={'0px'}
                     onPress={() => {
                       // remove the current user from the workshop participantIds
                       const userIndex = workshop.participantIds.indexOf(userId ?? '');
@@ -152,7 +150,7 @@ const WorkshopDetailsPage = ({
                       exit();
                     }}
                   >
-                    <TextHighlighter style={styles.name} text={t('Withdraw')} pressed={pressed} setPressed={setPressed} />
+                    <TextHighlighter style={styles.buttonText} text={t('Withdraw')} pressed={pressed} setPressed={setPressed} />
                   </SharpButton>
                 </View> 
               )
@@ -269,6 +267,7 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: 30,
+    lineHeight: 30,
     fontFamily: fonts.bold,
     marginTop: 200,
     textAlign: 'left',
@@ -281,6 +280,11 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 0,
+  },
+  buttonText: {
+    fontSize: 30,
+    lineHeight: 30,
+    fontFamily: fonts.bold,
   },
 });
 
