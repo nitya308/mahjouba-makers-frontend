@@ -108,7 +108,7 @@ export const getPartsAndMaterialsForJob = createAsyncThunk(
       try {
         const dbPart = await partsApi.getPart(req.job.partTypeId, req.fbUserRef);
         dispatch(addPart({ part: dbPart, id: req.job.partTypeId }));
-        dispatch(getPhotos({ photoIds: dbPart.imageIds, fbUserRef: req.fbUserRef }));
+        dispatch(getPhotos({ photoIds: [dbPart.mainImageId, ... dbPart.instructionImageIds], fbUserRef: req.fbUserRef }));
         const materialIds = dbPart.materialIds;
         await Promise.all(
           materialIds.map(async (mId) => {

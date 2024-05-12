@@ -3,7 +3,7 @@ import { StyleSheet, Dimensions } from 'react-native';
 const FormatStyle = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000',
+    backgroundColor: 'white',
     alignItems: 'center',
     justifyContent: 'center',
   },

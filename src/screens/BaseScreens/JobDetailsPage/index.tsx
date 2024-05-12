@@ -51,7 +51,7 @@ const JobDetailsPage = ({
   // Display different image depending on current jobStatus
   const imageUrl = (job?.jobStatus === JOB_STATUS_ENUM.COMPLETE || job?.jobStatus === JOB_STATUS_ENUM.PENDING_REVIEW)
     ? (photoMap?.[job?.imageIds[0]]?.fullUrl)
-    : (photoMap?.[part?.imageIds[0]]?.fullUrl);
+    : (photoMap?.[part?.mainImageId]?.fullUrl);
 
   const [pressed, setPressed] = useState(false);
 
@@ -65,7 +65,7 @@ const JobDetailsPage = ({
     <View style={styles.container}>
       <ScrollView >
         <View style={styles.imageWrapper}>
-          {part?.imageIds?.length
+          {part?.mainImageId
             ? <Image source={{ uri: imageUrl }} style={styles.image} alt="part image" />
             : <Image source={Placeholder} style={styles.image} alt="image not found" />
           }
@@ -85,7 +85,7 @@ const JobDetailsPage = ({
         {part && job &&
           <>
             <VStack width="100%" alignItems='center' mb={5}>
-              {!part.imageIds.length ? <Image alt='placeholder' source={Placeholder} style={styles.image} /> : <Image alt='part' source={{ uri: imageUrl }} style={styles.image} />}
+              {!part.mainImageId ? <Image alt='placeholder' source={Placeholder} style={styles.image} /> : <Image alt='part' source={{ uri: imageUrl }} style={styles.image} />}
             </VStack>
             <View style={styles.partDetails}>
               <TextHighlighter style={AppStyles.left_heading} text={t(part.name)} pressed={pressed} setPressed={setPressed} />
