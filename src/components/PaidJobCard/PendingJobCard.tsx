@@ -1,28 +1,27 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { Text, View, Image, IconButton, HStack, VStack } from 'native-base';
-import { StyleSheet } from 'react-native';
+import React, { useMemo, useState } from 'react';
+import { Text, View, Image, HStack, VStack } from 'native-base';
+import { StyleSheet, TouchableOpacity } from 'react-native';
 import useAppSelector from 'hooks/useAppSelector';
 import { JOB_STATUS_ENUM, Job } from 'types/job';
 import { PartType } from 'types/part_type';
 import Placeholder from 'assets/no_image_placeholder.png';
-import AudioIcon from '../../assets/audio_icon.svg';
-import HammerIcon from '../../assets/hammer2.svg';
-import Money1 from '../../assets/money1.svg';
-import * as Speech from 'expo-speech';
-import i18next from 'i18next';
+import Modal from 'react-native-modal';
+import BackCircle from '../../assets/back_circle.svg';
 import { useTranslation } from 'react-i18next';
-import { Icon } from 'react-native-elements';
 import TextHighlighter from 'components/SpeechHighlighter';
 import AppStyles from 'styles/commonstyles';
 import Colors from 'utils/Colors';
 import SharpButton from 'components/SharpButton';
+import { ScreenHeight } from 'react-native-elements/dist/helpers';
+import { fonts } from 'utils/constants';
 
 
 const PendingJobCard = (
   { job, part, pressed, setPressed }:
-  { job: Job, part: PartType, materials: string[], pressed: boolean, setPressed: React.Dispatch<React.SetStateAction<boolean>> },
+    { job: Job, part: PartType, materials: string[], pressed: boolean, setPressed: React.Dispatch<React.SetStateAction<boolean>> },
 ) => {
 
+  const [showToken, setShowToken] = useState(false);
   const { t } = useTranslation();
   const photoMap = useAppSelector((state) => state.photos.photosMap);
   const daysLeft = useMemo(() => {
@@ -58,31 +57,50 @@ const PendingJobCard = (
             <TextHighlighter style={AppStyles.bodyTextLg} text={t(part?.name)} pressed={pressed} setPressed={setPressed} />
             <TextHighlighter style={AppStyles.bodyTextMd} text={t(job?.price?.toString() + ' ' + 'MAD')} pressed={pressed} setPressed={setPressed} />
           </View>
-          
+
           {completionDate && (
             <TextHighlighter style={styles.completionDate} text={t('Completed' + ' ' + completionDate)} pressed={pressed} setPressed={setPressed} />
           )}
           {job?.jobStatus === JOB_STATUS_ENUM.COMPLETE &&
-            daysLeft && daysLeft > 0 ?
-            
             <HStack justifyContent='flex-end' alignItems='center' space={2}>
-              <TextHighlighter style={styles.timeLeft} text={t(daysLeft + ' days left to:')} pressed={pressed} setPressed={setPressed} />
-              <SharpButton >
-                <TextHighlighter style={AppStyles.buttonText} text={t('Collect')} pressed={pressed} setPressed={setPressed} />
-              </SharpButton>
+              {daysLeft && daysLeft > 0 ?
+                <>
+                  <TextHighlighter style={styles.timeLeft} text={t(daysLeft + ' days left to:')} pressed={pressed} setPressed={setPressed} />
+                  <SharpButton
+                    onPress={() => setShowToken(true)}>
+                    <TextHighlighter style={AppStyles.buttonText} text={t('Collect')} pressed={pressed} setPressed={setPressed} />
+                  </SharpButton>
+                </>
+                :
+                <TextHighlighter style={styles.timeLeft} text={t('Collection date expired')} pressed={pressed} setPressed={setPressed} />
+              }
             </HStack>
-            :
-            <TextHighlighter style={styles.timeLeft} text={t('Token expired')} pressed={pressed} setPressed={setPressed} />
-            // <TextHighlighter style={styles.timeLeft} text={t('Collection date expired')} pressed={pressed} setPressed={setPressed} />
+
           }
         </VStack>
-
       </View>
-      <View>
+      <Modal isVisible={showToken} backdropOpacity={0.7} style={styles.tokenModal}>
+        <TouchableOpacity style={styles.exitModal} onPress={() => setShowToken(false)}>
+          <BackCircle width={40} height={40} />
+        </TouchableOpacity>
+        <TextHighlighter style={AppStyles.center_heading} text={t('Collect Money')} pressed={pressed} setPressed={setPressed} />
+        <VStack space={1} mt={5}>
+          <View style={AppStyles.row}>
+            <TextHighlighter style={{ ...AppStyles.bodyTextLg, color: Colors.jobButton }} text={t(part?.name)} pressed={pressed} setPressed={setPressed} />
+            <TextHighlighter style={{ ...AppStyles.bodyText, color: Colors.jobButton }} text={t(job?.price?.toString() + ' ' + 'MAD')} pressed={pressed} setPressed={setPressed} />
+          </View>
 
-      </View>
-
-
+          {completionDate && (
+            <TextHighlighter style={{ ...AppStyles.bodyText, color: Colors.jobButton }} text={t('Completed' + ' ' + completionDate)} pressed={pressed} setPressed={setPressed} />
+          )}
+        </VStack>
+        <VStack space={1} mt={5} mb={2}>
+          <Text style={AppStyles.bodyTextLg}>Token:</Text>
+          <Text style={styles.tokenBox}>21AWGEQ7JKER</Text>
+        </VStack>
+        <TextHighlighter style={styles.timeLeft} text={t(daysLeft + ' days left')} pressed={pressed} setPressed={setPressed} />
+        <TextHighlighter style={styles.info} text={t('Show this token at a CashPlus center and get your cash')} pressed={pressed} setPressed={setPressed} />
+      </Modal>
     </View>
   );
 };
@@ -96,6 +114,12 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: Colors.darkGray,
   },
+  exitModal: {
+    position: 'absolute',
+    top: 15,
+    left: 15,
+    zIndex: 10,
+  },
   image: {
     height: 65,
     minWidth: 65,
@@ -103,10 +127,36 @@ const styles = StyleSheet.create({
   cardContent: {
     padding: 10,
   },
-  timeLeft:
-  {
+  timeLeft: {
     color: 'red',
     fontSize: 18,
+  },
+  info:{
+    fontSize: 18,
+    color: Colors.jobButton,
+    marginTop: 10, 
+  },
+  tokenBox: {
+    borderWidth: 2,
+    borderColor: Colors.outline,
+    borderRadius: 10,
+    padding: 10,
+    fontSize: 18,
+    fontFamily: fonts.bold,
+    fontWeight: '600',
+  },
+  tokenModal: {
+    flex: 0,
+    display: 'flex',
+    justifyContent: 'flex-start',
+    padding: 25,
+    marginTop: ScreenHeight / 2 - 150,
+    height: 350,
+    marginHorizontal: 20,
+    borderRadius: 30,
+    borderWidth: 3,
+    borderColor: Colors.outline,
+    backgroundColor: 'white',
   },
 });
 
