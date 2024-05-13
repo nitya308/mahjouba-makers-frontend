@@ -10,9 +10,11 @@ import {
   Input,
   View,
   Text,
+  VStack,
 } from 'native-base';
 import React, { useState, useCallback, useMemo, useEffect, useTransition } from 'react';
 import { Image } from 'react-native-image-crop-picker';
+import BackCircle from 'assets/back_circle.svg';
 import { Ionicons } from '@expo/vector-icons';
 import { uploadMedia } from 'utils/mediaUtils';
 import useAppSelector from 'hooks/useAppSelector';
@@ -40,6 +42,10 @@ import { DEFAULT_PROFILE_URI } from 'utils/constants';
 import AppStyles from 'styles/commonstyles';
 import AudioIcon from '../../assets/audio_icon.svg';
 import { Modal, SafeAreaView, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
+import TextHighlighter from 'components/SpeechHighlighter';
+import OnboardingStyles from 'styles/onboarding';
+import { background } from 'native-base/lib/typescript/theme/styled-system';
+import { TextInput } from 'react-native';
 
 export default function ProfileEditor({
   toggleEditing,
@@ -137,138 +143,63 @@ export default function ProfileEditor({
   const [pressed, setPressed] = useState(false);
 
   return (
-    <SafeAreaView>
-      <ScrollView>
-        <Box pt='75px' width={'100%'}>
-          <IconButton
-            style={AppStyles.audioStyle}
-            icon={<AudioIcon />}
-            onPress={() => {
-              setPressed(true);
-            }}
-          />
-          <HStack alignItems={'center'} justifyContent={'center'} width={'100%'}>
-            <IconButton
-              icon={<BackArrowIcon />}
-              onPress={toggleEditing}
-              position={'absolute'}
-              left={0}
-            />
-            <Heading marginLeft={'20px'} marginRight={'10px'} fontFamily={fonts.bold}>
-              Edit Profile
-            </Heading>
-          </HStack>
-          <Center
-            marginTop={'10px'}
-          >
-            <ProfileImageSelector
-              selectedProfile={selectedImage}
-              setSelectedProfile={setSelectedImage}
-              defaultImageUri={photoMap?.[userData?.profilePicId ?? '']?.fullUrl ?? DEFAULT_PROFILE_URI}
-              width={120}
-              height={120}
-            />
-            <Input
-              placeholder={userData?.name || 'Name'}
-              value={newName}
-              onChangeText={setNewName}
-              w='60%'
-              borderRadius='2px'
-              paddingY='10px'
-              paddingX='16px'
-              borderColor='black'
-              borderWidth='1px'
-              autoCapitalize='none'
-              size='sm'
-              type='text'
-              backgroundColor='#ffffff'
-              mb='7'
-            />
-            <AddressInput
-              setAddress={setNewAddress}
-              // TODO: Make this defaultValue instead of placeholder (so that the text isn't light grey)
-              placeholder={addressMap?.[userData?.homeAddressId ?? '']?.description ?? 'Address'}
-            />
-            {
-              // TODO: Need to figure out why can't put MaterialSelector in AppModal - Eric
-            }
-            {/* <HStack
-          alignItems={'center'}
-        >
-          {
-            userData?.materialIds?.map((materialId: string) => {
-              const material = materialsMap[materialId];
-              if (material) {
-                return <MaterialChip materialName={material?.name} />;
-              }
-              return <></>;
-            })
-          }
-          <AppModal 
-            showModal={showModal}
-            setShowModal={setShowModal}
-            modalButton={
-              <IconButton
-                icon={<AddIcon />}
-                onPress={() => {
-                  setShowModal(true);
-                }}
-              />
-            }
-          >
-            {/* TODO: Put MaterialSelector here */}
-            {/* </AppModal> */}
-            {/* </HStack> */}
-            
-            <TouchableOpacity onPress={toggleModal} style={styles.button}>
-              <Text> Materials <Text style={styles.plusSign}>+</Text> </Text>
-            </TouchableOpacity>
+    <SafeAreaView style={AppStyles.mainContainer}>
 
-            <Modal visible={isModalVisible} animationType="fade" transparent={true}  >
-              <View style={styles.modalContainer}>
-                <View style={styles.modalContent}>
-                  <Text style={[styles.modalFont, { marginTop: 10, marginBottom: 20 }]}>Select Materials</Text>
-                  <MaterialSelector
-                    selectedMaterialIds={selectedMaterialIds}
-                    setSelectedMaterialIds={setSelectedMaterialIds}
-                  />
-                  <TouchableOpacity onPress={toggleModal}>
-                    <Text style={styles.modalFont}>Close</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </Modal>
-          </Center>
-          <Center>
-            <SharpButton
-              width={'80px'}
-              backgroundColor={Colors.yellow}
-              my='2px'
-              size='sm'
-              onPress={saveChanges}
-              marginTop={'10px'}
-            >
-              <Text fontFamily={fonts.regular}>
-                Save
-              </Text>
-            </SharpButton>
-          </Center>
-          {
-            // demo translation functionality
-          }
-          <Center>
-            <Text>
-              {
-                'demo translation functionality: '
-              }
-              {
-                t('Hello world')
-              }
-            </Text>
-            <SelectLanguage />
-          </Center>
-        </Box>
+      <TouchableOpacity style={AppStyles.exitButton} onPress={toggleEditing}>
+        <BackCircle width={40} height={40} />
+      </TouchableOpacity>
+
+      <VStack mt={5} mb={5}>
+        <TextHighlighter style={AppStyles.center_heading} text={t('Edit Profile')} pressed={pressed} setPressed={setPressed} />
+      </VStack>
+
+      <ScrollView style={{ paddingHorizontal: 20 }}>
+        <ProfileImageSelector
+          selectedProfile={selectedImage}
+          setSelectedProfile={setSelectedImage}
+          defaultImageUri={photoMap?.[userData?.profilePicId ?? '']?.fullUrl ?? DEFAULT_PROFILE_URI}
+          width={120}
+          height={120}
+        />
+
+        <TextHighlighter style={AppStyles.bodyTextMd} text={t('Name')} pressed={pressed} setPressed={setPressed} />
+        <TextInput
+          style={AppStyles.profileEditingStyle}
+          defaultValue={userData?.name || 'Name'}
+          value={newName}
+          onChangeText={setNewName}
+        />
+
+        <TextHighlighter style={AppStyles.bodyTextMd} text={t('Address')} pressed={pressed} setPressed={setPressed} />
+        <AddressInput
+          setAddress={setNewAddress}
+          placeholder={addressMap?.[userData?.homeAddressId ?? '']?.description ?? 'Address'}
+        />
+
+        <View style={{ alignItems: 'flex-end', marginTop: 20 }}>
+          <SharpButton my='10px' size='sm' onPress={saveChanges}>
+            <TextHighlighter style={AppStyles.buttonText} text={t('Save')} pressed={pressed} setPressed={setPressed} />
+          </SharpButton>
+        </View>
+
+        <Spacer size={5} />
+
+        <TextHighlighter style={AppStyles.bodyTextMd} text={t('Change App language')} pressed={pressed} setPressed={setPressed} />
+        <Center>
+          <Text>
+            {'demo translation functionality: '}
+            {t('Hello world')}
+          </Text>
+          <SelectLanguage />
+        </Center>
       </ScrollView>
+      <IconButton
+        icon={<AudioIcon />}
+        onPress={() => {
+          setPressed(true);
+        }}
+        style={AppStyles.audioButtonStyle}
+      />
     </SafeAreaView>
   );
 }
@@ -278,33 +209,4 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#080026',
   },
-  modalContainer: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  button: {
-    borderRadius: 2,
-    borderWidth: 1,
-    borderColor: '#080026',
-    backgroundColor: '#FFFDF6',
-    flexShrink: 0,
-    marginTop: 15,
-    padding: 5,
-  },
-  modalContent: {
-    backgroundColor: 'rgba(0, 0, 0, 1)',
-    padding: 20,
-    borderRadius: 10,
-    width: 370,
-    alignItems: 'center',
-    borderColor: 'white',
-    borderWidth: 1,
-  },
-  modalFont: {
-    fontSize: 20,
-    color: 'white',
-  },
-
 });

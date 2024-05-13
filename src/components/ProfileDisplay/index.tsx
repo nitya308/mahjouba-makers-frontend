@@ -3,29 +3,26 @@ import { userDataSelector } from 'redux/slices/userDataSlice';
 import { StyleSheet } from 'react-native';
 import useAppDispatch from 'hooks/useAppDispatch';
 import useAppSelector from 'hooks/useAppSelector';
-import { Box, HStack, IconButton, ScrollView, View, Pressable, VStack, Spacer } from 'native-base';
+import { HStack, IconButton, ScrollView, View, Pressable, VStack, Spacer } from 'native-base';
 import { Image as ExpoImage } from 'expo-image';
 import { DEFAULT_PROFILE_URI } from 'utils/constants';
 import { authSelector } from 'redux/slices/authSlice';
 import AudioIcon from '../../assets/audio_icon.svg';
+import SettingsIcon from '../../assets/settings_icon.svg';
 import { useTranslation } from 'react-i18next';
 import MapPinIcon from '../../assets/map_pin.svg';
 import { jobsSelector, getUserJobHistory } from 'redux/slices/jobsSlice';
-import MaterialChip from '../MaterialChip';
 import Colors from 'utils/Colors';
 import { SafeAreaView, RefreshControl } from 'react-native';
 import AppStyles from 'styles/commonstyles';
 import TextHighlighter from 'components/SpeechHighlighter';
 import JobHistoryCard from 'components/JobHistoryCard';
 import { SvgXml } from 'react-native-svg';
-import { ScreenHeight } from 'react-native-elements/dist/helpers';
 
 export default function ProfileDisplay({
   toggleEditing,
-  toggleSettingsOpen,
 }: {
   toggleEditing: () => void;
-  toggleSettingsOpen: () => void;
 }): JSX.Element {
   const dispatch = useAppDispatch();
 
@@ -137,6 +134,11 @@ export default function ProfileDisplay({
         }}
         style={AppStyles.audioButtonStyle}
       />
+      <IconButton
+        icon={<SettingsIcon />}
+        onPress={toggleEditing}
+        style={styles.settingsStyle}
+      />
     </SafeAreaView>
   );
 }
@@ -160,5 +162,10 @@ const styles = StyleSheet.create({
   jobHistoryScroll: {
     paddingHorizontal: 20,
     height: '100%',
+  },
+  settingsStyle: {
+    position: 'absolute',
+    right: 10,
+    top: 45,
   },
 });

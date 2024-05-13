@@ -11,7 +11,6 @@ import { useTranslation } from 'react-i18next';
 import EditIcon from '../../assets/edit_icon.svg';
 import MapPinIcon from '../../assets/map_pin.svg';
 import { jobsSelector, getUserJobHistory } from 'redux/slices/jobsSlice';
-import MaterialChip from '../MaterialChip';
 import Colors from 'utils/Colors';
 import { SafeAreaView, View } from 'react-native';
 import AppStyles from 'styles/commonstyles';
@@ -64,7 +63,7 @@ export default function PendingDelivery(): JSX.Element {
             key={job._id}
             onPress={() => console.log('TODO')}
           >
-            <JobHistoryCard job={job} part={part} materials={materials} />
+            <JobHistoryCard job={job} part={part} materials={materials} pressed={false} setPressed={()=> {}}/>
           </Pressable>
         );
       })}

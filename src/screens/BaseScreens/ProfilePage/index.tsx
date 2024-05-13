@@ -11,18 +11,15 @@ import ProfileDisplay from 'components/ProfileDisplay';
 export default function ProfilePage({
   editing,
   toggleEditing,
-  toggleSettingsOpen,
 }: {
   editing: boolean;
   toggleEditing: () => void;
-  toggleSettingsOpen: () => void;
 }) {
   return (
     editing ?
       <ProfileEditor toggleEditing={toggleEditing} /> :
       <ProfileDisplay
         toggleEditing={toggleEditing}
-        toggleSettingsOpen={toggleSettingsOpen}
       />
 
   );

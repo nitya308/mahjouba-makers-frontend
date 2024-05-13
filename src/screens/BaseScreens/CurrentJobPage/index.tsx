@@ -256,7 +256,7 @@ export default function CurrentJobPage(
                   dispatch(unacceptJob({ jobId: currentJobId ?? '', fbUserRef }));
                   setDetailsPageOpen(false);
                 }}
-                marginBottom={'10px'}
+                marginBottom={'100px'}
               >
                 <Text fontFamily={fonts.regular}>
                   Unaccept Job
