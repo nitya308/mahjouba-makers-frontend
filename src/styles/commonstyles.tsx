@@ -40,6 +40,7 @@ const AppStyles = StyleSheet.create({
     shadowOffset: { width: 0, height: 8 },
   },
   profileEditingStyle: {
+    width: '100%',
     marginTop: 5,
     marginBottom: 20,
     color: Colors.blueBlack,

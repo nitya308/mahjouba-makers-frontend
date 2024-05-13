@@ -155,7 +155,7 @@ export default function ProfileEditor({
         <TextHighlighter style={AppStyles.center_heading} text={t('Edit Profile')} pressed={pressed} setPressed={setPressed} />
       </VStack>
 
-      <ScrollView style={{ paddingHorizontal: 20 }}>
+      <ScrollView nestedScrollEnabled={true} style={{ paddingHorizontal: 20 }}>
         <ProfileImageSelector
           selectedProfile={selectedImage}
           setSelectedProfile={setSelectedImage}
@@ -187,16 +187,17 @@ export default function ProfileEditor({
         <Spacer size={5} />
 
         <TextHighlighter style={AppStyles.bodyTextMd} text={t('Change App language')} pressed={pressed} setPressed={setPressed} />
-        <Center>
+        <Center style={{ zIndex: 10 }} mb={300}>
           <Text>
             {'demo translation functionality: '}
             {t('Hello world')}
           </Text>
           <SelectLanguage />
         </Center>
+
       </ScrollView>
       <IconButton
-        icon={!pressed ? <AudioIcon /> : <StopIcon/>}
+        icon={!pressed ? <AudioIcon /> : <StopIcon />}
         onPress={() => {
           if (pressed) {
             Speech.stop();
