@@ -25,6 +25,7 @@ import Colors from 'utils/Colors';
 import MaterialSelector from 'components/MaterialSelector';
 import { cleanUndefinedFields } from 'utils/requestUtils';
 import SharpButton from 'components/SharpButton';
+import Onboarding from 'controllers/AuthController/Onboarding';
 
 const JobsPage = ({
   pullNextPage,
@@ -40,7 +41,6 @@ const JobsPage = ({
   const { jobFeedIds, jobsMap, partsMap, materialsMap, loading } = useAppSelector(jobsSelector);
   const { t } = useTranslation();
   const [selectedJobId, setSelectedJobId] = useState<string | undefined>();
-
   const [resultArray, setResultArray] = useState<{ job: Job, part: PartType }[]>([]);
 
   const calculateMatchingJobs = () => {
@@ -111,8 +111,8 @@ const JobsPage = ({
   );
 
   const [pressed, setPressed] = useState(false);
-
   const [changeMaterials, setChangeMaterials] = useState(false);
+  const [showTutorial, setShowTutorial] = useState(false);
   const [selectedMaterialIds, setSelectedMaterialIds] = useState<string[]>(userData?.materialIds ?? []);
   const dispatch = useAppDispatch();
   const { fbUserRef } = useAppSelector(authSelector);
@@ -250,15 +250,22 @@ const JobsPage = ({
           }
         </>
       </Modal>
+
+      {/* Displays tutorial for the app */}
+      <Modal isVisible={showTutorial} backdropOpacity={0.7} style={styles.tutorialModal}>
+        <Onboarding />
+      </Modal>
+
       <IconButton
-        icon={!pressed ? <AudioIcon /> : <StopIcon/>}
+        icon={!pressed ? <AudioIcon /> : <StopIcon />}
         onPress={() => {
-          if (pressed) {
-            Speech.stop();
-            setPressed(false);
-          } else {
-            setPressed(true);
-          }
+          setShowTutorial(true);
+          // if (pressed) {
+          //   Speech.stop();
+          //   setPressed(false);
+          // } else {
+          //   setPressed(true);
+          // }
         }}
         style={AppStyles.audioButtonStyle}
       />
@@ -303,7 +310,19 @@ const styles = StyleSheet.create({
     top: 0,
     right: -100,
   },
-
+  tutorialModal: {
+    flex: 0,
+    display: 'flex',
+    justifyContent: 'flex-start',
+    padding: 25,
+    marginTop: 100,
+    marginBottom: 100,
+    marginHorizontal: 20,
+    borderRadius: 30,
+    borderWidth: 3,
+    borderColor: Colors.outline,
+    backgroundColor: 'white',
+  },
 });
 
 export default JobsPage;

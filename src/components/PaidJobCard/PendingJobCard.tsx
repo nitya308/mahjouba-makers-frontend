@@ -18,7 +18,7 @@ import { fonts } from 'utils/constants';
 
 const PendingJobCard = (
   { job, part, pressed, setPressed }:
-    { job: Job, part: PartType, materials: string[], pressed: boolean, setPressed: React.Dispatch<React.SetStateAction<boolean>> },
+  { job: Job, part: PartType, materials: string[], pressed: boolean, setPressed: React.Dispatch<React.SetStateAction<boolean>> },
 ) => {
 
   const [showToken, setShowToken] = useState(false);

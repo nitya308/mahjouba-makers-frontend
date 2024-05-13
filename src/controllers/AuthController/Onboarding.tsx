@@ -12,7 +12,7 @@ import TextHighlighter from '../../components/SpeechHighlighter';
 import styles from 'styles/onboarding';
 import AppStyles from 'styles/commonstyles';
 
-export default function Onboarding({ navigation }: { navigation: any }) {
+export default function Onboarding() {
 
   const [pgNo, setPgNo] = useState(0);
   const textDisplay = [
