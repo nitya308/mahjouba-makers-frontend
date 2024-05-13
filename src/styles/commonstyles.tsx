@@ -10,7 +10,7 @@ const AppStyles = StyleSheet.create({
   left_heading: { fontSize: 32, lineHeight: 32, textAlign: 'left', fontFamily: fonts.bold },
   bodyText: { fontSize: 18 },
   bodyTextMd: { fontSize: 20 },
-  bodyTextLg: { fontSize: 25 },
+  bodyTextLg: { fontSize: 25, lineHeight: 25 },
   underline: { textDecorationLine: 'underline' },
   audioStyle: { position: 'absolute', top: 0, right: 0, zIndex: 1 },
   mainContainer: { paddingHorizontal: 20, height: '100%' },

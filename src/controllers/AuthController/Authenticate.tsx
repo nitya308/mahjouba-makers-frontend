@@ -24,11 +24,11 @@ export default function Authenticate({ navigation }: { navigation: any }) {
           <VStack space={2} alignItems="center">
             <MahjoubaLogo width='141px' height='104.88px' />
             <Box height='65px' width='100%' />
-            <SharpButton my='10px'
+            <SharpButton my='10px' width={'80%'}
               size='sm' onPress={() => navigation.navigate('Login')}>
               <TextHighlighter style={AppStyles.buttonText} text={t('Sign In')} pressed={pressed} setPressed={setPressed} />
             </SharpButton>
-            <SharpButton my='10px'
+            <SharpButton my='10px' width={'80%'}
               size='sm' onPress={() => navigation.navigate('Signup')}>
               <TextHighlighter style={AppStyles.buttonText} text={t('Sign Up')} pressed={pressed} setPressed={setPressed} />
             </SharpButton>
