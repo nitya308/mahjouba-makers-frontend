@@ -1,6 +1,7 @@
 import { StyleSheet } from 'react-native';
 import { fonts } from 'utils/constants';
 import { ScreenHeight } from 'react-native-elements/dist/helpers';
+import Colors from 'utils/Colors';
 
 const AppStyles = StyleSheet.create({
   italic: { fontStyle: 'italic' },
@@ -12,6 +13,11 @@ const AppStyles = StyleSheet.create({
   bodyTextLg: { fontSize: 25 },
   underline: { textDecorationLine: 'underline' },
   audioStyle: { position: 'absolute', top: 0, right: 0, zIndex: 1 },
+  mainContainer: { paddingHorizontal: 20, height: '100%' },
+  paddingContainer: { paddingHorizontal: 20 },
+  buttonText: { color: 'white', fontSize: 18, fontFamily: fonts.bold },
+  row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  rowFlexStart: { flexDirection: 'row', justifyContent: 'flex-start', gap: 5, alignItems: 'center', width: '100%', padding: 0 },
   audioButtonStyle: {
     position: 'absolute',
     top: ScreenHeight - 200,
@@ -21,19 +27,31 @@ const AppStyles = StyleSheet.create({
     shadowOpacity: 0.15,
     shadowOffset: { width: 0, height: 5 },
   },
-  mainContainer: { paddingHorizontal: 20, height: '100%' },
-  paddingContainer: { paddingHorizontal: 20 },
-  buttonText: { color: 'white', fontSize: 18, fontFamily: fonts.bold },
-  row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  rowFlexStart: { flexDirection: 'row', justifyContent: 'flex-start', gap: 5, alignItems: 'center', width: '100%', padding: 0 },
   inputBoxStyle: {
     marginTop: 10,
     padding: 15,
     borderRadius: 10,
     borderWidth: 0,
     fontSize: 18,
+    fontFamily: fonts.regular,
     backgroundColor: '#F2F1EC',
     shadowColor: '#3A3449',
+    shadowOpacity: 0.15,
+    shadowOffset: { width: 0, height: 8 },
+  },
+  profileEditingStyle: {
+    width: '100%',
+    marginTop: 5,
+    marginBottom: 20,
+    color: Colors.blueBlack,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    borderRadius: 10,
+    fontFamily: fonts.regular,
+    borderWidth: 1,
+    borderColor: Colors.outline,
+    fontSize: 18,
+    shadowColor: Colors.jobButton,
     shadowOpacity: 0.15,
     shadowOffset: { width: 0, height: 8 },
   },
@@ -46,6 +64,12 @@ const AppStyles = StyleSheet.create({
     shadowColor: '#3A3449',
     shadowOpacity: 0.15,
     shadowOffset: { width: 0, height: 8 },
+  },
+  exitButton: {
+    position: 'absolute',
+    top: 75,
+    left: 20,
+    zIndex: 5,
   },
 });
 

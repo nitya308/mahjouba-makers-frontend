@@ -1,32 +1,43 @@
 import React, { useEffect, useState } from 'react';
 import i18next from 'i18next';
-import { Button } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { Languages } from 'types/user';
 import { updateUser } from 'redux/slices/userDataSlice';
 import useAppDispatch from 'hooks/useAppDispatch';
 import useAppSelector from 'hooks/useAppSelector';
 import { authSelector } from 'redux/slices/authSlice';
-
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { Dropdown } from 'react-native-element-dropdown';
+import AppStyles from 'styles/commonstyles';
+import { fonts } from 'utils/constants';
+import Colors from 'utils/Colors';
 
 export const languageMap = {
-  EN: { label: 'English', active: true, abb: 'EN' },
-  FR: { label: 'French', active: false, abb: 'FR' },
-  AR: { label: 'Arabic', active: false, abb: 'AR' },
+  'en': { label: 'English', active: true, value: 'en' },
+  'fr': { label: 'French', active: false, value: 'fr' },
+  'ar': { label: 'Arabic', active: false, value: 'ar' },
 };
 
 const SelectLanguage = () => {
+
   const dispatch = useAppDispatch();
-  const [language, setLanguage] = useState(i18next.language);
+  const currentLanguage = i18next.language;
+  const [language, setLanguage] = useState<any>(currentLanguage);
+  console.log('LAJF', language);
   const { fbUserRef } = useAppSelector(authSelector);
 
+  const data = [
+    { label: 'English', value: 'en' },
+    { label: 'French', value: 'fr' },
+    { label: 'Arabic', value: 'ar' },
+  ];
 
-  // useEffect(() => {
-  //   // update selected location for component usage
-  //   console.log(language);
-  // }, []);
+  useEffect(() => {
+    setLanguage(i18next.language);
+  }, []);
 
-  const updateLang = (lang: string) => {
 
+  const updateLang = (lang: any) => {
     if (!fbUserRef) return;
     try {
       dispatch(updateUser({
@@ -41,29 +52,30 @@ const SelectLanguage = () => {
   };
 
   return (
-    <Button
-      onPress={() => {
-        try {
-          if (language === Languages.EN) {
-            setLanguage(Languages.FR);
-            i18next.changeLanguage(Languages.FR);
-            updateLang(Languages.FR);
-          } else if (language === Languages.FR) {
-            setLanguage(Languages.AR);
-            i18next.changeLanguage(Languages.AR);
-            updateLang(Languages.AR);
-          } else {
-            setLanguage(Languages.EN);
-            i18next.changeLanguage(Languages.EN);
-            updateLang(Languages.EN);
-          }
-        } catch (e) {
-          console.log(e);
-        }
+    <Dropdown
+      data={data}
+      placeholder={languageMap[currentLanguage as keyof typeof languageMap].label}
+      style={AppStyles.profileEditingStyle}
+      itemTextStyle={styles.dropdownText}
+      selectedTextStyle={styles.dropdownText}
+      maxHeight={300}
+      labelField="label"
+      valueField="value"
+      value={language}
+      onChange={item => {
+        setLanguage(item.value);
+        updateLang(item.value);
       }}
-      title={`Change Language (selected = ${language})`}
     />
   );
 };
 
 export default SelectLanguage;
+
+const styles = StyleSheet.create({
+  dropdownText: {
+    color: Colors.blueBlack,
+    fontFamily: fonts.regular,
+    fontSize: 18,
+  },
+});

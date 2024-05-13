@@ -1,34 +1,20 @@
 
-import React, { useCallback, useEffect, useState } from 'react';
-import { View, Text, Center } from 'native-base';
-import { ProfilePage, AccountSettingsPage } from 'screens/BaseScreens';
-import Colors from 'utils/Colors';
+import React, { useCallback, useState } from 'react';
+import { ProfilePage } from 'screens/BaseScreens';
 
 
 export default function ProfileController(): JSX.Element {
   const [profileEditing, setProfileEditing] = useState(false);
-  const [settingsOpen, setSettingsOpen] = useState(false);
 
   const toggleProfileEditing = useCallback(() => {
     setProfileEditing(!profileEditing);
+    console.log('Profile editing toggled');
   }, [profileEditing, setProfileEditing]);
 
-  const toggleSettingsOpen = useCallback(() => {
-    if (!settingsOpen) {
-      setProfileEditing(false);
-      setSettingsOpen(true);
-    } else {
-      setSettingsOpen(false);
-    }
-  }, [settingsOpen, setSettingsOpen, profileEditing]);
-
   return (
-    settingsOpen ?
-      <AccountSettingsPage exit={() => toggleSettingsOpen()} /> :
-      <ProfilePage
-        editing={profileEditing}
-        toggleEditing={toggleProfileEditing}
-        toggleSettingsOpen={toggleSettingsOpen}
-      />
+    <ProfilePage
+      editing={profileEditing}
+      toggleEditing={toggleProfileEditing}
+    />
   );
 }

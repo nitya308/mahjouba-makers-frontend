@@ -13,6 +13,8 @@ import { useTranslation } from 'react-i18next';
 import styles from 'styles/onboarding';
 import TextHighlighter from 'components/SpeechHighlighter';
 import AudioIcon from '../../assets/audio_icon.svg';
+import * as Speech from 'expo-speech';
+import StopIcon from '../../assets/hand_icon.svg';
 
 export default function IDSetup({ navigation, route }): JSX.Element {
   const { name, selectedImage } = route.params;
@@ -26,9 +28,14 @@ export default function IDSetup({ navigation, route }): JSX.Element {
     <View flex={1}>
       <IconButton
         style={styles.audioStyle}
-        icon={<AudioIcon />}
+        icon={!pressed ? <AudioIcon /> : <StopIcon/>}
         onPress={() => {
-          setPressed(true);
+          if (pressed) {
+            Speech.stop();
+            setPressed(false);
+          } else {
+            setPressed(true);
+          }
         }}
       />
       <Center flex={1} >

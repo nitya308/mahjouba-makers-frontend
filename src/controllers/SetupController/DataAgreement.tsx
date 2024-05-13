@@ -8,6 +8,8 @@ import { useTranslation } from 'react-i18next';
 import TextHighlighter from 'components/SpeechHighlighter';
 import styles from 'styles/onboarding';
 import AudioIcon from '../../assets/audio_icon.svg';
+import StopIcon from '../../assets/hand_icon.svg';
+import * as Speech from 'expo-speech';
 
 export default function DataAgreement({ navigation, route }): JSX.Element {
   const [pressed, setPressed] = useState(false);
@@ -18,9 +20,14 @@ export default function DataAgreement({ navigation, route }): JSX.Element {
     <View style={{ flex: 1, position: 'relative' }}>
       <IconButton
         style={styles.audioStyle}
-        icon={<AudioIcon />}
+        icon={!pressed ? <AudioIcon /> : <StopIcon/>}
         onPress={() => {
-          setPressed(true);
+          if (pressed) {
+            Speech.stop();
+            setPressed(false);
+          } else {
+            setPressed(true);
+          }
         }}
       />
       <Box w='100%' minH='60px' mt='150px' alignItems='center'>
