@@ -7,6 +7,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import MahjoubaLogo from '../../assets/mahjouba_logo.svg';
 import styles from 'styles/onboarding';
 import AudioIcon from '../../assets/audio_icon.svg';
+import StopIcon from '../../assets/hand_icon.svg';
+import * as Speech from 'expo-speech';
 import TextHighlighter from 'components/SpeechHighlighter';
 import AppStyles from 'styles/commonstyles';
 
@@ -34,9 +36,14 @@ export default function Authenticate({ navigation }: { navigation: any }) {
         </ScrollView>
       </Center>
       <IconButton
-        icon={<AudioIcon />}
+        icon={!pressed ? <AudioIcon /> : <StopIcon/>}
         onPress={() => {
-          setPressed(true);
+          if (pressed) {
+            Speech.stop();
+            setPressed(false);
+          } else {
+            setPressed(true);
+          }
         }}
         style={AppStyles.audioButtonStyle}
       />

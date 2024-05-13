@@ -3,7 +3,7 @@ import React, { useEffect, useState, useCallback, useRef } from 'react';
 import JobCard from 'components/JobCard';
 import { Animated, StyleSheet, FlatList, ScrollView, SafeAreaView, TouchableOpacity, RefreshControl } from 'react-native';
 import Modal from 'react-native-modal';
-import { Text, VStack, Button, IconButton, Spinner, Spacer, Center } from 'native-base';
+import { Text, VStack, Button, IconButton, Spinner, Spacer, Center, Icon } from 'native-base';
 import useAppSelector from 'hooks/useAppSelector';
 import { updateUser, userDataSelector } from 'redux/slices/userDataSlice';
 import { jobsSelector } from 'redux/slices/jobsSlice';
@@ -12,6 +12,8 @@ import { Job } from 'types/job';
 import { useTranslation } from 'react-i18next';
 import useAppDispatch from 'hooks/useAppDispatch';
 import AudioIcon from '../../../assets/audio_icon.svg';
+import StopIcon from '../../../assets/hand_icon.svg';
+import * as Speech from 'expo-speech';
 import { authSelector } from 'redux/slices/authSlice';
 import { PartType } from 'types/part_type';
 import { ScreenWidth } from 'react-native-elements/dist/helpers';
@@ -173,7 +175,7 @@ const JobsPage = ({
 
           <Pressable onPress={() => setChangeMaterials(true)}>
             <TextHighlighter
-              style={{ color: Colors.highlight, fontWeight: 600 }}
+              style={{ color: Colors.highlight, fontWeight: '600' }}
               text={t('Change materials here.')}
               pressed={pressed} setPressed={setPressed} />
           </Pressable>
@@ -249,9 +251,14 @@ const JobsPage = ({
         </>
       </Modal>
       <IconButton
-        icon={<AudioIcon />}
+        icon={!pressed ? <AudioIcon /> : <StopIcon/>}
         onPress={() => {
-          setPressed(true);
+          if (pressed) {
+            Speech.stop();
+            setPressed(false);
+          } else {
+            setPressed(true);
+          }
         }}
         style={AppStyles.audioButtonStyle}
       />

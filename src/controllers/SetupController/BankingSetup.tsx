@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { View, Box, HStack, Heading, Icon, Text, IconButton } from 'native-base';
 import SharpButton from 'components/SharpButton';
 import AudioIcon from '../../assets/audio_icon.svg';
+import StopIcon from '../../assets/hand_icon.svg';
+import * as Speech from 'expo-speech';
 import DotProgress from 'components/DotProgress';
 import { AntDesign } from '@expo/vector-icons';
 import Colors from 'utils/Colors';
@@ -18,9 +20,14 @@ export default function BankingSetup({ navigation, route }): JSX.Element {
     <View style={{ flex: 1, position: 'relative' }}>
       <IconButton
         style={styles.audioStyle}
-        icon={<AudioIcon />}
+        icon={!pressed ? <AudioIcon /> : <StopIcon/>}
         onPress={() => {
-          setPressed(true);
+          if (pressed) {
+            Speech.stop();
+            setPressed(false);
+          } else {
+            setPressed(true);
+          }
         }}
       />
       <Box w='100%' minH='60px' mt='150px' alignItems='center'>

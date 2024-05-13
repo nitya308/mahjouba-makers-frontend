@@ -5,6 +5,8 @@ import { useTranslation } from 'react-i18next';
 import { SafeAreaView, StyleSheet, Text, View, ScrollView } from 'react-native';
 import AppStyles from 'styles/commonstyles';
 import AudioIcon from '../../../assets/audio_icon.svg';
+import StopIcon from '../../../assets/hand_icon.svg';
+import * as Speech from 'expo-speech';
 import useAppSelector from 'hooks/useAppSelector';
 import { jobsSelector } from 'redux/slices/jobsSlice';
 import PaidJobCard from 'components/PaidJobCard/PaidJobCard';
@@ -17,8 +19,6 @@ const PaymentPage = () => {
 
   const { jobsMap, partsMap, materialsMap, jobHistoryIds } = useAppSelector(jobsSelector);
   console.log('jobhistoryids', jobHistoryIds);
-
-  
 
   // TODO: sort jobHistoryIds into paid and unpaid ones
   // Have some system to get paid ones from cashplus when refreshed (+ every 24 hours) and update their status if there's a new paid job? 
@@ -63,9 +63,14 @@ const PaymentPage = () => {
         })}
       </ScrollView>
       <IconButton
-        icon={<AudioIcon />}
+        icon={!pressed ? <AudioIcon /> : <StopIcon/>}
         onPress={() => {
-          setPressed(true);
+          if (pressed) {
+            Speech.stop();
+            setPressed(false);
+          } else {
+            setPressed(true);
+          }
         }}
         style={AppStyles.audioButtonStyle}
       />

@@ -8,6 +8,8 @@ import { Image as ExpoImage } from 'expo-image';
 import { DEFAULT_PROFILE_URI } from 'utils/constants';
 import { authSelector } from 'redux/slices/authSlice';
 import AudioIcon from '../../assets/audio_icon.svg';
+import StopIcon from '../../assets/hand_icon.svg';
+import * as Speech from 'expo-speech';
 import SettingsIcon from '../../assets/settings_icon.svg';
 import { useTranslation } from 'react-i18next';
 import MapPinIcon from '../../assets/map_pin.svg';
@@ -101,7 +103,7 @@ export default function ProfileDisplay({
           </HStack>
         </View>
         <Spacer size={5} />
-        <TextHighlighter style={[AppStyles.center_heading, AppStyles.underline]} text={t('Past Projects')} pressed={pressed} setPressed={setPressed} />
+        <TextHighlighter style={{ ...AppStyles.center_heading, ...AppStyles.underline }} text={t('Past Projects')} pressed={pressed} setPressed={setPressed} />
       </View>
       <ScrollView style={styles.jobHistoryScroll} contentContainerStyle={{ flexGrow: 1, alignItems: 'center' }}
         refreshControl={
@@ -128,9 +130,14 @@ export default function ProfileDisplay({
         <Spacer size={400} />
       </ScrollView>
       <IconButton
-        icon={<AudioIcon />}
+        icon={!pressed ? <AudioIcon /> : <StopIcon/>}
         onPress={() => {
-          setPressed(true);
+          if (pressed) {
+            Speech.stop();
+            setPressed(false);
+          } else {
+            setPressed(true);
+          }
         }}
         style={AppStyles.audioButtonStyle}
       />

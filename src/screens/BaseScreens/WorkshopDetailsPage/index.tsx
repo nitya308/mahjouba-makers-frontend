@@ -10,6 +10,8 @@ import { userDataSelector } from 'redux/slices/userDataSlice';
 import { JOB_STATUS_ENUM } from 'types/job';
 import SharpButton from 'components/SharpButton';
 import AudioIcon from '../../../assets/audio_icon.svg';
+import StopIcon from '../../../assets/hand_icon.svg';
+import * as Speech from 'expo-speech';
 import { fonts } from 'utils/constants';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import XIcon from 'assets/x.svg';
@@ -71,9 +73,14 @@ const WorkshopDetailsPage = ({
       <ScrollView >
         <IconButton
           style={AppStyles.audioStyle}
-          icon={<AudioIcon />}
+          icon={!pressed ? <AudioIcon /> : <StopIcon/>}
           onPress={() => {
-            setPressed(true);
+            if (pressed) {
+              Speech.stop();
+              setPressed(false);
+            } else {
+              setPressed(true);
+            }
           }}
         />
 

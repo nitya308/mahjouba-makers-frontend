@@ -10,6 +10,8 @@ import { useTranslation } from 'react-i18next';
 import styles from 'styles/onboarding';
 import Colors from 'utils/Colors';
 import AudioIcon from '../../assets/audio_icon.svg';
+import StopIcon from '../../assets/hand_icon.svg';
+import * as Speech from 'expo-speech';
 import TextHighlighter from 'components/SpeechHighlighter';
 import AppStyles from 'styles/commonstyles';
 
@@ -130,9 +132,14 @@ const Login = () => {
         </VStack>
       </ScrollView>
       <IconButton
-        icon={<AudioIcon />}
+        icon={!pressed ? <AudioIcon /> : <StopIcon/>}
         onPress={() => {
-          setPressed(true);
+          if (pressed) {
+            Speech.stop();
+            setPressed(false);
+          } else {
+            setPressed(true);
+          }
         }}
         style={AppStyles.audioButtonStyle}
       />

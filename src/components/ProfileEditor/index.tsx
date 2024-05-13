@@ -41,6 +41,8 @@ import { createPhoto } from 'redux/slices/photosSlice';
 import { DEFAULT_PROFILE_URI } from 'utils/constants';
 import AppStyles from 'styles/commonstyles';
 import AudioIcon from '../../assets/audio_icon.svg';
+import StopIcon from '../../assets/hand_icon.svg';
+import * as Speech from 'expo-speech';
 import { Modal, SafeAreaView, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
 import TextHighlighter from 'components/SpeechHighlighter';
 import OnboardingStyles from 'styles/onboarding';
@@ -194,9 +196,14 @@ export default function ProfileEditor({
         </Center>
       </ScrollView>
       <IconButton
-        icon={<AudioIcon />}
+        icon={!pressed ? <AudioIcon /> : <StopIcon/>}
         onPress={() => {
-          setPressed(true);
+          if (pressed) {
+            Speech.stop();
+            setPressed(false);
+          } else {
+            setPressed(true);
+          }
         }}
         style={AppStyles.audioButtonStyle}
       />

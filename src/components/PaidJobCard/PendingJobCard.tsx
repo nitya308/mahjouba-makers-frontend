@@ -72,7 +72,7 @@ const PendingJobCard = (
               </SharpButton>
             </HStack>
             :
-            <Text>{daysLeft}</Text>
+            <TextHighlighter style={styles.timeLeft} text={t('Token expired')} pressed={pressed} setPressed={setPressed} />
             // <TextHighlighter style={styles.timeLeft} text={t('Collection date expired')} pressed={pressed} setPressed={setPressed} />
           }
         </VStack>

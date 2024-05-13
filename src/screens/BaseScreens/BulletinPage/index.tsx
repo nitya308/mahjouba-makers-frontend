@@ -7,6 +7,8 @@ import { ScrollView } from 'react-native';
 import AppStyles from 'styles/commonstyles';
 import { Pressable, VStack, Button, IconButton } from 'native-base';
 import AudioIcon from '../../../assets/audio_icon.svg';
+import StopIcon from '../../../assets/hand_icon.svg';
+import * as Speech from 'expo-speech';
 import WorkshopCard from 'components/WorkshopCard';
 import Modal from 'react-native-modal';
 import { workshopsSelector } from 'redux/slices/workshopsSlice';
@@ -75,7 +77,7 @@ const BulletinPage = ({ reloadWorkshops, refreshing }: { reloadWorkshops: () => 
                   );
                 })}
               </VStack>
-              : 
+              :
               <VStack space={6}>
                 <TextHighlighter
                   text={t('Sign up for Workshops to learn new skills, crafting techniques, or to simply bond with other craftsmen in your area.')}
@@ -94,9 +96,14 @@ const BulletinPage = ({ reloadWorkshops, refreshing }: { reloadWorkshops: () => 
           </VStack>
         </ScrollView>
         <IconButton
-          icon={<AudioIcon />}
+          icon={!pressed ? <AudioIcon /> : <StopIcon />}
           onPress={() => {
-            setPressed(true);
+            if (pressed) {
+              Speech.stop();
+              setPressed(false);
+            } else {
+              setPressed(true);
+            }
           }}
           style={AppStyles.audioButtonStyle}
         />
