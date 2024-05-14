@@ -3,7 +3,7 @@ import { Text, Input, VStack, Center, Button, Box, ScrollView, IconButton } from
 import SharpButton from 'components/SharpButton';
 import i18next from 'i18next';
 import { Languages } from 'types/user';
-import { SafeAreaView } from 'react-native';
+import { SafeAreaView, View } from 'react-native';
 import MahjoubaLogo from '../../assets/mahjouba_logo.svg';
 import * as Speech from 'expo-speech';
 import AudioIcon from '../../assets/audio_icon.svg';
@@ -11,8 +11,9 @@ import StopIcon from '../../assets/hand_icon.svg';
 import TextHighlighter from '../../components/SpeechHighlighter';
 import styles from 'styles/onboarding';
 import AppStyles from 'styles/commonstyles';
+import XIcon from '../../assets/x_icon.svg';
 
-export default function Onboarding() {
+export default function Onboarding(modalClose: any) {
 
   const [pgNo, setPgNo] = useState(0);
   const textDisplay = [
@@ -27,9 +28,9 @@ export default function Onboarding() {
   const [pressed, setPressed] = useState(false);
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <View>
       <Center flex={1}>
-        <TextHighlighter text={textDisplay[pgNo]} pressed={pressed} setPressed={setPressed} />
+        <TextHighlighter style={AppStyles.center_heading} text={textDisplay[pgNo]} pressed={pressed} setPressed={setPressed} />
       </Center>
       <IconButton
         icon={!pressed ? <AudioIcon /> : <StopIcon/>}
@@ -43,6 +44,6 @@ export default function Onboarding() {
         }}
         style={AppStyles.audioButtonStyle}
       />
-    </SafeAreaView>
+    </View>
   );
 }

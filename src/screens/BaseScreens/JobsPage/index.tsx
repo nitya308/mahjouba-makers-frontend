@@ -311,7 +311,6 @@ const styles = StyleSheet.create({
     right: -100,
   },
   tutorialModal: {
-    flex: 0,
     display: 'flex',
     justifyContent: 'flex-start',
     padding: 25,
