@@ -2,7 +2,7 @@
 
 Frontend for craftsmen to find, accept, and complete (+ receive payment for) jobs to create parts for electric scooters built by the Mahjouba Initiative.
 
-_Pending TestFlight approval _
+_Pending TestFlight approval_
 
 ## App features
 
