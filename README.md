@@ -6,15 +6,24 @@ Frontend for craftsmen to find, accept, and complete (+ receive payment for) job
 
 ### Piece selection for craftsmen: 
 The ability to search for jobs based on the materials they work with, see instructions, schematics, payment information & accept the job
-![Job Search - Master Jobs (1)](https://github.com/user-attachments/assets/a4c19880-b700-499c-a9bc-901aa4b1c336)  
+
+<div align="center">
+	<img width = "300" src="https://github.com/user-attachments/assets/a4c19880-b700-499c-a9bc-901aa4b1c336">
+</div>
 
 ### Workshops 
 are created and posted by the Mahjouba organization through the admin app! Here craftsmen can see, register, or unregister for local workshops on how to make parts
-![Job Search - Master Jobs (2)](https://github.com/user-attachments/assets/2a68fdfc-ab97-4cdb-b7ec-47d892317d86)
+
+<div align="center">
+	<img width = "300" src="https://github.com/user-attachments/assets/2a68fdfc-ab97-4cdb-b7ec-47d892317d86">
+</div>
 
 ### Accessibility
 Not all our target users can read English. We support English, French and Arabic and have voice support in all 3 languages. The Expo speech package aids this functionality
-![Android Small - 896](https://github.com/user-attachments/assets/00b8fdb1-4bdf-4189-86d6-606f0ae1d45f)
+
+<div align="center">
+	<img width = "300" src="https://github.com/user-attachments/assets/00b8fdb1-4bdf-4189-86d6-606f0ae1d45f">
+</div>
 
 
 ## Architecture
@@ -39,8 +48,6 @@ Due to the native code being used in this project, we are using a bare Expo flow
 2. Change `SERVER_URL` endpoint depending on if you are using hosted backend or local backend
 3. `cd ios` and `pod install`
 4. `npx run-ios`, and the app should be ready for use
-   - If the build fails, usually it is enough to try building the `.xcworkspace` file from XCode and fixing whatever error shows up based on XCode's recommendation
-      - ![img](https://i.imgur.com/6WCL7Gd.png)
 
 <hr/>
 
