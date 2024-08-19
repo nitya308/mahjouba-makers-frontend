@@ -2,11 +2,13 @@
 
 Frontend for craftsmen to find, accept, and complete (+ receive payment for) jobs to create parts for electric scooters built by the Mahjouba Initiative.
 
-## Designs
+## App features
 
-[Link to the project Figma](https://www.figma.com/file/rcOfcvZOeWk6nu4GqHAHI1/Mahjouba-Initiative-23F?type=design&mode=design&t=m3PQAB3jcMtY0YEQ-0)
+### Piece selection for craftsmen: the ability to search for jobs based on the materials they work with, see instructions, schematics, payment information & accept the job
+![Job Search - Master Jobs (1)](https://github.com/user-attachments/assets/a4c19880-b700-499c-a9bc-901aa4b1c336)  
 
-[2-4 screenshots from the app]
+### Workshops are created and posted by the Mahjouba organization through the admin app! Here craftsmen can see, register or unregister for local workshops on how to make parts
+![Job Search - Master Jobs (2)](https://github.com/user-attachments/assets/2a68fdfc-ab97-4cdb-b7ec-47d892317d86)
 
 ## Architecture
 ### Tech Stack
